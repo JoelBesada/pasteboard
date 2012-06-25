@@ -37,6 +37,6 @@ production:
   reconnect: false
   database: pasteboard
   pool: 5
-  username: root
-  password:
+  username: <%= ENV['MYSQL_PRODUCTION_USER'] %>
+  password: <%= ENV['MYSQL_PRODUCTION_PASSWORD'] %>
   socket: /var/run/mysqld/mysqld.sock
