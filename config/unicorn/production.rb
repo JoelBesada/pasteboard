@@ -28,8 +28,8 @@ if env == "production"
   user 'zevas'
   shared_path = "~/public/pasteboard.me/pasteboard/shared"
 
-  stderr_path "#{shared_path}/log/unicorn.stderr.log"
-  stdout_path "#{shared_path}/log/unicorn.stdout.log"
+  #stderr_path "#{shared_path}/log/unicorn.stderr.log"
+  #stdout_path "#{shared_path}/log/unicorn.stdout.log"
 end
 
 before_fork do |server, worker|
