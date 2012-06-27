@@ -23,6 +23,7 @@ end
 
 group :development do 
 	gem 'capistrano'
+	gem 'capistrano-unicorn'
 end
 
 gem 'jquery-rails'
