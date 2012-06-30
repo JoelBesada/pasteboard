@@ -1,0 +1,96 @@
+@background-color: #242424;
+@text-color: #040404;
+
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Droid Sans'), local('DroidSans'), url(http://themes.googleusercontent.com/static/fonts/droidsans/v3/s-BiyweUPV0v-yRb-cjciBsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Droid Sans Bold'), local('DroidSans-Bold'), url(http://themes.googleusercontent.com/static/fonts/droidsans/v3/EFpQQyG9GqCrobXxL-KRMQFhaRv2pGgT5Kf0An0s4MM.woff) format('woff');
+}
+
+::selection {
+	background: rgba(0,0,0, 0.1);
+}
+
+body {
+	background: @background-color;
+	background-image: url("../images/bg.jpg");
+	background-repeat: no-repeat;
+	background-size: 100% auto;
+	font-family: "Droid Sans", sans-serif;
+	color: @text-color;
+}
+
+.splash {
+	position: absolute;
+	height: 350px;
+	width: 580px;
+	left: 50%;
+	top: 50%;
+	margin-top: -175px;
+	margin-left: -290px;
+	text-align: center;
+
+	.splash-image {
+		position: relative;
+		width: 300px; 
+		height: 300px; 
+		margin: 0 auto;
+
+		.image-regular, .image-shine {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			background-size: 100%;
+		}
+
+		.image-regular {
+			background: url("../images/splash-image.png") no-repeat;
+		}
+
+		.image-shine {
+			opacity: 0;
+			background: url("../images/splash-image-shine.png") no-repeat;
+		}
+		
+		&.dragging .image-shine {
+			display: block;
+			transition: opacity 1s;
+			opacity: 1;
+		}
+	}
+
+	.instructions {
+		font-size: 28px;
+		font-weight: bold;
+		text-shadow: 0 1px 1px rgba(255,255,255,0.12);
+		margin-top: 5px;
+
+	}
+}
+
+.button {
+	width: 35px;
+	height: 35px;
+	margin: 15px 10px;
+
+	background: rgba(67, 67, 67, 0.8);
+	background-image: linear-gradient(#434343, #000);
+	background-image: linear-gradient(transparent, rgba(0,0,0,.2));
+	border: 1px solid #111;
+	box-shadow: inset 0 1px 1px rgba(255,255,255,0.15),
+				inset 0 0 5px rgba(255,255,255, 0.05),
+				0 0 5px rgba(0,0,0,0.5),
+				0 5px 10px rgba(0,0,0,0.3);
+
+	border-radius: 3px;
+
+}
