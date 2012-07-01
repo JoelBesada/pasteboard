@@ -38,6 +38,9 @@ body {
 				transition-duration: 1s;
 			}
 		}
+		.drag-overlay {
+			transition: box-shadow 1s;
+		}
 	}
 
 	&.dragging {
@@ -49,6 +52,9 @@ body {
 				color: #eee;
 				text-shadow: 0 0 10px white;
 			}
+		}
+		.drag-overlay {
+			box-shadow: inset 0 0 100px white;
 		}
 	}
 
