@@ -1,3 +1,5 @@
+@import "../stylesheets/normalize.css";
+
 @background-color: #242424;
 @text-color: #040404;
 
@@ -25,6 +27,38 @@ body {
 	background-size: 100% auto;
 	font-family: "Droid Sans", sans-serif;
 	color: @text-color;
+
+	&.loaded {
+		.splash {
+			.splash-image .image-shine {
+				transition: opacity 1s;
+			}
+			.splash-instructions {
+				transition-property: text-shadow, color;
+				transition-duration: 1s;
+			}
+		}
+	}
+
+	&.dragging {
+		.splash {
+			.splash-image .image-shine {
+				opacity: 1;
+			}
+			.splash-instructions {
+				color: #eee;
+				text-shadow: 0 0 10px white;
+			}
+		}
+	}
+
+}
+
+.drag-overlay {
+	position: fixed;
+	z-index: 999;
+	width: 100%;
+	height: 100%;
 }
 
 .splash {
@@ -60,15 +94,9 @@ body {
 			opacity: 0;
 			background: url("../images/splash-image-shine.png") no-repeat;
 		}
-		
-		&.dragging .image-shine {
-			display: block;
-			transition: opacity 1s;
-			opacity: 1;
-		}
 	}
 
-	.instructions {
+	.splash-instructions {
 		font-size: 28px;
 		font-weight: bold;
 		text-shadow: 0 1px 1px rgba(255,255,255,0.12);
@@ -76,6 +104,7 @@ body {
 
 	}
 }
+
 
 .button {
 	width: 35px;
