@@ -23,6 +23,7 @@ app.configure(function(){
 });
 
 app.configure('development', function(){
+  app.set('port', 4000);
   app.use(express.errorHandler());
 });
 
