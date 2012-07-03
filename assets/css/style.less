@@ -23,8 +23,8 @@
 body {
 	background: @background-color;
 	background-image: url("../images/bg.jpg");
-	background-repeat: no-repeat;
-	background-size: 100% auto;
+	background-size: 100%;
+
 	font-family: "Droid Sans", sans-serif;
 	color: @text-color;
 
@@ -33,9 +33,13 @@ body {
 			.splash-image .image-shine {
 				transition: opacity 1s;
 			}
-			.splash-instructions {
+			.splash-instructions p {
 				transition-property: text-shadow, color;
 				transition-duration: 1s;
+			}
+			.author a {
+				transition-property: text-shadow, color;
+				transition-duration: 0.35s;
 			}
 		}
 		.drag-overlay {
@@ -48,7 +52,7 @@ body {
 			.splash-image .image-shine {
 				opacity: 1;
 			}
-			.splash-instructions {
+			.splash-instructions p {
 				color: #eee;
 				text-shadow: 0 0 10px white;
 			}
@@ -62,52 +66,76 @@ body {
 
 .drag-overlay {
 	position: fixed;
-	z-index: 999;
+	z-index: 10;
 	width: 100%;
 	height: 100%;
 }
-
 .splash {
-	position: absolute;
-	height: 350px;
-	width: 580px;
-	left: 50%;
-	top: 50%;
-	margin-top: -175px;
-	margin-left: -290px;
-	text-align: center;
+	width: 100%;
+	height: 100%;
 
-	.splash-image {
-		position: relative;
-		width: 300px; 
-		height: 300px; 
-		margin: 0 auto;
+	.splash-instructions {
+		position: absolute;
+		height: 350px;
+		width: 580px;
+		left: 50%;
+		top: 50%;
+		margin-top: -175px;
+		margin-left: -290px;
+		text-align: center;
 
-		.image-regular, .image-shine {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: 0;
-			background-size: 100%;
+		.splash-image {
+			position: relative;
+			width: 300px; 
+			height: 300px; 
+			margin: 0 auto;
+
+			.image-regular, .image-shine {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				background-size: 100%;
+			}
+
+			.image-regular {
+				background: url("../images/splash-image.png") no-repeat;
+			}
+
+			.image-shine {
+				opacity: 0;
+				background: url("../images/splash-image-shine.png") no-repeat;
+			}
 		}
 
-		.image-regular {
-			background: url("../images/splash-image.png") no-repeat;
-		}
+		p {
+			font-size: 28px;
+			font-weight: bold;
+			text-shadow: 0 1px 1px rgba(255,255,255,0.12);
+			margin-top: 5px;
 
-		.image-shine {
-			opacity: 0;
-			background: url("../images/splash-image-shine.png") no-repeat;
 		}
 	}
 
-	.splash-instructions {
-		font-size: 28px;
-		font-weight: bold;
+	.author {
+		position: absolute;
+		z-index: 11;
+		bottom: 20px;
+		right: 30px;
 		text-shadow: 0 1px 1px rgba(255,255,255,0.12);
-		margin-top: 5px;
 
+		a {
+			color: @text-color;
+			text-decoration: none;
+			font-weight: bold;
+			
+
+			&:hover {
+				color: #eee;
+				text-shadow: 0 0 5px rgba(255,255,255,0.7);
+			}
+		}
 	}
 }
 
