@@ -30,11 +30,11 @@
 		self = 
 			init: () ->
 				unless window.Clipboard and PasteBoard.fileReadSupport
-					pasteTarget
+					pasteArea
 						.appendTo("body")
 						.focus()
 
-					$(document).on "click", () -> pasteTarget.focus() 
+					$(document).on "click", () -> pasteArea.focus() 
 			
 				$(window).on "paste", onPaste
 			hide: () ->
