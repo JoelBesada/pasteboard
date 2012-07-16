@@ -13,6 +13,13 @@
 					PasteBoard.ImageEditor.init url.createObjectURL(file)
 					return true
 
-				return false	
+				return false
+
+			uploadFile: (data) ->
+				$.post("/upload", { url: data }, (data) ->
+					log data
+					window.location = data.url
+				).error (data) ->
+					log data.responseText
 	)() 
 )(jQuery)

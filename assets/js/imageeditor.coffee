@@ -11,6 +11,7 @@
 		$uploadButton = $("<button>")
 							.addClass("button upload-button")
 							.text("Upload")
+							
 
 		setPosition = () ->
 			y = $window.height() / 2 - $imageEditor.outerHeight() / 2
@@ -25,11 +26,8 @@
 			maxWidth = MAX_WIDTH_RATIO * $window.width()
 			maxHeight = MAX_HEIGHT_RATIO * $window.height()
 
-
 			width = Math.min maxWidth, width
 			height = Math.min maxHeight, height
-
-			log height
 
 			$imageEditor
 				.css(
@@ -39,15 +37,28 @@
 					"overflow-y": if height is maxHeight then "scroll" else "hidden"
 				)
 
-		
+		uploadImage = () ->
+			canvas = document.createElement("canvas")
+			context = canvas.getContext("2d")
+
+			canvas.width = image.width
+			canvas.height = image.height
+
+			context.drawImage image, 0, 0
+			PasteBoard.FileHandler.uploadFile canvas.toDataURL()
+			$uploadButton.off "click"
+
 		self = 
 			init: (img) ->
 				this.loadImage img
 				PasteBoard.DragAndDrop.hide()
 				$(".splash").hide()
+				
 				$window.on "resize", () -> 
 					setPosition()
 					setSize()
+
+				$uploadButton.on("click", uploadImage)
 
 				
 			loadImage: (img) ->

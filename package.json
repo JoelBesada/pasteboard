@@ -10,6 +10,8 @@
     "ejs": "*",
     "less": "*",
     "coffee-script": "*",
-    "connect-assets": "*"
+    "connect-assets": "*",
+    "knox": "*",
+    "microtime": "*"
   }
 }
