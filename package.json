@@ -12,6 +12,7 @@
     "coffee-script": "*",
     "connect-assets": "*",
     "knox": "*",
-    "microtime": "*"
+    "microtime": "*",
+    "formidable": "*"
   }
 }

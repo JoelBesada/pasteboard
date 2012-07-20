@@ -1,4 +1,5 @@
 var knox = require("knox"),
+	formidable = require("formidable"),
 	microtime = require("microtime"),
 	amazonAuth = require("../auth/amazon.js");
 
@@ -11,27 +12,44 @@ exports.index = function(req, res){
 exports.upload = function(req, res){
 	if (amazonAuth.S3_KEY && amazonAuth.S3_SECRET && amazonAuth.S3_BUCKET) {
 		var knoxClient = knox.createClient({
-			key: amazonAuth.S3_KEY,
-			secret: amazonAuth.S3_SECRET,
-			bucket: amazonAuth.S3_BUCKET
-		}),
-		dataURL = req.body.url.replace(/^data:image\/\w+;base64,/, ""),
-		buffer = new Buffer(dataURL,'base64');
+				key: amazonAuth.S3_KEY,
+				secret: amazonAuth.S3_SECRET,
+				bucket: amazonAuth.S3_BUCKET
+			}),
+			fs = require('fs'),
+			form = new formidable.IncomingForm(),
+			percent = 0;
+		
+		console.log("Uploading file to server");
+		form.parse(req, function(err, fields, files) {
+			var type = files.file.type,
+				fileExt = type.replace("image/", ""),
+				filePath = "/images/rm_" + microtime.now() + "." + (fileExt === "jpeg" ? "jpg" : fileExt);
+				
+			console.log("Uploading file to Amazon");
+			knoxClient.putFile(
+				files.file.path,
+				filePath,
+				{ "Content-Type": type },
+				function(err, putRes) {
+					var url = "http://pasteboard.s3.amazonaws.com" + filePath;
+					fs.unlink(files.file.path);
 
-		putReq = knoxClient.put("/images/rm_" + microtime.now() + ".png", {
-			"Content-Length": buffer.length,
-			"Content-Type": "image/png"
+					if (putRes.statusCode === 200) {
+						console.log('saved to %s', url);
+						res.json({url: url});
+					} else {
+						console.log("Error: ", err);
+						res.send("Failure", putRes.statusCode);
+					}
+			});
 		});
-
-		putReq.on("response", function(putRes) {
-			if (putRes.statusCode === 200) {
-				console.log('saved to %s', putReq.url);
-				res.json({url: putReq.url});
-			} else {
-				console.log('error %d', putReq.statusCode);
-				res.send("Failure", putReq.statusCode);
+		form.on("progress", function(rec, tot) {
+			if (rec/tot > percent + 0.1) {
+				percent += 0.1;
+				console.log(percent * 100 + "%");
 			}
-		}).end(buffer);
+		});
 
 	} else {
 		res.send("Missing Amazon S3 credentials", 500);

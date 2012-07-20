@@ -3,8 +3,9 @@
 		MAX_WIDTH_RATIO = 0.8
 		MAX_HEIGHT_RATIO = 0.8
 
-		$window = $(window)
 		image = null
+		fileType = null
+		$window = $(window)
 		$imageEditor = $("<div>")
 							.addClass("image-editor")
 
@@ -45,11 +46,13 @@
 			canvas.height = image.height
 
 			context.drawImage image, 0, 0
-			PasteBoard.FileHandler.uploadFile canvas.toDataURL()
+			dataURL = if fileType then canvas.toDataURL(fileType) else canvas.toDataURL()
+			PasteBoard.FileHandler.uploadFile dataURL
 			$uploadButton.off "click"
 
 		self = 
-			init: (img) ->
+			init: (img, type) ->
+				fileType ||= type
 				this.loadImage img
 				PasteBoard.DragAndDrop.hide()
 				$(".splash").hide()
