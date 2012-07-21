@@ -17,6 +17,7 @@
 
 			uploadFile: (data) ->
 				fd = new FormData()
+				fd.append "uuid", PasteBoard.UUID
 				fd.append "file", dataURLtoBlob data
 				$.ajax
 					url: "/upload"
