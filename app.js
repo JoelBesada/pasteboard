@@ -49,9 +49,16 @@ wsServer = new WebSocketServer({
 
 wsServer.on("request", function(req) {
   var connection = req.accept(null, req.origin),
-      UUID = false;
+      UUID = false,
+      startTime,
+      interval;
   // TODO: verify origin in production
   console.log("Socket connection accepted from " + req.origin);
+
+  interval = setInterval(function() {
+    startTime = startTime || Date.now();
+    connection.sendUTF("Time: " + (Date.now() - startTime) / 1000);
+  }, 500);
   connection.on("message", function(msg) {
     if (!UUID) {
       UUID = msg.utf8Data;
@@ -59,6 +66,7 @@ wsServer.on("request", function(req) {
     }
   });
   connection.on("close", function(reasonCode, description) {
+    clearInterval(interval);
     console.log(connection.remoteAddress + " disconnected");
     if (UUID) {
       delete clients[UUID];
