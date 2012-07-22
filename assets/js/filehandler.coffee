@@ -22,8 +22,13 @@
 				onProgress = (e) ->
 					log "#{Math.floor (e.loaded / e.total) * 100}%"
 				onSuccess = (e) ->
-					data = JSON.parse(e.target.response);
-					log data.url
+					try 
+						data = JSON.parse(e.target.response);
+						log data.url
+					catch err
+						log "returned non-json"
+						log e.target.response
+
 				onError = (e) ->
 					log "Error: ", e
 
