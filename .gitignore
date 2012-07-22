@@ -1,4 +1,5 @@
 builtAssets/
+node_modules/
 auth/
 
 deploy_master
