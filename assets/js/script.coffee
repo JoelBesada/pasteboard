@@ -11,11 +11,6 @@
 
 		PasteBoard.DragAndDrop.init()
 		PasteBoard.CopyAndPaste.init()
-		connection = new WebSocket("ws://#{window.location.hostname}:#{SOCKET_PORT}")
-		connection.onopen = () ->
-			connection.send(PasteBoard.UUID);
-		connection.onmessage = (msg) ->
-			console.log(msg.data)
 
 )(jQuery)
 

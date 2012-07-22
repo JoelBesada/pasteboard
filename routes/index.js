@@ -21,7 +21,6 @@ exports.upload = function(data) {
 				}),
 				fs = require('fs'),
 				form = new formidable.IncomingForm(),
-				client = false,
 				percent = 0;
 			
 			console.log("Uploading file to server");
@@ -47,22 +46,6 @@ exports.upload = function(data) {
 							res.send("Failure", putRes.statusCode);
 						}
 				});
-			});
-			form.on("progress", function(rec, tot) {
-				if (rec/tot > percent + 0.1) {
-					percent += 0.1;
-					console.log(percent * 100 + "%");
-					// Broadcast to client socket if available
-					if (client) {
-						client.sendUTF(percent);
-					}
-				}
-			});
-			form.on("field", function(name, value) {
-				// Get the client socket
-				if (name === "uuid") {
-					client = data.clients[value];
-				}
 			});
 
 		} else {

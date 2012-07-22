@@ -17,18 +17,23 @@
 
 			uploadFile: (data) ->
 				fd = new FormData()
-				fd.append "uuid", PasteBoard.UUID
 				fd.append "file", dataURLtoBlob data
-				$.ajax
-					url: "/upload"
-					data: fd
-					processData: false
-					contentType: false
-					type: "POST"
-					success: (data) ->
-						window.location = data.url
-					error: (data) ->
-						log data
 
-	)() 
+				onProgress = (e) ->
+					log "#{Math.floor (e.loaded / e.total) * 100}%"
+				onSuccess = (e) ->
+					data = JSON.parse(e.target.response);
+					log data.url
+				onError = (e) ->
+					log "Error: ", e
+
+
+				xhr = new XMLHttpRequest();
+				xhr.upload.addEventListener "progress", onProgress
+				xhr.addEventListener "load", onSuccess
+				xhr.addEventListener "error", onError
+				xhr.open "POST", "/upload"
+				xhr.send fd
+
+	)() 	
 )(jQuery)
