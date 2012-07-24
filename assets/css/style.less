@@ -68,6 +68,7 @@ body {
 .button {
 	padding: 0.5em 1em;
 	border-radius: 3px;
+	box-sizing: padding-box;
 
 	color: #eee;
 	text-shadow: 0 1px 0 black;
@@ -183,16 +184,21 @@ body {
 .image-editor {
 	position: relative;
 	margin: 0 auto;
+	margin-top: -50px;
 
 	box-shadow: 0 0 20px rgba(0,0,0,0.7);
 	animation: fadeIn 0.5s both;
 }
 
 .upload-button {
+	@width: 100px;
 	position: absolute;
-	bottom: 20px;
-	right: 20px;
-	font-size: 16px;
+	width: @width;
+	bottom: 50px;
+	left: 50%;
+	margin-left: -@width / 2;
+
+	font-size: 18px;
 }
 
 @keyframes fadeIn {
