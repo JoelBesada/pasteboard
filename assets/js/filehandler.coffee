@@ -1,16 +1,16 @@
 (($) ->
-	PasteBoard.FileHandler = (() ->
+	pasteBoard.fileHandler = (() ->
 		self = 
 			readFile: (file) ->
 				if window.FileReader
 					fileReader = new FileReader()
 					fileReader.onload = (e) ->
-						PasteBoard.ImageEditor.init e.target.result, file.type
+						pasteBoard.imageEditor.init e.target.result, file.type
 
 					fileReader.readAsDataURL file
 					return true
 				else if url = window.URL || window.webkitURL
-					PasteBoard.ImageEditor.init url.createObjectURL(file), file.type
+					pasteBoard.imageEditor.init url.createObjectURL(file), file.type
 					return true
 
 				return false

@@ -1,5 +1,5 @@
 (($) ->
-	PasteBoard.ImageEditor = (() ->
+	pasteBoard.imageEditor = (() ->
 		MAX_WIDTH_RATIO = 0.8
 		MAX_HEIGHT_RATIO = 0.8
 
@@ -47,14 +47,14 @@
 
 			context.drawImage image, 0, 0
 			dataURL = if fileType then canvas.toDataURL(fileType) else canvas.toDataURL()
-			PasteBoard.FileHandler.uploadFile dataURL
+			pasteBoard.fileHandler.uploadFile dataURL
 			$uploadButton.off "click"
 
 		self = 
 			init: (img, type) ->
 				fileType ||= type
 				this.loadImage img
-				PasteBoard.DragAndDrop.hide()
+				pasteBoard.dragAndDrop.hide()
 				$(".splash").hide()
 				
 				$window.on "resize", () -> 

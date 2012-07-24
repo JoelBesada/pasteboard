@@ -1,5 +1,5 @@
 (($) ->
-	PasteBoard.CopyAndPaste = (() ->
+	pasteBoard.copyAndPaste = (() ->
 		pasteArea = $("<div>")
 						.attr("contenteditable", "")
 						.css( "opacity", 0)
@@ -8,10 +8,10 @@
 				return unless e.originalEvent.clipboardData.items
 				for item in e.originalEvent.clipboardData.items
 					if /image/.test item.type
-						PasteBoard.FileHandler.readFile item.getAsFile()
+						pasteBoard.fileHandler.readFile item.getAsFile()
 						return
 
-				PasteBoard.noImageError()
+				pasteBoard.noImageError()
 			else 
 				setTimeout parsePaste, 1
 
@@ -21,15 +21,15 @@
 
 			if child 
 				if child.tagName is "IMG"
-					PasteBoard.ImageEditor.init child.src
+					pasteBoard.imageEditor.init child.src
 					return
 
-			PasteBoard.noImageError()
+			pasteBoard.noImageError()
 		
 
 		self = 
 			init: () ->
-				unless window.Clipboard and PasteBoard.fileReadSupport
+				unless window.Clipboard and pasteBoard.fileReadSupport
 					pasteArea
 						.appendTo("body")
 						.focus()

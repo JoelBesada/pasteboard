@@ -3,7 +3,7 @@
 		if window.console
 			window.console.log.apply window.console, arguments
 
-	window.PasteBoard = 
+	window.pasteBoard = 
 		fileReadSupport: window.FileReader or window.URL or window.webkitURL
 		noImageError: () ->
 			log "no images found"

@@ -1,5 +1,5 @@
 (($) ->
-	PasteBoard.DragAndDrop = (() ->
+	pasteBoard.dragAndDrop = (() ->
 		$body = $ "body"
 		$dropArea = $("<div>")
 						.addClass("drop-area")
@@ -24,14 +24,14 @@
 
 			for file in e.originalEvent.dataTransfer.files
 				if /image/.test file.type
-					PasteBoard.FileHandler.readFile file
+					pasteBoard.fileHandler.readFile file
 					return
 
-			PasteBoard.noImageError()
+			pasteBoard.noImageError()
 	
 
 		self = 
-			supported:  Modernizr.draganddrop and PasteBoard.fileReadSupport
+			supported:  Modernizr.draganddrop and pasteBoard.fileReadSupport
 			init: () ->
 				return unless this.supported
 				$body.prepend $dropArea

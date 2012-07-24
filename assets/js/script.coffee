@@ -9,8 +9,8 @@
 	 	# used to prevent transition "flashing" with -prefix-free
 		$("body").addClass "loaded"
 
-		PasteBoard.DragAndDrop.init()
-		PasteBoard.CopyAndPaste.init()
+		pasteBoard.dragAndDrop.init()
+		pasteBoard.copyAndPaste.init()
 
 )(jQuery)
 
