@@ -11,9 +11,10 @@
 		ctx = $canvas[0].getContext("2d")
 		return unless ctx
 
-		$canvas.width $window.width()
-		$canvas.height $window.height()
-
+		$canvas.css(
+			"width": $window.width()
+			"height": $window.height()
+		)
 		ctx.clearRect 0, 0, $window.width(), $window.height()
 
 		gradient = ctx.createRadialGradient(150, 50, 0, 150, 50, 200)
