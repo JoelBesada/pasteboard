@@ -2,6 +2,7 @@
 
 @background-color: #242424;
 @text-color: #040404;
+@font-stack: 'Droid Sans', sans-serif;
 
 @font-face {
   font-family: 'Droid Sans';
@@ -17,15 +18,15 @@
 }
 
 ::selection {
-	background: rgba(0,0,0, 0.1);
+	background: transparent;
 }
-
+* { box-sizing: border-box; }
 body {
 	background: @background-color;
 	background-image: url("../images/bg.jpg");
 	background-size: 100%;
 
-	font-family: "Droid Sans", sans-serif;
+	font-family: @font-stack;
 	text-align: center;
 	color: @text-color;
 
@@ -68,10 +69,10 @@ body {
 .button {
 	padding: 0.5em 1em;
 	border-radius: 3px;
-	box-sizing: border-box;
 
 	color: #eee;
 	text-shadow: 0 1px 0 black;
+	font-family: @font-stack;
 
 	background: rgba(67, 67, 67, 0.8);
 	background-image: linear-gradient(#434343, #000);
@@ -185,13 +186,96 @@ body {
 	position: relative;
 	margin: 0 auto;
 	margin-top: -50px;
-	box-sizing: border-box;
-	box-shadow: 0 0 20px rgba(0,0,0,0.7);
 	animation: fadeIn 0.5s both;
 
 	.image-container {
 		width: 100%;
 		height: 100%;
+		overflow: hidden;
+		box-shadow: 0 0 20px rgba(0,0,0,0.7);
+
+		.image {
+			position: relative;
+		}
+	}
+
+	.x-scroll-bar, .y-scroll-bar {
+		display: none;
+		position: absolute;
+
+		.track {
+			position: relative;
+			background: #111;
+			border-radius: 7px;
+			overflow: hidden;
+			border: 1px solid black;
+			padding: 2px;
+			box-shadow: 1px 1px 1px rgba(255,255,255,0.10),
+						0 0 5px rgba(255,255,255, 0.05),
+						inset 0 0 5px rgba(0,0,0,0.5),
+						inset 5px 5px 10px rgba(0,0,0,0.3);
+			.handle {
+				position: relative;
+				background: #444;
+				border-radius: 4px;
+				background-image: linear-gradient(transparent, rgba(0,0,0,.2));
+				box-shadow: inset 1px 1px 0 rgba(255,255,255,0.15),
+							inset 0 0 5px rgba(255,255,255, 0.05),
+							0 0 5px rgba(0,0,0,0.5),
+							3px 3px 3px rgba(0,0,0,0.5);
+
+			}
+		}
+	}
+
+	.x-scroll-bar {
+		bottom: 0;
+		height: 50px;
+		width: 100%;
+		padding-right: 50px;
+
+		.track {
+			width: 95%;
+			height: 14px;
+			margin-left: 2.5%;
+			margin-top: 20px; 
+
+			.handle {
+				height: 8px;
+			}
+		}
+	}
+
+	.y-scroll-bar {
+		right: 0;
+		top: 0;
+		width: 50px;
+		height: 100%;
+		padding-bottom: 50px;
+
+		.track {
+			height: 95%;
+			width: 14px;
+			top: 2.5%;
+			margin-left: 20px; 
+
+			.handle {
+				width: 8px;
+				background-image: linear-gradient(0deg, transparent, rgba(0,0,0,.2));
+			}
+		}
+	}
+
+	&.scroll-x {
+		.x-scroll-bar {
+			display: block;
+		}
+	}
+
+	&.scroll-y {
+		.y-scroll-bar {
+			display: block;
+		}
 	}
 }
 
