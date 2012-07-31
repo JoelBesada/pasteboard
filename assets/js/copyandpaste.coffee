@@ -1,5 +1,6 @@
 (($) ->
 	pasteBoard.copyAndPaste = (() ->
+		firstInit = true
 		pasteArea = $("<div>")
 						.attr("contenteditable", "")
 						.css( "opacity", 0)
@@ -34,10 +35,14 @@
 						.appendTo("body")
 						.focus()
 
-					$(document).on "click", () -> pasteArea.focus() 
+					if firstInit
+						$(document).on "click", () -> pasteArea.focus() 
+						firstInit = false
 			
 				$(window).on "paste", onPaste
 			hide: () ->
-				# ... 		
+				pasteArea.remove()
+				$(window).off "paste", onPaste
+
 	)() 
 )(jQuery)

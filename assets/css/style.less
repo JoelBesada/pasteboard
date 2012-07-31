@@ -81,10 +81,10 @@ body {
 				0 0 5px rgba(0,0,0,0.5),
 				0 5px 10px rgba(0,0,0,0.3);
 
-	transition: background 0.15s; 
+	transition: background-color 0.15s; 
 
 	&:hover {
-		background: rgba(87, 87, 87, 0.8);
+		background-color: rgba(87, 87, 87, 0.8);
 	}
 
 	&:active {
@@ -164,27 +164,28 @@ body {
 		}
 	}
 
-	.author {
-		position: absolute;
-		z-index: 11;
-		bottom: 20px;
-		right: 30px;
-		text-shadow: 0 1px 1px rgba(255,255,255,0.12);
+}
 
-		a {
-			color: @text-color;
-			text-decoration: none;
-			font-weight: bold;
-			
+.author {
+	position: absolute;
+	z-index: 11;
+	bottom: 20px;
+	right: 30px;
+	text-shadow: 0 1px 1px rgba(255,255,255,0.12);
 
-			&:hover {
-				color: #eee;
-				text-shadow: 0 0 5px rgba(255,255,255,0.7);
-			}
+	a {
+		color: @text-color;
+		text-decoration: none;
+		font-weight: bold;
+		
+
+		&:hover {
+			color: #eee;
+			text-shadow: 0 0 5px rgba(255,255,255,0.7);
 		}
 	}
 }
-
+	
 .image-editor {
 	position: relative;
 	margin: 0 auto;
@@ -281,29 +282,57 @@ body {
 		}
 	}
 
-}
+	.action-bar {
+		position: absolute;
+		top: 105%;
+		width: 100%;
 
-.upload-button {
-	@width: 100px;
-	@base-color: #0D550D;
-	position: absolute;
-	width: @width;
-	top: 105%;
-	left: 50%;
-	margin-left: -@width / 2;
+		.upload-button {
+			@base-color: #0D550D;
 
-	font-size: 18px;
-	background: @base-color;
-	border-color: darken(@base-color, 30%);
+			font-size: 18px;
+			background: @base-color;
+			border-color: darken(@base-color, 30%);
 
-	&:hover {
-		background: lighten(@base-color, 5%);
+			&:hover {
+				background-color: lighten(@base-color, 5%);
+			}
+
+			&:active {
+				background-color: darken(@base-color, 5%);
+			}
+		}
+
+		.delete-button {
+			@base-color: #5F1414;
+
+			width: 32px;
+			height: 32px;
+			vertical-align: top;
+			margin: 5px;
+
+			background: @base-color;
+			border-color: darken(@base-color, 30%);
+
+			text-indent: -9999px;
+			background-image: url("../images/delete-icon.png");
+			background-repeat: no-repeat;
+			background-size: 18px 18px;
+			background-position: center;
+
+			&:hover {
+				background-color: lighten(@base-color, 5%);
+			}
+
+			&:active {
+				background-color: darken(@base-color, 5%);
+			}
+		}
 	}
 
-	&:active {
-		background: darken(@base-color, 5%);
-	}
 }
+
+
 
 @keyframes fadeIn {
 	0% {

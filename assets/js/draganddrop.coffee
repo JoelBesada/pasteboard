@@ -1,5 +1,6 @@
 (($) ->
 	pasteBoard.dragAndDrop = (() ->
+		firstInit = true
 		$body = $ "body"
 		$dropArea = $("<div>")
 						.addClass("drop-area")
@@ -35,14 +36,16 @@
 			init: () ->
 				return unless this.supported
 				$body.prepend $dropArea
-
-				$dropArea.on
-						"dragenter": onDragStart
-						"dragleave": onDragEnd
-						"dragover": onDragOver
-						"drop": onDragDrop
+				if firstInit
+					$dropArea.on
+							"dragenter": onDragStart
+							"dragleave": onDragEnd
+							"dragover": onDragOver
+							"drop": onDragDrop
+					firstInit = false
+				
 			hide: () ->
-				$dropArea.hide()
+				$dropArea.detach()
 		
 	)() 
 )(jQuery)

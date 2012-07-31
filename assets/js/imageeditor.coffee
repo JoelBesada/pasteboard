@@ -8,6 +8,7 @@
 		SCROLL_SPEED = 50
 		TEMPLATE_URL = "jstemplates/imageeditor.tmpl"
 
+		firstInit = true
 		image = null
 		fileType = null
 		scrollableX = false
@@ -24,6 +25,55 @@
 		$uploadButton = null
 		$window = $(window)
 							
+		addEvents = () ->
+			$window.on "resize", () -> 
+				setPosition()
+				setSize()
+				scrollImage 0, 0
+
+			$(document)
+				.on("click", ".upload-button", uploadImage)
+				.on("click", ".delete-button", hide)
+				.on("mousewheel", ".image-container", scrollWheelHandler)
+				.on("mousedown", ".image-editor .y-scroll-bar, .image-editor .x-scroll-bar", (e) -> 
+					return if e.button is not 0
+					e.preventDefault()
+					return false
+				)
+				.on("mousedown", ".image-editor .y-scroll-bar", (e) -> 
+					$handle = $(this).find(".handle")
+					if $handle.offset().top <= e.clientY <= $handle.offset().top + $handle.height()
+						dragDirection = "y"
+						dragOffsetY = e.clientY - $handle.offset().top
+						isDragging = true
+					else
+						# Ignore clicks on the padding
+						return if e.clientY > $yScrollBar.offset().top + $yScrollBar.height()
+						if e.clientY < $handle.offset().top
+							scrollImage(0, SCROLL_SPEED)
+						else
+							scrollImage(0, -SCROLL_SPEED)
+				)
+				.on("mousedown", ".image-editor .x-scroll-bar", (e) -> 
+					$handle = $(this).find(".handle")
+					if $handle.offset().left <= e.clientX <= $handle.offset().left + $handle.width()
+						dragDirection = "x"
+						dragOffsetX = e.clientX - $handle.offset().left
+						isDragging = true
+					else
+						# Ignore clicks on the padding
+						return if e.clientX > $xScrollBar.offset().left + $xScrollBar.width()
+						if e.clientX < $handle.offset().left
+							scrollImage(SCROLL_SPEED, 0)
+						else
+							scrollImage(-SCROLL_SPEED, 0)
+				)
+				.on("mouseup", () -> 
+					isDragging = false
+				)
+				.on("mousemove", (e) -> 
+					dragScrollHandler e if isDragging 
+				)
 
 		setPosition = () ->
 			y = $window.height() / 2 - $imageEditor.outerHeight() / 2
@@ -134,6 +184,12 @@
 			pasteBoard.fileHandler.uploadFile dataURL
 			$uploadButton.off "click"
 
+		hide = () ->
+			$(".splash").show()
+			pasteBoard.dragAndDrop.init()
+			pasteBoard.copyAndPaste.init()
+			$imageEditor.remove()
+
 		self = 
 			init: (img, type) ->
 				fileType ||= type
@@ -142,57 +198,13 @@
 				this.loadImage img
 
 				pasteBoard.dragAndDrop.hide()
+				pasteBoard.copyAndPaste.hide()
 				$(".splash").hide()
 				
-				# Events
-				$window.on "resize", () -> 
-					setPosition()
-					setSize()
-					scrollImage 0, 0
-
-				$(document)
-					.on("click", ".upload-button", uploadImage)
-					.on("mousewheel", ".image-container", scrollWheelHandler)
-					.on("mousedown", ".image-editor .y-scroll-bar, .image-editor .x-scroll-bar", (e) -> 
-						return if e.button is not 0
-						e.preventDefault()
-						return false
-					)
-					.on("mousedown", ".image-editor .y-scroll-bar", (e) -> 
-						$handle = $(this).find(".handle")
-						if $handle.offset().top <= e.clientY <= $handle.offset().top + $handle.height()
-							dragDirection = "y"
-							dragOffsetY = e.clientY - $handle.offset().top
-							isDragging = true
-						else
-							# Ignore clicks on the padding
-							return if e.clientY > $yScrollBar.offset().top + $yScrollBar.height()
-							if e.clientY < $handle.offset().top
-								scrollImage(0, SCROLL_SPEED)
-							else
-								scrollImage(0, -SCROLL_SPEED)
-					)
-					.on("mousedown", ".image-editor .x-scroll-bar", (e) -> 
-						$handle = $(this).find(".handle")
-						if $handle.offset().left <= e.clientX <= $handle.offset().left + $handle.width()
-							dragDirection = "x"
-							dragOffsetX = e.clientX - $handle.offset().left
-							isDragging = true
-						else
-							# Ignore clicks on the padding
-							return if e.clientX > $xScrollBar.offset().left + $xScrollBar.width()
-							if e.clientX < $handle.offset().left
-								scrollImage(SCROLL_SPEED, 0)
-							else
-								scrollImage(-SCROLL_SPEED, 0)
-					)
-					.on("mouseup", () -> 
-						isDragging = false
-					)
-					.on("mousemove", (e) -> 
-						dragScrollHandler e if isDragging 
-					)
-
+				if firstInit
+					addEvents()
+					firstInit = false
+				
 				
 			loadImage: (img) ->
 				image = new Image()

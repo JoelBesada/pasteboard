@@ -1,5 +1,6 @@
 <div class="image-editor">
 	<div class="image-container">
+		<div class="selection"></div>
 		<div class="image" style="background-image: url(<%= url %>)"></div>
 	</div>
 	<div class="close-button"></div>
@@ -13,5 +14,8 @@
 			<div class="handle"></div>
 		</div>
 	</div>
-	<button class="button upload-button">Upload</button>
+	<div class="action-bar">
+		<button class="button delete-button" title="Delete">Delete</button>
+		<button class="button upload-button">Upload</button>
+	</div>
 </div>
