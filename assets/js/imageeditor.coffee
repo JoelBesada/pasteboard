@@ -21,10 +21,8 @@
 		$imageContainer = null
 		$xScrollBar = null
 		$yScrollBar = null
+		$uploadButton = null
 		$window = $(window)
-		$uploadButton = $("<button>")
-							.addClass("button upload-button")
-							.text("Upload")
 							
 
 		setPosition = () ->
@@ -208,6 +206,7 @@
 							$imageContainer = $imageEditor.find(".image-container")
 							$xScrollBar = $imageEditor.find(".x-scroll-bar")
 							$yScrollBar = $imageEditor.find(".y-scroll-bar")
+							$uploadButton = $imageEditor.find(".upload-button")
 
 
 							$imageEditor.appendTo("body")
@@ -219,9 +218,6 @@
 
 							setSize()
 							setPosition()
-
-							$uploadButton
-								.appendTo("body")
 					)
 		
 	)() 
