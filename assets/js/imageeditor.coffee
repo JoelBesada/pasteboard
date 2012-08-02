@@ -20,6 +20,9 @@
 		dragDirection = null
 		dragOffsetX = 0
 		dragOffsetY = 0
+		imagePosition = 
+			x: 0
+			y: 0
 		
 		$imageEditor = null
 		$imageContainer = null
@@ -174,24 +177,27 @@
 
 		# Scrolls the image by the given number of pixels
 		scrollImage = (x, y) ->
-			newX = -((parseInt($image.css("left"), 10) or 0)  + x)
-			newY = -((parseInt($image.css("top"), 10) or 0)  + y)
+			newX = -(imagePosition.x + x)
+			newY = -(imagePosition.y + y)
 
 			scrollImageTo(newX, newY)
 
 		# Scrolls the image to the given coordinates
 		scrollImageTo = (x, y) ->
-			x = -parseInt($image.css("left"), 10) if x is undefined
-			y = -parseInt($image.css("top"), 10) if y is undefined
+			x = -imagePosition.x if x is undefined
+			y = -imagePosition.y if y is undefined
 
 			# Cap values
 			x = Math.max 0, Math.min x, $image.width() - $imageContainer.width()
 			y = Math.max 0, Math.min y, $image.height() - $imageContainer.height()
 
 			$image.css(
-					left: -x + "px"
-					top: -y + "px"
+					x: -x + "px"
+					y: -y + "px"
 				)
+
+			imagePosition.x = -x
+			imagePosition.y = -y
 
 			# Set the handle positions
 			$yScrollHandle
