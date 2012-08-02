@@ -197,6 +197,10 @@
 			x = Math.max 0, Math.min x, $image.width() - $imageContainer.width()
 			y = Math.max 0, Math.min y, $image.height() - $imageContainer.height()
 
+			# Round values
+			x = Math.round x
+			y = Math.round y
+
 			$image.css(
 					x: -x + "px"
 					y: -y + "px"
@@ -207,10 +211,10 @@
 
 			# Set the handle positions
 			$scrollBar.y.handle
-				.css("y", (y / ($image.height() - $imageContainer.height())) * ($scrollBar.y.track.height() - $scrollBar.y.handle.height() )  + "px")
+				.css("y", Math.round((y / ($image.height() - $imageContainer.height())) * ($scrollBar.y.track.height() - $scrollBar.y.handle.height() ))  + "px")
 
 			$scrollBar.x.handle
-				.css("x", (x / ($image.width() - $imageContainer.width())) * ($scrollBar.x.track.width() - $scrollBar.x.handle.width() )  + "px")
+				.css("x", Math.round((x / ($image.width() - $imageContainer.width())) * ($scrollBar.x.track.width() - $scrollBar.x.handle.width() ))  + "px")
 
 		# Loads an image and sets up the editor
 		loadImage = (img) ->

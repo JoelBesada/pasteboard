@@ -191,7 +191,8 @@ body {
 	margin: 0 auto;
 	margin-top: -50px;
 	animation: fadeIn 0.5s;
-
+	transform: translateZ(0); // GPU acceleration!
+	
 	.image-container {
 		width: 100%;
 		height: 100%;
@@ -209,7 +210,6 @@ body {
 
 		.image {
 			position: relative;
-			transform: translateZ(0); // GPU acceleration!
 		}
 	}
 
