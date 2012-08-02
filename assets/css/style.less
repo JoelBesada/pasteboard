@@ -190,7 +190,7 @@ body {
 	position: relative;
 	margin: 0 auto;
 	margin-top: -50px;
-	animation: fadeIn 0.5s both;
+	animation: fadeIn 0.5s;
 
 	.image-container {
 		width: 100%;
@@ -204,6 +204,7 @@ body {
 		background-size: 20px 20px;
 		background-position:0 0, 10px 10px;
 
+		box-shadow: 0 0 20px rgba(0,0,0,0.7);
 		animation: shadow 0.5s both;
 
 		.image {
@@ -348,7 +349,7 @@ body {
 }
 
 @keyframes shadow {
-	100% {
-		box-shadow: 0 0 20px rgba(0,0,0,0.7);
+	0% {
+		box-shadow: none;
 	}
 }

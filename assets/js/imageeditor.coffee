@@ -205,8 +205,6 @@
 			imagePosition.x = -x
 			imagePosition.y = -y
 
-			log imagePosition.x, x
-
 			# Set the handle positions
 			$scrollBar.y.handle
 				.css("y", (y / ($image.height() - $imageContainer.height())) * ($scrollBar.y.track.height() - $scrollBar.y.handle.height() )  + "px")
@@ -245,9 +243,13 @@
 		# TODO: Clean up event listeners
 		hide = () ->
 			$(".splash").show()
-			pasteBoard.dragAndDrop.init()
-			pasteBoard.copyAndPaste.init()
-			$imageEditor.remove()
+			$imageEditor.transition(
+				opacity: 0
+			, () ->
+				pasteBoard.dragAndDrop.init()
+				pasteBoard.copyAndPaste.init()
+				$imageEditor.remove()
+			)
 
 		self = 
 			# Initializes the image editor.
