@@ -261,6 +261,15 @@
 				pasteBoard.template.load(TEMPLATE_URL)
 				loadImage img
 
+				# Reset values
+				isDragging = false
+				scrollable.x = false
+				scrollable.y = false
+				dragOffset.x = 0
+				dragOffset.y = 0
+				imagePosition.x = 0
+				imagePosition.y = 0
+
 				pasteBoard.dragAndDrop.hide()
 				pasteBoard.copyAndPaste.hide()
 				$(".splash").hide()
