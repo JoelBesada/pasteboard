@@ -1,6 +1,15 @@
+
+### 
+# File handler module, takes care of reading and 
+# uploading files.
+###
+
 (($) ->
 	pasteBoard.fileHandler = (() ->
 		self = 
+			isSupported: () -> window.FileReader or window.URL or window.webkitURL
+			# Reads a file and sends it over to the image editor.
+			# Returns true for successful reads, else false
 			readFile: (file) ->
 				if window.FileReader
 					fileReader = new FileReader()
@@ -9,12 +18,15 @@
 
 					fileReader.readAsDataURL file
 					return true
+				# FileReader fallback
 				else if url = window.URL || window.webkitURL
 					pasteBoard.imageEditor.init url.createObjectURL(file), file.type
 					return true
 
 				return false
 
+			# Converts the data to a file object and uploads
+			# it to the server, while tracking the progress.
 			uploadFile: (data) ->
 				fd = new FormData()
 				fd.append "file", dataURLtoBlob data

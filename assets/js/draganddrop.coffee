@@ -1,3 +1,9 @@
+
+### 
+# Drag and Drop module, handles drag / drop events
+# and sends the dropped image to the editor.
+###
+
 (($) ->
 	pasteBoard.dragAndDrop = (() ->
 		firstInit = true
@@ -5,7 +11,6 @@
 		$dropArea = $("<div>")
 						.addClass("drop-area")
 						
-
 		onDragStart = (e) ->
 			$body.addClass "dragging"	
 
@@ -22,7 +27,6 @@
 			e.stopPropagation()
 			$body.removeClass "dragging"
 
-
 			for file in e.originalEvent.dataTransfer.files
 				if /image/.test file.type
 					pasteBoard.fileHandler.readFile file
@@ -32,9 +36,10 @@
 	
 
 		self = 
-			supported:  Modernizr.draganddrop and pasteBoard.fileReadSupport
+			isSupported: () -> Modernizr.draganddrop and pasteBoard.fileHandler.isSupported()
+			# Initializes the module
 			init: () ->
-				return unless this.supported
+				return unless this.isSupported()
 				$body.prepend $dropArea
 				if firstInit
 					$dropArea.on
@@ -43,7 +48,9 @@
 							"dragover": onDragOver
 							"drop": onDragDrop
 					firstInit = false
-				
+			
+			# Hides the elements related to the module
+			# and stops event listeners
 			hide: () ->
 				$dropArea.detach()
 		

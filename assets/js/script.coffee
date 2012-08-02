@@ -6,10 +6,12 @@
 (($) ->
 	$window = $(window)
 
+	# Draws a canvas overlay for the vignette effect
 	drawBackgroundOverlay = () ->
 		$canvas = $(".shadow")
+		return unless $canvas[0].getContext
+		
 		ctx = $canvas[0].getContext("2d")
-		return unless ctx
 
 		$canvas.css(
 			"width": $window.width()
@@ -28,7 +30,7 @@
 		
 	
 	$ ->
-	 	# used to prevent transition "flashing" with -prefix-free
+	 	# Used to prevent transition "flashing" on load with -prefix-free
 		$("body").addClass "loaded"
 
 		pasteBoard.dragAndDrop.init()
