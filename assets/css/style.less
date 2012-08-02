@@ -196,8 +196,16 @@ body {
 		width: 100%;
 		height: 100%;
 		overflow: hidden;
-		animation: shadow 0.5s both;
+		background-color: #eee;
+		
+		// Checkerboard background
+		background-image: linear-gradient(45deg, #bbb 25%, transparent 25%, transparent 75%, #bbb 75%, #bbb), 
+						  linear-gradient(45deg, #bbb 25%, transparent 25%, transparent 75%, #bbb 75%, #bbb);
+		background-size: 20px 20px;
+		background-position:0 0, 10px 10px;
 
+		animation: shadow 0.5s both;
+		
 		.image {
 			position: relative;
 		}
@@ -331,8 +339,6 @@ body {
 	}
 
 }
-
-
 
 @keyframes fadeIn {
 	0% {
