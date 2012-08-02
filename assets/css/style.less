@@ -38,13 +38,13 @@ body {
 				transition-property: text-shadow, color;
 				transition-duration: 1s;
 			}
-			.author a {
-				transition-property: text-shadow, color;
-				transition-duration: 0.35s;
-			}
 		}
 		.drop-area {
 			transition: box-shadow 0.75s;
+		}
+		.author a {
+			transition-property: text-shadow, color;
+			transition-duration: 0.35s;
 		}
 	}
 
@@ -177,7 +177,6 @@ body {
 		color: @text-color;
 		text-decoration: none;
 		font-weight: bold;
-		
 
 		&:hover {
 			color: #eee;
@@ -205,7 +204,7 @@ body {
 		background-position:0 0, 10px 10px;
 
 		animation: shadow 0.5s both;
-		
+
 		.image {
 			position: relative;
 		}
