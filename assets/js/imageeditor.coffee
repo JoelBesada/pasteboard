@@ -14,12 +14,15 @@
 		firstInit = true
 		image = null
 		fileType = null
-		scrollableX = false
-		scrollableY = false
 		isDragging = false
 		dragDirection = null
-		dragOffsetX = 0
-		dragOffsetY = 0
+		
+		scrollable =
+			x: false
+			y: false
+		dragOffset =
+			x: 0
+			y: 0
 		imagePosition = 
 			x: 0
 			y: 0
@@ -27,12 +30,16 @@
 		$imageEditor = null
 		$imageContainer = null
 		$image = null
-		$xScrollBar = null
-		$yScrollBar = null
-		$xScrollTrack = null
-		$yScrollTrack = null
-		$xScrollHandle = null
-		$yScrollHandle = null
+		$scrollBar = 
+			x:
+				bar: null
+				track: null
+				handle: null
+			y:
+				bar: null
+				track: null
+				handle: null	
+		
 		$uploadButton = null
 		$window = $(window)
 		
@@ -61,12 +68,11 @@
 			$imageEditor = $(element)
 			$imageContainer = $imageEditor.find(".image-container")
 			$image = $imageContainer.find(".image")
-			$xScrollBar = $imageEditor.find(".x-scroll-bar")
-			$yScrollBar = $imageEditor.find(".y-scroll-bar")
-			$xScrollTrack = $xScrollBar.find(".track")
-			$yScrollTrack = $yScrollBar.find(".track")
-			$xScrollHandle = $xScrollTrack.find(".handle")
-			$yScrollHandle = $yScrollTrack.find(".handle")
+			for coordinate of $scrollBar
+				$scrollBar[coordinate].bar = $imageEditor.find(".#{coordinate}-scroll-bar");
+				$scrollBar[coordinate].track = $scrollBar[coordinate].bar.find(".track");
+				$scrollBar[coordinate].handle = $scrollBar[coordinate].track.find(".handle");
+
 			$uploadButton = $imageEditor.find(".upload-button")
 
 		# Sets the vertical position of the image editor window
@@ -94,32 +100,32 @@
 
 			# TODO: Make this less repetitive
 			if $imageContainer.width() < image.width
-				scrollableX = true
+				scrollable.x = true
 				$imageEditor.addClass("scroll-x")
-				$imageContainer.css("height", height - $xScrollBar.outerHeight())
+				$imageContainer.css("height", height - $scrollBar.x.bar.outerHeight())
 
 				# Make the scroll handle represent the visible image width
 				# relative to the track
-				$xScrollHandle
-					.css("width", ($imageContainer.width() / image.width) * $xScrollTrack.width())
+				$scrollBar.x.handle
+					.css("width", ($imageContainer.width() / image.width) * $scrollBar.x.track.width())
 			else 
 				$imageEditor.removeClass("scroll-x")
 				$imageContainer.css("height", "")
-				scrollableX = false
+				scrollable.x = false
 			
 			if $imageContainer.height() < image.height
-				scrollableY = true
+				scrollable.y = true
 				$imageEditor.addClass("scroll-y")
-				$imageContainer.css("width", width - $yScrollBar.outerWidth())
+				$imageContainer.css("width", width - $scrollBar.y.bar.outerWidth())
 
 				# Make the scroll handle represent the visible image height
 				# relative to the track
-				$yScrollHandle
-					.css("height", ($imageContainer.height() / image.height) * $yScrollTrack.height())
+				$scrollBar.y.handle
+					.css("height", ($imageContainer.height() / image.height) * $scrollBar.y.track.height())
 			else 
 				$imageEditor.removeClass("scroll-y")
 				$imageContainer.css("width", "")
-				scrollableY = false
+				scrollable.y = false
 				
 		# Handles mouse scrolling (clicking and dragging)
 		mouseScrollHandler = (e) ->
@@ -128,27 +134,27 @@
 
 			# TODO: Make this less repetitive
 			if $target.hasClass("y-scroll-bar")
-				if $yScrollHandle.offset().top <= e.clientY <= $yScrollHandle.offset().top + $yScrollHandle.height()
+				if $scrollBar.y.handle.offset().top <= e.clientY <= $scrollBar.y.handle.offset().top + $scrollBar.y.handle.height()
 					dragDirection = "y"
-					dragOffsetY = e.clientY - $yScrollHandle.offset().top
+					dragOffset.y = e.clientY - $scrollBar.y.handle.offset().top
 					isDragging = true
 				else
 					# Ignore clicks on the padding
-					return if e.clientY > $yScrollBar.offset().top + $yScrollBar.height()
-					if e.clientY < $yScrollHandle.offset().top
+					return if e.clientY > $scrollBar.y.bar.offset().top + $scrollBar.y.bar.height()
+					if e.clientY < $scrollBar.y.handle.offset().top
 						scrollImage(0, SCROLL_SPEED)
 					else
 						scrollImage(0, -SCROLL_SPEED)
 
 			else if $target.hasClass("x-scroll-bar")
-				if $xScrollHandle.offset().left <= e.clientX <= $xScrollHandle.offset().left + $xScrollHandle.width()
+				if $scrollBar.x.handle.offset().left <= e.clientX <= $scrollBar.x.handle.offset().left + $scrollBar.x.handle.width()
 					dragDirection = "x"
-					dragOffsetX = e.clientX - $xScrollHandle.offset().left
+					dragOffset.x = e.clientX - $scrollBar.x.handle.offset().left
 					isDragging = true
 				else
 					# Ignore clicks on the padding
-					return if e.clientX > $xScrollBar.offset().left + $xScrollBar.width()
-					if e.clientX < $xScrollHandle.offset().left
+					return if e.clientX > $scrollBar.x.bar.offset().left + $scrollBar.x.bar.width()
+					if e.clientX < $scrollBar.x.handle.offset().left
 						scrollImage(SCROLL_SPEED, 0)
 					else
 						scrollImage(-SCROLL_SPEED, 0)
@@ -159,20 +165,20 @@
 		# Handles mouse wheel scrolling.
 		# (Scrolling while holding shift scrolls the image sideways)
 		scrollWheelHandler = (e) ->
-			return unless scrollableY or ((e.originalEvent.shiftKey or e.originalEvent.wheelDeltaX) and scrollableX)
+			return unless scrollable.y or ((e.originalEvent.shiftKey or e.originalEvent.wheelDeltaX) and scrollable.x)
 			direction = if e.originalEvent.wheelDelta < 0 then -1 else 1
 			if e.originalEvent.shiftKey or e.originalEvent.wheelDeltaX
-				scrollImage(direction * SCROLL_SPEED, 0) if scrollableX
+				scrollImage(direction * SCROLL_SPEED, 0) if scrollable.x
 			else
-				scrollImage(0, direction * SCROLL_SPEED) if scrollableY
+				scrollImage(0, direction * SCROLL_SPEED) if scrollable.y
 
 		# Handles dragging of the scroll bar handles
 		dragScrollHandler = (e) ->
 			if dragDirection is "x"
-				x = ((e.clientX - dragOffsetX - $xScrollTrack.offset().left) / $xScrollTrack.width()) * image.width
+				x = ((e.clientX - dragOffset.x - $scrollBar.x.track.offset().left) / $scrollBar.x.track.width()) * image.width
 				scrollImageTo(x, undefined)	
 			else if dragDirection is "y"
-				y = ((e.clientY - dragOffsetY - $yScrollTrack.offset().top) / $yScrollTrack.height()) * image.height
+				y = ((e.clientY - dragOffset.y - $scrollBar.y.track.offset().top) / $scrollBar.y.track.height()) * image.height
 				scrollImageTo(undefined, y)				
 
 		# Scrolls the image by the given number of pixels
@@ -199,12 +205,14 @@
 			imagePosition.x = -x
 			imagePosition.y = -y
 
-			# Set the handle positions
-			$yScrollHandle
-				.css("top", (y / ($image.height() - $imageContainer.height())) * ($yScrollTrack.height() - $yScrollHandle.height() )  + "px")
+			log imagePosition.x, x
 
-			$xScrollHandle
-				.css("left", (x / ($image.width() - $imageContainer.width())) * ($xScrollTrack.width() - $xScrollHandle.width() )  + "px")
+			# Set the handle positions
+			$scrollBar.y.handle
+				.css("y", (y / ($image.height() - $imageContainer.height())) * ($scrollBar.y.track.height() - $scrollBar.y.handle.height() )  + "px")
+
+			$scrollBar.x.handle
+				.css("x", (x / ($image.width() - $imageContainer.width())) * ($scrollBar.x.track.width() - $scrollBar.x.handle.width() )  + "px")
 
 		# Loads an image and sets up the editor
 		loadImage = (img) ->
