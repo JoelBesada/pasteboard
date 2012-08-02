@@ -1,3 +1,4 @@
+#= require lib/jquery.min.js
 #= require_tree lib
 #= require pasteboard
 #= require_tree .
