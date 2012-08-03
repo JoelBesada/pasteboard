@@ -37,6 +37,9 @@
 					try 
 						data = JSON.parse(e.target.response);
 						log data.url
+						
+						# Temporary way to get to your image
+						window.location = data.url
 					catch err
 						log "returned non-json"
 						log e.target.response
