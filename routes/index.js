@@ -1,7 +1,11 @@
 var knox = require("knox"),
 	formidable = require("formidable"),
 	microtime = require("microtime"),
+	amazonAuth = {};
+
+try	{
 	amazonAuth = require("../auth/amazon.js");
+} catch (e) {}
 
 /* GET home page */
 exports.index = function(data) {
@@ -49,6 +53,7 @@ exports.upload = function(data) {
 			});
 
 		} else {
+			console.log("Missing Amazon S3 credentials (/auth/amazon.js)");
 			res.send("Missing Amazon S3 credentials", 500);
 		}
 	};
