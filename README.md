@@ -5,7 +5,7 @@ The final version will be available at [http://pasteboard.me](http://pasteboard.
 To try out a preview version that is running the code from the dev branch, visit [http://dev.pasteboard.me](http://dev.pasteboard.me). Please
 note that any images you upload before the final release might be deleted at random.
 
-MIT Licensed (http://www.opensource.org/licenses/mit-license.php)
+MIT Licensed (http://www.opensource.org/licenses/mit-license.php)   
 Copyright 2012, Joel Besada
 
 ## Running Locally
