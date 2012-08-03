@@ -5,7 +5,7 @@
 
 (($) ->
 
-	pasteBoard.imageEditor = (() ->
+	pasteboard.imageEditor = (() ->
 		MAX_WIDTH_RATIO = 0.8
 		MAX_HEIGHT_RATIO = 0.8
 		SCROLL_SPEED = 50
@@ -221,7 +221,7 @@
 			image = new Image()
 			image.src = img
 			image.onload = () ->
-				pasteBoard.template.compile(
+				pasteboard.template.compile(
 					"jstemplates/imageeditor.tmpl",
 					{ url: img },
 					(compiledTemplate) ->
@@ -239,7 +239,7 @@
 
 		# Uploads the image
 		uploadImage = () ->
-			pasteBoard.fileHandler.uploadFile image.src
+			pasteboard.fileHandler.uploadFile image.src
 			
 			# Prevent multiple uploads
 			$uploadButton.off "click"
@@ -251,8 +251,8 @@
 				opacity: 0
 				scale: 0.95
 			, () ->
-				pasteBoard.dragAndDrop.init()
-				pasteBoard.copyAndPaste.init()
+				pasteboard.dragAndDrop.init()
+				pasteboard.copyAndPaste.init()
 				$imageEditor.remove()
 			)
 
@@ -263,7 +263,7 @@
 				fileType ||= type
 				
 				# Start loading the template
-				pasteBoard.template.load(TEMPLATE_URL)
+				pasteboard.template.load(TEMPLATE_URL)
 				loadImage img
 
 				# Reset values
@@ -275,8 +275,8 @@
 				imagePosition.x = 0
 				imagePosition.y = 0
 
-				pasteBoard.dragAndDrop.hide()
-				pasteBoard.copyAndPaste.hide()
+				pasteboard.dragAndDrop.hide()
+				pasteboard.copyAndPaste.hide()
 				$(".splash").hide()
 				
 				if firstInit

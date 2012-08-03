@@ -10,7 +10,7 @@
 
 (($) ->
 	
-	pasteBoard.template = (()->
+	pasteboard.template = (()->
 		cache = {}
 		loading = {}
 		compile = (str, data) ->

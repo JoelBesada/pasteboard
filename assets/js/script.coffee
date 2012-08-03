@@ -34,8 +34,8 @@
 	 	# Used to prevent transition "flashing" on load with -prefix-free
 		$("body").addClass "loaded"
 
-		pasteBoard.dragAndDrop.init()
-		pasteBoard.copyAndPaste.init()
+		pasteboard.dragAndDrop.init()
+		pasteboard.copyAndPaste.init()
 
 		drawBackgroundOverlay()
 		$window.resize drawBackgroundOverlay

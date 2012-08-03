@@ -11,7 +11,7 @@
 		if window.console
 			window.console.log.apply window.console, arguments
 
-	window.pasteBoard = 
+	window.pasteboard = 
 		noImageError: () ->
 			log "no images found"
 

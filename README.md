@@ -1,5 +1,5 @@
-# PasteBoard
-PasteBoard is my upcoming web app for easy image uploading. PasteBoard will be replacing [PasteShack](http://www.pasteshack.net) once it's done.
+# Pasteboard
+Pasteboard is my upcoming web app for easy image uploading. Pasteboard will be replacing [PasteShack](http://www.pasteshack.net) once it's done.
 The final version will be available at [http://pasteboard.me](http://pasteboard.me) (the site lacks any kind of functionality at the moment).   
 
 To try out a preview version that is running the code from the dev branch, visit [http://dev.pasteboard.me](http://dev.pasteboard.me). Please

@@ -5,7 +5,7 @@
 ###
 
 (($) ->
-	pasteBoard.dragAndDrop = (() ->
+	pasteboard.dragAndDrop = (() ->
 		firstInit = true
 		$body = $ "body"
 		$dropArea = $("<div>")
@@ -29,14 +29,14 @@
 
 			for file in e.originalEvent.dataTransfer.files
 				if /image/.test file.type
-					pasteBoard.fileHandler.readFile file
+					pasteboard.fileHandler.readFile file
 					return
 
-			pasteBoard.noImageError()
+			pasteboard.noImageError()
 	
 
 		self = 
-			isSupported: () -> Modernizr.draganddrop and pasteBoard.fileHandler.isSupported()
+			isSupported: () -> Modernizr.draganddrop and pasteboard.fileHandler.isSupported()
 			# Initializes the module
 			init: () ->
 				return unless this.isSupported()
