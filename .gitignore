@@ -1,4 +1,6 @@
 builtAssets/
+node_modules/
+auth/amazon.js
 
 deploy_master
 deploy_dev
