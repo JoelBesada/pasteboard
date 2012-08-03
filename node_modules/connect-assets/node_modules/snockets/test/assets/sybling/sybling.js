@@ -1,1 +1,0 @@
-var thereWillBeJS = 3;
