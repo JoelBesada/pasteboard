@@ -249,6 +249,7 @@
 			$(".splash").show()
 			$imageEditor.transition(
 				opacity: 0
+				scale: 0.95
 			, () ->
 				pasteBoard.dragAndDrop.init()
 				pasteBoard.copyAndPaste.init()
