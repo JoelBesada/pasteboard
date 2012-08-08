@@ -16,7 +16,7 @@ git clone https://github.com/JoelBesada/pasteboard.git
 cd pasteboard
 git checkout dev
 npm install
-node app.js
+./run_local
 ```
 __Step 3 (Optional):__ Edit _/auth/amazon.example.js_ with your Amazon S3 credentials and rename the file to _amazon.js_.
 You can still run the app without this, but the images will not be uploaded anywhere.

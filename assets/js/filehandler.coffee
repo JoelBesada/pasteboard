@@ -6,6 +6,23 @@
 
 (($) ->
 	pasteboard.fileHandler = (() ->
+		preuploadXHR = null
+		sendFileXHR = (url, formData) ->
+			onProgress = (e) ->
+				log "#{Math.floor (e.loaded / e.total) * 100}%"
+			onSuccess = (e) ->
+				log e.target.response
+			onError = (e) ->
+				log "Error: ", e
+
+			xhr = new XMLHttpRequest()
+			xhr.upload.addEventListener "progress", onProgress
+			xhr.addEventListener "load", onSuccess
+			xhr.addEventListener "error", onError
+			xhr.open "POST", url
+			xhr.send formData
+			return xhr
+
 		self = 
 			isSupported: () -> window.FileReader or window.URL or window.webkitURL
 			# Reads a file and sends it over to the image editor.
@@ -27,33 +44,49 @@
 
 			# Converts the data to a file object and uploads
 			# it to the server, while tracking the progress.
-			uploadFile: (data) ->
-				fd = new FormData()
-				fd.append "file", dataURLtoBlob data
+			#
+			# TODO: Hold upload until an ID has been given
+			# (force upload if no ID has been received before upload is clicked)
+			preuploadFile: (imageData) ->
+				id = pasteboard.socketConnection.getID()
+				$(pasteboard.socketConnection).off "idReceive" 
 
-				onProgress = (e) ->
-					log "#{Math.floor (e.loaded / e.total) * 100}%"
-				onSuccess = (e) ->
-					try 
-						data = JSON.parse(e.target.response);
-						log data.url
-						
-						# Temporary way to get to your image
-						window.location = data.url
-					catch err
-						log "returned non-json"
-						log e.target.response
+				if id
+					fd = new FormData()
+					fd.append "id", pasteboard.socketConnection.getID()
+					fd.append "file", dataURLtoBlob imageData
 
-				onError = (e) ->
-					log "Error: ", e
+					preuploadXHR = sendFileXHR "/preupload", fd
+				else
+					log "no id"
+					$(pasteboard.socketConnection).on "idReceive", () -> self.preuploadFile imageData
 
+			abortPreupload: () ->
+				if preuploadXHR
+					preuploadXHR.abort()
+					$(pasteboard.socketConnection).off "idReceive"
+					preuploadXHR = null
 
-				xhr = new XMLHttpRequest();
-				xhr.upload.addEventListener "progress", onProgress
-				xhr.addEventListener "load", onSuccess
-				xhr.addEventListener "error", onError
-				xhr.open "POST", "/upload"
-				xhr.send fd
+			uploadFile: (imageData) ->
+				if preuploadXHR 
+					if preuploadXHR.readyState is 4
+						preuploadXHR = null
+						$.post("/upload", { id: pasteboard.socketConnection.getID() }, (data) ->
+								# Temporary way to get to your image
+								window.location = data.url
+								
+						).error((err) -> log err)
+					else 
+						# Wait for the file to preupload
+						preuploadXHR.addEventListener "load", @uploadFile
+				else
+					$(pasteboard.socketConnection).off "idReceive"
+					
+					# Force upload
+					fd = new FormData()
+					fd.append "file", dataURLtoBlob imageData
+
+					sendFileXHR "/upload", fd
 
 	)() 	
 )(jQuery)

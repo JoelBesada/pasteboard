@@ -1,0 +1,2 @@
+#!/bin/bash
+LOCAL=true node app.js

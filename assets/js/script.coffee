@@ -36,6 +36,7 @@
 
 		pasteboard.dragAndDrop.init()
 		pasteboard.copyAndPaste.init()
+		pasteboard.socketConnection.init()
 
 		drawBackgroundOverlay()
 		$window.resize drawBackgroundOverlay

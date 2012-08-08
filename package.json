@@ -13,6 +13,7 @@
     "connect-assets": "*",
     "knox": "*",
     "microtime": "*",
-    "formidable": "*"
+    "formidable": "*",
+    "websocket": "*"
   }
 }

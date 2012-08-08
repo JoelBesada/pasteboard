@@ -16,7 +16,7 @@
 		fileType = null
 		isDragging = false
 		dragDirection = null
-		
+
 		scrollable =
 			x: false
 			y: false
@@ -218,6 +218,8 @@
 
 		# Loads an image and sets up the editor
 		loadImage = (img) ->
+			pasteboard.fileHandler.preuploadFile img
+
 			image = new Image()
 			image.src = img
 			image.onload = () ->
@@ -240,12 +242,16 @@
 		# Uploads the image
 		uploadImage = () ->
 			pasteboard.fileHandler.uploadFile image.src
-			
 			# Prevent multiple uploads
-			$uploadButton.off "click"
+			$(document).off("click", ".upload-button", uploadImage)
 
-		# TODO: Clean up event listeners
+		# TODO: 
+		#	Clean up event listeners
 		hide = () ->
+			$.post("/clearfile", 
+				id: pasteboard.socketConnection.getID()
+			);
+			pasteboard.fileHandler.abortPreupload()
 			$(".splash").show()
 			$imageEditor.transition(
 				opacity: 0

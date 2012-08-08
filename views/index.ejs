@@ -4,6 +4,10 @@
     <title><%= title %></title>
     <%- css("style") %>
     <script type="text/javascript" src="javascripts/prefixfree.min.js"></script>
+    <!-- Globals -->
+    <script type="text/javascript">
+      window.SOCKET_PORT = <%= port %>;
+    </script>
   </head>
   <body>
     <canvas class="shadow"></canvas>
