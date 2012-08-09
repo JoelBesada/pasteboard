@@ -165,12 +165,14 @@
 		# Handles mouse wheel scrolling.
 		# (Scrolling while holding shift scrolls the image sideways)
 		scrollWheelHandler = (e) ->
-			return unless scrollable.y or ((e.originalEvent.shiftKey or e.originalEvent.wheelDeltaX) and scrollable.x)
-			direction = if e.originalEvent.wheelDelta < 0 then -1 else 1
-			if e.originalEvent.shiftKey or e.originalEvent.wheelDeltaX
-				scrollImage(direction * SCROLL_SPEED, 0) if scrollable.x
-			else
-				scrollImage(0, direction * SCROLL_SPEED) if scrollable.y
+			deltaX = e.originalEvent.wheelDeltaX or 0
+			deltaY = e.originalEvent.wheelDeltaY or e.originalEvent.wheelDelta or 0
+
+			if e.originalEvent.shiftKey
+				deltaX ||= deltaY
+				deltaY = 0
+
+			scrollImage deltaX / 2, deltaY / 2
 
 		# Handles dragging of the scroll bar handles
 		dragScrollHandler = (e) ->
@@ -183,6 +185,9 @@
 
 		# Scrolls the image by the given number of pixels
 		scrollImage = (x, y) ->
+			x = 0 unless scrollable.x
+			y = 0 unless scrollable.y
+			
 			newX = -(imagePosition.x + x)
 			newY = -(imagePosition.y + y)
 
@@ -202,9 +207,9 @@
 			y = Math.round y
 
 			$image.css(
-					x: -x + "px"
-					y: -y + "px"
-				)
+				x: -x + "px"
+				y: -y + "px"
+			)
 
 			imagePosition.x = -x
 			imagePosition.y = -y
@@ -284,7 +289,7 @@
 				pasteboard.dragAndDrop.hide()
 				pasteboard.copyAndPaste.hide()
 				$(".splash").hide()
-				
+
 				if firstInit
 					addEvents()
 					firstInit = false
