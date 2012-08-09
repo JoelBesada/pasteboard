@@ -1,7 +1,8 @@
 @import "../stylesheets/normalize.css";
 
-@background-color: #242424;
-@text-color: #040404;
+@background-color: #61687E;
+@text-color: #070C16;
+@text-highlight-color: #E0E6F3;
 @font-stack: 'Droid Sans', sans-serif;
 
 @font-face {
@@ -22,8 +23,8 @@
 }
 * { box-sizing: border-box; }
 body {
-	background: @background-color;
-	background-image: url("../images/bg.gif");
+	background-color: @background-color;
+	background-image: url("../images/bg.png");
 
 	font-family: @font-stack;
 	text-align: center;
@@ -31,6 +32,7 @@ body {
 	overflow: hidden;
 
 	&.loaded {
+		transition: background-color 1s;
 		.splash {
 			.splash-image .image-shine {
 				transition: opacity 1s;
@@ -40,9 +42,6 @@ body {
 				transition-duration: 1s;
 			}
 		}
-		.drop-area {
-			transition: box-shadow 0.75s;
-		}
 		.author a {
 			transition-property: text-shadow, color;
 			transition-duration: 0.35s;
@@ -50,17 +49,15 @@ body {
 	}
 
 	&.dragging {
+		background-color: lighten(@background-color, 15%);
 		.splash {
 			.splash-image .image-shine {
 				opacity: 1;
 			}
 			.splash-instructions p {
-				color: #eee;
+				color: @text-highlight-color;
 				text-shadow: 0 0 10px white;
 			}
-		}
-		.drop-area {
-			box-shadow: inset 0 0 80px rgba(255,255,255, 0.5);
 		}
 	}
 
@@ -79,8 +76,8 @@ body {
 	border: 1px solid #111;
 	box-shadow: inset 0 1px 1px rgba(255,255,255,0.15),
 				inset 0 0 5px rgba(255,255,255, 0.05),
-				0 0 5px rgba(0,0,0,0.5),
-				0 5px 10px rgba(0,0,0,0.3);
+				0 0 5px rgba(0,0,25,0.5),
+				0 5px 10px rgba(0,0,25,0.3);
 
 	transition: background-color 0.15s; 
 
@@ -94,8 +91,8 @@ body {
 
 		box-shadow: 0 1px 1px rgba(255,255,255,0.10),
 					0 0 5px rgba(255,255,255, 0.05),
-					inset 0 0 5px rgba(0,0,0,0.5),
-					inset 0 5px 10px rgba(0,0,0,0.3);
+					inset 0 0 5px rgba(0,0,0,0.4),
+					inset 0 5px 10px rgba(0,0,0,0.2);
 	}
 }
 
@@ -137,7 +134,7 @@ body {
 		.splash-image {
 			position: relative;
 			width: 300px; 
-			height: 300px; 
+			height: 280px; 
 			margin: 0 auto;
 
 			.image-regular, .image-shine {
@@ -188,7 +185,7 @@ body {
 		font-weight: bold;
 
 		&:hover {
-			color: #eee;
+			color: @text-highlight-color;
 			text-shadow: 0 0 5px rgba(255,255,255,0.7);
 		}
 	}
@@ -213,7 +210,7 @@ body {
 		background-size: 20px 20px;
 		background-position:0 0, 10px 10px;
 
-		box-shadow: 0 0 20px rgba(0,0,0,0.7);
+		box-shadow: 0 0 20px rgba(0,0,25,0.7);
 		animation: shadow 0.5s both;
 
 		.image {
@@ -227,7 +224,7 @@ body {
 
 		.track {
 			position: relative;
-			background: #111;
+			background-color: darken(@background-color, 30%);
 			border-radius: 7px;
 			overflow: hidden;
 			border: 1px solid black;
@@ -238,7 +235,7 @@ body {
 						inset 5px 5px 10px rgba(0,0,0,0.3);
 			.handle {
 				position: relative;
-				background: #444;
+				background-color: @background-color;
 				border-radius: 4px;
 				background-image: linear-gradient(transparent, rgba(0,0,0,.2));
 				box-shadow: inset 1px 1px 0 rgba(255,255,255,0.15),
@@ -306,7 +303,7 @@ body {
 		width: 100%;
 
 		.upload-button {
-			@base-color: #0D550D;
+			@base-color: #166F16;
 
 			font-size: 18px;
 			background-color: @base-color;
@@ -322,7 +319,7 @@ body {
 		}
 
 		.delete-button {
-			@base-color: #5F1414;
+			@base-color: #8D1D1D;
 
 			width: 32px;
 			height: 32px;
