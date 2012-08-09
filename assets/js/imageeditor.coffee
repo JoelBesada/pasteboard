@@ -7,7 +7,6 @@ imageEditor = (pasteboard) ->
 	SCROLL_SPEED = 50
 	TEMPLATE_URL = "jstemplates/imageeditor.tmpl"
 
-	firstInit = true
 	image = null
 	fileType = null
 	isDragging = false
@@ -38,28 +37,31 @@ imageEditor = (pasteboard) ->
 	
 	$uploadButton = null
 	$window = $(window)
-	
+	$document = $(document)
+
 	# Add all the event listeners			
 	addEvents = () ->
-		$window.on "resize", () -> 
+		$window.on "resize.imageeditorevent", () -> 
 			setPosition()
 			setSize()
 			scrollImage 0, 0
 
-		$(document)
-			.on("click", ".upload-button", uploadImage)
-			.on("click", ".delete-button", hide)
-			.on("mousewheel", ".image-container", scrollWheelHandler)
-			.on("mousedown", ".image-editor .y-scroll-bar, .image-editor .x-scroll-bar", mouseScrollHandler)
-			.on("mouseup", () -> 
+		$document
+			.on("click.imageeditorevent", ".upload-button", uploadImage)
+			.on("click.imageeditorevent", ".delete-button", hide)
+			.on("mousewheel.imageeditorevent", ".image-container", scrollWheelHandler)
+			.on("mousedown.imageeditorevent", ".image-editor .y-scroll-bar, .image-editor .x-scroll-bar", mouseScrollHandler)
+			.on("mouseup.imageeditorevent", () -> 
 				isDragging = false
 			)
-			.on("mousemove", (e) -> 
+			.on("mousemove.imageeditorevent", (e) -> 
 				dragScrollHandler e if isDragging 
 			)
+	removeEvents = () ->
+		$document.off(".imageeditorevent")
+		$window.off(".imageeditorevent")
 
 	# Cache the needed jQuery element objects for quicker access
-	# TODO: Organize this better
 	cacheElements = (element) ->
 		$imageEditor = $(element)
 		$imageContainer = $imageEditor.find(".image-container")
@@ -244,10 +246,8 @@ imageEditor = (pasteboard) ->
 	uploadImage = () ->
 		pasteboard.fileHandler.uploadFile image.src
 		# Prevent multiple uploads
-		$(document).off("click", ".upload-button", uploadImage)
+		$document.off("click", ".upload-button", uploadImage)
 
-	# TODO: 
-	#	Clean up event listeners
 	hide = () ->
 		$.post("/clearfile", 
 			id: pasteboard.socketConnection.getID()
@@ -262,6 +262,8 @@ imageEditor = (pasteboard) ->
 			pasteboard.copyAndPaste.init()
 			$imageEditor.remove()
 		)
+
+		removeEvents()
 
 	self = 
 		# Initializes the image editor.
@@ -286,8 +288,7 @@ imageEditor = (pasteboard) ->
 			pasteboard.copyAndPaste.hide()
 			$(".splash").hide()
 
-			if firstInit
-				addEvents()
-				firstInit = false
+			addEvents()
+
 			
 window.moduleLoader.addModule "imageEditor", imageEditor
