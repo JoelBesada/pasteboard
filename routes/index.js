@@ -101,7 +101,7 @@ exports.upload = function(req, res) {
 					{ "Content-Type": file.type },
 					function(err, putRes) {
 						if (putRes) {
-							var url = "http://pasteboard.s3.amazonaws.com" + filePath;
+							var url = "http://" + amazonAuth.S3_BUCKET + ".s3.amazonaws.com" + filePath;
 							fs.unlink(file.path); // Remove tmp file
 
 							if (putRes.statusCode === 200) {
