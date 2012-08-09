@@ -64,7 +64,7 @@ exports.clearfile = function(req, res) {
 	});
 };
 
-/* POST, uploads a file to Amazon S3. 
+/* POST, uploads a file to Amazon S3.
    If a file has been preuploaded, upload that, else
    upload the file that should have been posted with this request */
 
@@ -90,9 +90,9 @@ exports.upload = function(req, res) {
 				file = client.file;
 				client.uploading[file.path] = true;
 			}
-
 			if (file) {
 				fileExt = file.type.replace("image/", "");
+				// Prefix with rm_ so that an Amazon S3 file expiration filter can be used
 				filePath = "/images/rm_" + microtime.now() + "." + (fileExt === "jpeg" ? "jpg" : fileExt);
 
 				knoxClient.putFile(
@@ -113,7 +113,7 @@ exports.upload = function(req, res) {
 						}
 				});
 			} else {
-				res.send("Missing file", 500)
+				res.send("Missing file", 500);
 			}
 		});
 		form.on("fileBegin", function(name, file) {
