@@ -39,7 +39,7 @@ copyAndPaste = (pasteboard) ->
 		# Initializes the module
 		init: () ->
 			# Clipboard fallback
-			unless window.Clipboard and pasteboard.fileReadSupport
+			unless window.Clipboard
 				pasteArea
 					.appendTo("body")
 					.focus()
