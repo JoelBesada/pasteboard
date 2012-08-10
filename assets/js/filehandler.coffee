@@ -32,7 +32,7 @@ fileHandler = (pasteboard) ->
 			currentFile = file
 			# Try creating a file URL first
 			if url = window.URL || window.webkitURL
-				pasteboard.imageEditor.init url.createObjectURL(file), file.type
+				pasteboard.imageEditor.init url.createObjectURL(file)
 			
 			# Else create a data URL
 			else if window.FileReader
@@ -63,7 +63,7 @@ fileHandler = (pasteboard) ->
 				preuploadXHR = sendFileXHR "/preupload", fd
 			else
 				log "no id"
-				$(pasteboard.socketConnection).on "idReceive", () -> self.preuploadFile imageData
+				$(pasteboard.socketConnection).on "idReceive", self.preuploadFile
 
 		# Aborts a preupload
 		abortPreupload: () ->
