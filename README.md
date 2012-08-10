@@ -10,7 +10,7 @@ Copyright 2012, Joel Besada
 
 ## Running Locally
 __Step 1:__ Install [Node](http://nodejs.org/) and [Node Package Manager](https://npmjs.org/).   
-__Step 2:__ Run the following command in the terminal   
+__Step 2:__ Run the following commands in the terminal   
 ``` 
 git clone https://github.com/JoelBesada/pasteboard.git   
 cd pasteboard
