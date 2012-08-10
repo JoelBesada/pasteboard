@@ -3,7 +3,6 @@
 #= require moduleloader
 #= require_tree .
 
-modules = 
 $window = $(window)
 $canvas = null
 
@@ -15,6 +14,8 @@ window.log = ->
 pasteboard = 
 	noImageError: () ->
 		log "no images found"
+
+window.moduleLoader.loadAll(pasteboard)
 
 # Draws a canvas overlay for the vignette effect
 drawBackgroundOverlay = () ->
@@ -38,12 +39,9 @@ drawBackgroundOverlay = () ->
 	ctx.fillStyle = gradient
 	ctx.fillRect 0, 0, $window.width(), $window.height()
 
-
 $ ->
  	# Used to prevent transition "flashing" on load with -prefix-free
 	$("body").addClass "loaded"
-
-	window.moduleLoader.loadAll(pasteboard)
 
 	pasteboard.dragAndDrop.init()
 	pasteboard.copyAndPaste.init()
