@@ -5,6 +5,9 @@
 
 fileHandler = (pasteboard) ->
 	preuploadXHR = null
+	currentFile = null
+
+	# Creates an XHR object and sends the given FormData to the url
 	sendFileXHR = (url, formData) ->
 		onProgress = (e) ->
 			log "#{Math.floor (e.loaded / e.total) * 100}%"
@@ -23,49 +26,56 @@ fileHandler = (pasteboard) ->
 
 	self = 
 		isSupported: () -> window.FileReader or window.URL or window.webkitURL
+		
 		# Reads a file and sends it over to the image editor.
-		# Returns true for successful reads, else false
 		readFile: (file) ->
-			if window.FileReader
+			currentFile = file
+			# Try creating a file URL first
+			if url = window.URL || window.webkitURL
+				pasteboard.imageEditor.init url.createObjectURL(file), file.type
+			
+			# Else create a data URL
+			else if window.FileReader
 				fileReader = new FileReader()
 				fileReader.onload = (e) ->
-					pasteboard.imageEditor.init e.target.result, file.type
+					pasteboard.imageEditor.init e.target.result
 
 				fileReader.readAsDataURL file
-				return true
-			# FileReader fallback
-			else if url = window.URL || window.webkitURL
-				pasteboard.imageEditor.init url.createObjectURL(file), file.type
-				return true
+			
+			@preuploadFile()
 
-			return false
+		# Converts the given data into a file, and sends the data
+		# to the image editor
+		readData: (data) ->
+			currentFile = dataURLtoBlob data
+			pasteboard.imageEditor.init data
+			@preuploadFile()
 
 		# Converts the data to a file object and uploads
 		# it to the server, while tracking the progress.
-		#
-		# TODO: Hold upload until an ID has been given
-		# (force upload if no ID has been received before upload is clicked)
-		preuploadFile: (imageData) ->
+		preuploadFile: () ->
 			id = pasteboard.socketConnection.getID()
 			$(pasteboard.socketConnection).off "idReceive" 
-
 			if id
 				fd = new FormData()
 				fd.append "id", pasteboard.socketConnection.getID()
-				fd.append "file", dataURLtoBlob imageData
-
+				fd.append "file", currentFile
 				preuploadXHR = sendFileXHR "/preupload", fd
 			else
 				log "no id"
 				$(pasteboard.socketConnection).on "idReceive", () -> self.preuploadFile imageData
 
+		# Aborts a preupload
 		abortPreupload: () ->
 			if preuploadXHR
 				preuploadXHR.abort()
 				$(pasteboard.socketConnection).off "idReceive"
 				preuploadXHR = null
 
-		uploadFile: (imageData) ->
+		# Uploads the file. If the file is already preuploaded, just
+		# send the client ID so that the server can upload the file to 
+		# the cloud.
+		uploadFile: () ->
 			if preuploadXHR 
 				if preuploadXHR.readyState is 4
 					preuploadXHR = null
@@ -82,7 +92,7 @@ fileHandler = (pasteboard) ->
 				
 				# Force upload
 				fd = new FormData()
-				fd.append "file", dataURLtoBlob imageData
+				fd.append "file", currentFile
 
 				sendFileXHR "/upload", fd
 

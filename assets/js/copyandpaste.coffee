@@ -27,7 +27,7 @@ copyAndPaste = (pasteboard) ->
 
 		if child 
 			if child.tagName is "IMG"
-				pasteboard.imageEditor.init child.src
+				pasteboard.fileHandler.readData child.src
 				return
 
 		pasteboard.noImageError()

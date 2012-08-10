@@ -8,7 +8,6 @@ imageEditor = (pasteboard) ->
 	TEMPLATE_URL = "jstemplates/imageeditor.tmpl"
 
 	image = null
-	fileType = null
 	isDragging = false
 	dragDirection = null
 
@@ -221,8 +220,6 @@ imageEditor = (pasteboard) ->
 
 	# Loads an image and sets up the editor
 	loadImage = (img) ->
-		pasteboard.fileHandler.preuploadFile img
-
 		image = new Image()
 		image.src = img
 		image.onload = () ->
@@ -244,7 +241,7 @@ imageEditor = (pasteboard) ->
 
 	# Uploads the image
 	uploadImage = () ->
-		pasteboard.fileHandler.uploadFile image.src
+		pasteboard.fileHandler.uploadFile()
 		# Prevent multiple uploads
 		$document.off("click", ".upload-button", uploadImage)
 
@@ -268,9 +265,7 @@ imageEditor = (pasteboard) ->
 	self = 
 		# Initializes the image editor.
 		# Loads and displays the given image
-		init: (img, type) ->
-			fileType ||= type
-			
+		init: (img) ->
 			# Start loading the template
 			pasteboard.template.load(TEMPLATE_URL)
 			loadImage img
