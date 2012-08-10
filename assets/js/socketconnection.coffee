@@ -9,6 +9,7 @@ socketConnection = (pasteboard) ->
 		isSupported: () -> !!window.WebSocket
 		getID: () -> return ID
 		init: () ->
+			return unless @isSupported()
 			connection = new WebSocket("ws://#{window.location.hostname}:#{SOCKET_PORT}")
 			connection.onmessage = (e) ->
 				try
