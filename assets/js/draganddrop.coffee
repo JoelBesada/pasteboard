@@ -3,7 +3,6 @@
 # and sends the dropped image to the editor.
 ###
 dragAndDrop = (pasteboard) ->
-	firstInit = true
 	$body = $ "body"
 	$dropArea = $("<div>")
 					.addClass("drop-area")
@@ -38,17 +37,16 @@ dragAndDrop = (pasteboard) ->
 		init: () ->
 			return unless this.isSupported()
 			$body.prepend $dropArea
-			if firstInit
-				$dropArea.on
-						"dragenter": onDragStart
-						"dragleave": onDragEnd
-						"dragover": onDragOver
-						"drop": onDragDrop
-				firstInit = false
+			$dropArea.on
+					"dragenter.dragevent": onDragStart
+					"dragleave.dragevent": onDragEnd
+					"dragover.dragevent": onDragOver
+					"drop.dragevent": onDragDrop
 		
 		# Hides the elements related to the module
 		# and stops event listeners
 		hide: () ->
+			$dropArea.off(".dragevent")
 			$dropArea.detach()
 	
 
