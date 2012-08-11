@@ -121,7 +121,7 @@ fileHandler = (pasteboard) ->
 					else
 						# Wait for the file to preupload
 						preuploadXHR.addEventListener "load", () =>
-							@uploadFile
+							@uploadFile()
 			else
 				# Force upload
 				$(pasteboard.socketConnection).off "idReceive"
