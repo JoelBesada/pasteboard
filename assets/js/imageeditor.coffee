@@ -143,7 +143,7 @@ imageEditor = (pasteboard) ->
 		$document
 			.on("click.imageeditorevent", ".upload-button", uploadImage)
 			.on("click.imageeditorevent", ".delete-button", hide)
-			.on("mousewheel.imageeditorevent", ".image-container", scrollWheelHandler)
+			.on("mousewheel.imageeditorevent" + (if ("onmousewheel" of document) then "" else " DOMMouseScroll.imageeditorevent"), ".image-container", scrollWheelHandler)
 			.on("mousedown.imageeditorevent", ".image-container .image", mouseCropHandler)
 			.on("mousedown.imageeditorevent", ".image-editor .y-scroll-bar, .image-editor .x-scroll-bar", mouseScrollHandler)
 			.on("mouseup.imageeditorevent", () -> 
@@ -279,8 +279,18 @@ imageEditor = (pasteboard) ->
 	# Handles mouse wheel scrolling.
 	# (Scrolling while holding shift scrolls the image sideways)
 	scrollWheelHandler = (e) ->
+		e.preventDefault()
 		deltaX = e.originalEvent.wheelDeltaX or 0
 		deltaY = e.originalEvent.wheelDeltaY or e.originalEvent.wheelDelta or 0
+		# Firefox
+		if e.type is "DOMMouseScroll"
+			# Set better delta values than what firefox throws out
+			direction = -e.originalEvent.detail / Math.abs(e.originalEvent.detail)
+			if e.originalEvent.axis is e.originalEvent.HORIZONTAL_AXIS
+				deltaX = direction * 100
+			else
+				deltaY = direction * 100
+
 
 		if e.originalEvent.shiftKey
 			deltaX ||= deltaY
