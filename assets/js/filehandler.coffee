@@ -106,8 +106,7 @@ fileHandler = (pasteboard) ->
 						canvas.width = cropSettings.width
 						canvas.height = cropSettings.height
 						context = canvas.getContext "2d"
-						context.drawImage pasteboard.imageEditor.getImage(), 0, 0
-
+						context.drawImage pasteboard.imageEditor.getImage(), -cropSettings.x, -cropSettings.y
 						canvas.toBlob (blob) => 
 							# Add 10% to the cropped size when comparing
 							# to make sure we'll benefit from reuploading
@@ -124,13 +123,20 @@ fileHandler = (pasteboard) ->
 						preuploadXHR.addEventListener "load", () =>
 							@uploadFile
 			else
+				# Force upload
 				$(pasteboard.socketConnection).off "idReceive"
 				preuploadXHR.abort() if preuploadXHR
-				# Force upload
 				fd = new FormData()
 				fd.append "file", currentFile
 
-				sendFileXHR "/upload", fd
+				sendFileXHR("/upload", fd).addEventListener("load", (e) ->
+					try
+						data = JSON.parse(e.target.response)
+						window.location = data.url
+					catch e
+						log e.target.response
+				)
+					
 
 
 window.moduleLoader.addModule "fileHandler", fileHandler
