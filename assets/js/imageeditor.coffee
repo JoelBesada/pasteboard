@@ -395,7 +395,7 @@ imageEditor = (pasteboard) ->
 		image.src = img
 		image.onload = () ->
 			pasteboard.template.compile(
-				"jstemplates/imageeditor.tmpl",
+				TEMPLATE_URL,
 				{ url: img },
 				(compiledTemplate) ->
 					cacheElements compiledTemplate
