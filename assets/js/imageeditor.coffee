@@ -4,7 +4,7 @@
 imageEditor = (pasteboard) ->
 	MAX_WIDTH_RATIO = 0.8
 	MAX_HEIGHT_RATIO = 0.8
-	SCROLL_SPEED = 50
+	SCROLL_SPEED = 25
 	TEMPLATE_URL = "jstemplates/imageeditor.tmpl"
 
 	image = null
@@ -75,8 +75,7 @@ imageEditor = (pasteboard) ->
 				style.height = image.height - style.y
 
 			element.css
-				left: style.x
-				top: style.y
+				transform: "translate3d(#{style.x}px, #{style.y}px, 0)"
 				width: style.width
 				height: style.height
 				"background-position": "#{-style.x}px #{-style.y}px"
@@ -87,8 +86,8 @@ imageEditor = (pasteboard) ->
 					$imageEditor.removeClass("cropped")
 					isCropped = false
 					clearTimeout(cropIntentTimeout)
-					cropIntentTimeout = setTimeout(() -> 
-						setUploadText("regular") unless isCropped
+					cropIntentTimeout = setTimeout(() ->
+						setUploadText(isCropped)
 					, 200)
 
 			else
@@ -97,7 +96,7 @@ imageEditor = (pasteboard) ->
 					isCropped = true
 					clearTimeout(cropIntentTimeout)
 					cropIntentTimeout = setTimeout(() -> 
-						setUploadText("cropped") if isCropped
+						setUploadText(isCropped)
 					, 200)
 
 		self =
@@ -174,20 +173,21 @@ imageEditor = (pasteboard) ->
 			$scrollBar[coordinate].handle = $scrollBar[coordinate].track.find(".handle");
 
 		$uploadButton = $imageEditor.find(".upload-button")
-		$uploadButton.setText = (text) -> 
 			
 	# Changes the upload button text
-	# TODO: Make this less awful
-	setUploadText = (text) ->
-		buttonWidth = if text is "cropped" then 180 else 100
-		return if $uploadButton.data("state") is text
+	setUploadText = (isCropped) ->
+		buttonWidth = if isCropped then 180 else 100
+		return if $uploadButton.data("cropped") is isCropped
+		$uploadButton.data("cropped", isCropped)
 		$uploadButton.find("span")
 			.stop()
-			.fadeOut(150, () ->
-				$(@).text($(@).data("#{text}-text"))
+			.transition({opacity: 0}, 150, () ->
+				$(@)
+					.text($(@).data("#{if isCropped then 'cropped' else 'regular'}-text"))
+					.css("width", "#{buttonWidth-40}px")
+
 				$uploadButton.transition({width: buttonWidth + "px"}, () ->
-					$(@).find("span").stop().fadeIn(150)
-					$uploadButton.data("state", text)
+					$(@).find("span").stop().transition({opacity: 1}, 150)
 				)
 			)
 
@@ -258,9 +258,9 @@ imageEditor = (pasteboard) ->
 				# Ignore clicks on the padding
 				return if e.clientY > $scrollBar.y.bar.offset().top + $scrollBar.y.bar.height()
 				if e.clientY < $scrollBar.y.handle.offset().top
-					scrollImage 0, SCROLL_SPEED
+					scrollImage 0, SCROLL_SPEED * 4
 				else
-					scrollImage 0, -SCROLL_SPEED
+					scrollImage 0, -SCROLL_SPEED * 4
 
 		else if $target.hasClass("x-scroll-bar")
 			if $scrollBar.x.handle.offset().left <= e.clientX <= $scrollBar.x.handle.offset().left + $scrollBar.x.handle.width()
@@ -320,20 +320,17 @@ imageEditor = (pasteboard) ->
 		x = Math.round x
 		y = Math.round y
 
-		$image.css(
-			x: -x + "px"
-			y: -y + "px"
-		)
-
 		imagePosition.x = -x
 		imagePosition.y = -y
 
-		# Set the handle positions
-		$scrollBar.y.handle
-			.css("y", Math.round((y / ($image.height() - $imageContainer.height())) * ($scrollBar.y.track.height() - $scrollBar.y.handle.height() ))  + "px")
+		# Use 3D transforms for GPU acceleration
+		$image.css "transform", "translate3d(#{-x}px, #{-y}px, 0)"
 
-		$scrollBar.x.handle
-			.css("x", Math.round((x / ($image.width() - $imageContainer.width())) * ($scrollBar.x.track.width() - $scrollBar.x.handle.width() ))  + "px")
+		# Set the handle positions
+		val = Math.round((y / ($image.height() - $imageContainer.height())) * ($scrollBar.y.track.height() - $scrollBar.y.handle.height() ))
+		$scrollBar.y.handle.css "transform", "translate3d(0, #{val}px, 0)"
+		val = Math.round((x / ($image.width() - $imageContainer.width())) * ($scrollBar.x.track.width() - $scrollBar.x.handle.width() ))
+		$scrollBar.x.handle.css "transform", "translate3d(#{val}px, 0, 0)"
 
 	# Handle cropping (click)
 	# Sets the crop selection starting position
@@ -343,7 +340,7 @@ imageEditor = (pasteboard) ->
 		
 		mousePosition.x = e.clientX
 		mousePosition.y = e.clientY
-		selectionScrollInterval = setInterval selectionDragScroll, 50
+		selectionScrollInterval = setInterval selectionDragScroll, 1000 / 60
 
 	# Handle cropping (drag)
 	dragCropHandler = (e) ->
@@ -425,7 +422,7 @@ imageEditor = (pasteboard) ->
 		$imageEditor.transition(
 			opacity: 0
 			scale: 0.95
-		, () ->
+		, 500, () ->
 			pasteboard.dragAndDrop.init()
 			pasteboard.copyAndPaste.init()
 			$imageEditor.remove()

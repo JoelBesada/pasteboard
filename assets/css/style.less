@@ -200,7 +200,6 @@ body {
 	margin: 0 auto;
 	margin-top: -50px;
 	animation: fadeIn 0.5s;
-	transform: translateZ(0px); // GPU acceleration!
 
 	.image-container {
 		width: 100%;
@@ -355,6 +354,10 @@ body {
 
 			&:active {
 				background-color: darken(@base-color, 5%);
+			}
+
+			span {
+				display: inline-block;
 			}
 		}
 
