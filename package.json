@@ -14,6 +14,7 @@
     "knox": "*",
     "microtime": "*",
     "formidable": "*",
-    "websocket": "*"
+    "websocket": "*",
+    "easyimage": "*"
   }
 }

@@ -1,7 +1,9 @@
 <div class="image-editor">
 	<div class="image-container">
-		<div class="selection"></div>
-		<div class="image" style="background-image: url(<%= url %>)"></div>
+		<div class="image" style="background-image: url(<%= url %>)">
+			<div class="crop-overlay"></div>
+			<div class="crop-selection"></div>
+		</div>
 	</div>
 	<div class="close-button"></div>
 	<div class="y-scroll-bar">
@@ -16,6 +18,6 @@
 	</div>
 	<div class="action-bar">
 		<button class="button delete-button" title="Delete">Delete</button>
-		<button class="button upload-button">Upload</button>
+		<button class="button upload-button"><span data-regular-text="Upload" data-cropped-text="Upload Selection">Upload</span></button>
 	</div>
 </div>

@@ -1,3 +1,4 @@
+// NOTE: Vendor prefixes are automatically added with -prefix-free (http://leaverou.github.com/prefixfree/)
 @import "../stylesheets/normalize.css";
 
 @background-color: #61687E;
@@ -21,7 +22,10 @@
 ::selection {
 	background: transparent;
 }
-* { box-sizing: border-box; }
+* {
+	box-sizing: border-box; 
+	user-select: none; 
+}
 body {
 	background-color: @background-color;
 	background-image: url("../images/bg.png");
@@ -215,8 +219,44 @@ body {
 
 		.image {
 			position: relative;
+			cursor: crosshair;
+
+			.crop-selection {
+				position: absolute;
+				opacity: 0;
+				background-image: inherit;
+				box-shadow: 0 0 15px 3px rgba(0,0,5,0.9),
+							inset 0 0 2px rgba(255,255,255,0.2),
+							inset 0 1px 1px rgba(255,255,255,0.2);
+				transition: opacity 0.25s;
+			}
+			.crop-overlay {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				opacity: 0;
+				background-image: inherit;
+				transition: opacity 0.5s;
+
+				// -prefix-free doesn't prefix filters
+				-webkit-filter: grayscale(1);
+				-moz-filter: grayscale(1);
+				-ms-filter: grayscale(1);
+				-o-filter: grayscale(1);
+				filter: grayscale(1);
+
+				&:after {
+					content: "";
+					position: absolute;
+					display: block;
+					width: 100%;
+					height: 100%;
+					background-color: rgba(0,0,25,0.3);
+				}
+			}
 		}
 	}
+
 
 	.x-scroll-bar, .y-scroll-bar {
 		display: none;
@@ -306,6 +346,9 @@ body {
 			@base-color: #166F16;
 
 			font-size: 18px;
+			width: 100px;
+			height: 40px;
+			overflow: hidden;
 			background-color: @base-color;
 			border-color: darken(@base-color, 30%);
 
@@ -341,6 +384,14 @@ body {
 
 			&:active {
 				background-color: darken(@base-color, 5%);
+			}
+		}
+	}
+	
+	&.cropped {
+		.image-container .image {
+			.crop-overlay, .crop-selection {
+				opacity: 1
 			}
 		}
 	}

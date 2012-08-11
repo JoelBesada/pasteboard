@@ -1,6 +1,7 @@
 var knox = require("knox"),
 	formidable = require("formidable"),
 	microtime = require("microtime"),
+	easyimage = require("easyimage"),
 	fs = require('fs'),
 	amazonAuth = {},
 	knoxClient = null;
@@ -76,8 +77,13 @@ exports.upload = function(req, res) {
 		form.parse(req, function(err, fields, files) {
 			var client,
 				file,
+				fileType,
 				fileExt,
-				filePath;
+				fileName,
+				targetPath,
+				cropPath,
+				uploadToAmazon,
+				canvas;
 
 			if (fields.id) {
 				client = req.app.get("clients")[fields.id];
@@ -91,27 +97,51 @@ exports.upload = function(req, res) {
 				client.uploading[file.path] = true;
 			}
 			if (file) {
-				fileExt = file.type.replace("image/", "");
+				fileType = file.type;
+				fileExt = fileType.replace("image/", "");
+				// Use microtime to generate a unique file name
+				fileName = microtime.now() + "." + (fileExt === "jpeg" ? "jpg" : fileExt);
 				// Prefix with rm_ so that an Amazon S3 file expiration filter can be used
-				filePath = "/images/rm_" + microtime.now() + "." + (fileExt === "jpeg" ? "jpg" : fileExt);
+				targetPath = "/images/rm_" + fileName;
 
-				knoxClient.putFile(
-					file.path,
-					filePath,
-					{ "Content-Type": file.type },
-					function(err, putRes) {
-						if (putRes) {
-							var url = "http://" + amazonAuth.S3_BUCKET + ".s3.amazonaws.com" + filePath;
-							fs.unlink(file.path); // Remove tmp file
+				uploadToAmazon = function(sourcePath) {
+					knoxClient.putFile(
+						sourcePath,
+						targetPath,
+						{ "Content-Type": fileType },
+						function(err, putRes) {
+							if (putRes) {
+								var url = "http://" + amazonAuth.S3_BUCKET + ".s3.amazonaws.com" + targetPath;
+								fs.unlink(sourcePath); // Remove tmp file
 
-							if (putRes.statusCode === 200) {
-								res.json({url: url});
-							} else {
-								console.log("Error: ", err);
-								res.send("Failure", putRes.statusCode);
+								if (putRes.statusCode === 200) {
+									res.json({url: url});
+								} else {
+									console.log("Error: ", err);
+									res.send("Failure", putRes.statusCode);
+								}
 							}
-						}
-				});
+					});
+				};
+				if (!fields.cropImage) {
+					uploadToAmazon(file.path);
+				} else {
+					// Crop the image
+					cropPath = "/tmp/" + fileName;
+					easyimage.crop({
+						src: file.path,
+						dst: cropPath,
+						cropwidth: fields["crop[width]"],
+						cropheight: fields["crop[height]"],
+						x: fields["crop[x]"],
+						y: fields["crop[y]"],
+						gravity: "NorthWest"
+					}, function() {
+						fs.unlink(file.path);
+						uploadToAmazon(cropPath);
+					});
+				}
+				
 			} else {
 				res.send("Missing file", 500);
 			}

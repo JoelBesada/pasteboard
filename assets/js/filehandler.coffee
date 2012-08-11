@@ -6,11 +6,13 @@
 fileHandler = (pasteboard) ->
 	preuploadXHR = null
 	currentFile = null
+	currentUploadProgress = 0
 
 	# Creates an XHR object and sends the given FormData to the url
 	sendFileXHR = (url, formData) ->
 		onProgress = (e) ->
-			log "#{Math.floor (e.loaded / e.total) * 100}%"
+			currentUploadProgress = e.loaded / e.total
+			log "#{Math.floor(currentUploadProgress * 100)}%"
 		onSuccess = (e) ->
 			log e.target.response
 		onError = (e) ->
@@ -75,21 +77,51 @@ fileHandler = (pasteboard) ->
 		# Uploads the file. If the file is already preuploaded, just
 		# send the client ID so that the server can upload the file to 
 		# the cloud.
-		uploadFile: () ->
-			if preuploadXHR 
+		uploadFile: (cropSettings, forceUpload) ->
+			if preuploadXHR and not forceUpload
 				if preuploadXHR.readyState is 4
+					postData = 	
+						id: pasteboard.socketConnection.getID()
+					if cropSettings
+						postData.cropImage = true
+						postData.crop = cropSettings 
+
 					preuploadXHR = null
-					$.post("/upload", { id: pasteboard.socketConnection.getID() }, (data) ->
+					$.post("/upload", postData, (data) ->
 							# Temporary way to get to your image
+							# log data.url
 							window.location = data.url
 							
 					).error((err) -> log err)
 				else 
-					# Wait for the file to preupload
-					preuploadXHR.addEventListener "load", @uploadFile
+					if cropSettings
+						# Estimate if it's faster to wait for the
+						# preupload to finish and crop the image server-side,
+						# or send a new cropped image instead
+						
+						remainingSize = (1.0 - currentUploadProgress) * currentFile.size
+						
+						# Crop the image and check the file size
+						canvas = document.createElement "canvas"
+						canvas.width = cropSettings.width
+						canvas.height = cropSettings.height
+						context = canvas.getContext "2d"
+						context.drawImage pasteboard.imageEditor.getImage(), 0, 0
+
+						canvas.toBlob (blob) => 
+							# Add 10% to the cropped size when comparing
+							# to make sure we'll benefit from reuploading
+							# the cropped part (might need some tweaking)
+							if blob.size * 1.1 < remainingSize
+								currentFile = blob;
+								@uploadFile null, true
+
+					else
+						# Wait for the file to preupload
+						preuploadXHR.addEventListener "load", @uploadFile
 			else
 				$(pasteboard.socketConnection).off "idReceive"
-				
+				preuploadXHR.abort() if preuploadXHR
 				# Force upload
 				fd = new FormData()
 				fd.append "file", currentFile
