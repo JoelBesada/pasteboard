@@ -37,32 +37,10 @@ body {
 
 	&.loaded {
 		transition: background-color 1s;
-		.splash {
-			.splash-image .image-shine {
-				transition: opacity 1s;
-			}
-			.splash-instructions p {
-				transition-property: text-shadow, color;
-				transition-duration: 1s;
-			}
-		}
-		.author a {
-			transition-property: text-shadow, color;
-			transition-duration: 0.35s;
-		}
 	}
 
 	&.dragging {
 		background-color: lighten(@background-color, 15%);
-		.splash {
-			.splash-image .image-shine {
-				opacity: 1;
-			}
-			.splash-instructions p {
-				color: @text-highlight-color;
-				text-shadow: 0 0 10px white;
-			}
-		}
 	}
 
 }
@@ -106,10 +84,10 @@ body {
 	left: 0;
 	opacity: 0;
 	animation: fadeInAlt 0.5s both;
-}
 
-.no-cssanimations .shadow {
-	opacity: 1;
+	.no-cssanimations & {
+		opacity: 1;
+	}
 }
 
 .drop-area {
@@ -124,6 +102,7 @@ body {
 	height: 100%;
 	opacity: 0;
 	animation: fadeInAlt 1.5s both;
+	.no-cssanimations & { opacity: 1 }
 
 	.splash-instructions {
 		position: absolute;
@@ -158,6 +137,14 @@ body {
 			.image-shine {
 				opacity: 0;
 				background-image: url("../images/splash-image-shine.png");
+				
+				.loaded & {
+					transition: opacity 1s;
+				}
+
+				.dragging & {
+					opacity: 1;
+				}
 			}
 		}
 
@@ -167,13 +154,18 @@ body {
 			text-shadow: 0 1px 1px rgba(255,255,255,0.12);
 			margin-top: 5px;
 
+			.loaded & {
+				transition-property: text-shadow, color;
+				transition-duration: 1s;
+			}
+
+			.dragging & {
+				color: @text-highlight-color;
+				text-shadow: 0 0 10px white;
+			}
 		}
 	}
 
-}
-
-.no-cssanimations .splash{
-	opacity: 1;
 }
 
 .author {
@@ -191,6 +183,11 @@ body {
 		&:hover {
 			color: @text-highlight-color;
 			text-shadow: 0 0 5px rgba(255,255,255,0.7);
+		}
+
+		.loaded & {
+			transition-property: text-shadow, color;
+			transition-duration: 0.35s;
 		}
 	}
 }
