@@ -115,10 +115,14 @@ fileHandler = (pasteboard) ->
 							if blob.size * 1.1 < remainingSize
 								currentFile = blob;
 								@uploadFile null, true
+							else 
+								preuploadXHR.addEventListener "load", () =>
+									@uploadFile cropSettings
 
 					else
 						# Wait for the file to preupload
-						preuploadXHR.addEventListener "load", @uploadFile
+						preuploadXHR.addEventListener "load", () =>
+							@uploadFile
 			else
 				$(pasteboard.socketConnection).off "idReceive"
 				preuploadXHR.abort() if preuploadXHR
