@@ -75,7 +75,8 @@ imageEditor = (pasteboard) ->
 				style.height = image.height - style.y
 
 			element.css
-				transform: "translate3d(#{style.x}px, #{style.y}px, 0)"
+				left: style.x
+				top: style.y
 				width: style.width
 				height: style.height
 				"background-position": "#{-style.x}px #{-style.y}px"
