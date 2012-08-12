@@ -1,0 +1,27 @@
+<div class="modal">
+	<div class="modal-window">
+		<div class="content">
+			<% switch(modalType) { 
+			    case "error": %>
+					<p>Error: <%= content %></p>
+				<% break; 
+				case "upload-progress": %>
+					<p>Uploading</p>
+					<div class="upload-bar">
+						<div class="track">
+							<div class="progress-bar"></div>
+						</div>
+						<span class="progress-number"></span>
+					</div>
+				<% break; 
+				case "upload-link": %>
+					<p class="status" data-text-done="Here's your link:">Generating link...</p>
+					<input type="text" class="image-link">
+				<% break; 
+				default: %> 	
+					<%= content %>
+			<% } %>
+		</div>
+		<button class="cancel">Cancel</button>
+	</div>
+</div>

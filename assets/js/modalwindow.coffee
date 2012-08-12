@@ -12,7 +12,6 @@ modalWindow = (pasteboard) ->
 	$window = $ window
 	$modal = null
 	$modalWindow = null
-	$closeButton = null
 
 	setPosition = () ->
 		$modalWindow.css 
@@ -31,14 +30,13 @@ modalWindow = (pasteboard) ->
 				(compiledTemplate) =>
 					$modal = $ compiledTemplate
 					$modalWindow = $modal.find(".modal-window")
-					$closeButton = $modalWindow.find(".close-button")
 					
 					$("body").append $modal
 					setPosition()
 
 					# Events
 					$window.on "resize.modalwindowevents", setPosition
-					$document.on "click.modalwindowevents", ".close-button", @hide
+					$document.on "click.modalwindowevents", ".modal-window .cancel", @hide
 			)
 
 		hide: () ->

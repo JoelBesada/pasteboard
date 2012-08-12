@@ -45,7 +45,7 @@ body {
 
 }
 
-.button {
+button {
 	padding: 0.5em 1em;
 	border-radius: 3px;
 
@@ -75,6 +75,34 @@ body {
 					0 0 5px rgba(255,255,255, 0.05),
 					inset 0 0 5px rgba(0,0,0,0.4),
 					inset 0 5px 10px rgba(0,0,0,0.2);
+	}
+
+	&.confirm {
+		@base-color: #166F16;
+		background-color: @base-color;
+		border-color: darken(@base-color, 30%);
+
+		&:hover {
+			background-color: lighten(@base-color, 5%);
+		}
+
+		&:active {
+			background-color: darken(@base-color, 5%);
+		}
+	}
+
+	&.cancel {
+		@base-color: #8D1D1D;
+		background-color: @base-color;
+		border-color: darken(@base-color, 30%);
+
+		&:hover {
+			background-color: lighten(@base-color, 5%);
+		}
+
+		&:active {
+			background-color: darken(@base-color, 5%);
+		}
 	}
 }
 
@@ -335,53 +363,28 @@ body {
 		top: 105%;
 		width: 100%;
 
-		.upload-button {
-			@base-color: #166F16;
-
+		.confirm {
 			font-size: 18px;
 			width: 100px;
 			height: 40px;
 			overflow: hidden;
-			background-color: @base-color;
-			border-color: darken(@base-color, 30%);
-
-			&:hover {
-				background-color: lighten(@base-color, 5%);
-			}
-
-			&:active {
-				background-color: darken(@base-color, 5%);
-			}
 
 			span {
 				display: inline-block;
 			}
 		}
 
-		.delete-button {
-			@base-color: #8D1D1D;
-
+		.cancel {
 			width: 32px;
 			height: 32px;
 			vertical-align: top;
 			margin: 5px;
-
-			background-color: @base-color;
-			border-color: darken(@base-color, 30%);
-
 			text-indent: -9999px;
+
 			background-image: url("../images/delete-icon.png");
 			background-repeat: no-repeat;
 			background-size: 18px 18px;
 			background-position: center;
-
-			&:hover {
-				background-color: lighten(@base-color, 5%);
-			}
-
-			&:active {
-				background-color: darken(@base-color, 5%);
-			}
 		}
 	}
 	
@@ -395,6 +398,90 @@ body {
 
 }
 
+.modal {
+	@top-bar-background: #5B6280;
+	@modal-background: rgba(70, 75, 105, 0.85);
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 99999;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,25,0.6);
+	animation: fadeInModal 0.5s;
+
+	.modal-window {
+		position: relative;
+		width: 400px;
+		margin: auto;
+		border-radius: 5px;
+		overflow: hidden;
+
+		background-color: @modal-background;
+		background-image: url("../images/modal-bg.png");
+							//linear-gradient(transparent, rgba(0,0,0,.05));
+
+		color: #eee;
+		font-size: 14px;
+		text-shadow: 0 2px 2px rgba(0,0,25,0.5);
+		box-shadow: 0 0 15px rgba(0,0,25,0.2),
+					0 0 1px 1px darken(@modal-background, 20%),
+					inset 0 0 1px rgba(255,255,255,0.5);
+
+
+		animation: fadeInModalWindow 0.3s;
+
+		.content {
+			min-height: 100px;
+			padding: 10px;
+
+			p {
+				margin-top: 0;
+			}
+		
+			.upload-bar {
+				margin: auto;
+
+				.track {
+					position: relative;
+					width: 300px;
+					margin: auto;
+					background-color: darken(@background-color, 30%);
+					border-radius: 7px;
+					overflow: hidden;
+					border: 1px solid black;
+					padding: 2px;
+					height: 14px;
+					box-shadow: 1px 1px 1px rgba(255,255,255,0.10),
+								0 0 5px rgba(255,255,255, 0.05),
+								inset 0 0 5px rgba(0,0,0,0.5),
+								inset 5px 5px 10px rgba(0,0,0,0.3);
+					
+					.progress-bar {
+						width: 0%;
+						height: 100%;
+						background-color: #166F16;
+						border-radius: 4px;
+						overflow: hidden;
+						background-image: linear-gradient(0deg, #E2A63C, #8BB324, #166F16);
+						background-size: 300px;
+						box-shadow: inset 1px 1px 0 rgba(255,255,255,0.15),
+									inset 0 0 5px rgba(255,255,255, 0.05),
+									0 0 5px rgba(0,0,0,0.5),
+									3px 3px 3px rgba(0,0,0,0.5);
+						animation: progressBarTest 10s linear infinite;
+
+					}
+
+				}
+			}
+
+		}
+
+
+	}
+}
+
 @keyframes fadeIn {
 	0% {
 		opacity: 0;
@@ -405,6 +492,19 @@ body {
 @keyframes fadeInAlt {
 	100% {
 		opacity: 1;
+	}
+}
+
+@keyframes fadeInModal {
+	0% { 
+		opacity: 0;
+	}
+}
+
+@keyframes fadeInModalWindow {
+	0% {
+		opacity: 0;
+		transform: scale(0.85);
 	}
 }
 

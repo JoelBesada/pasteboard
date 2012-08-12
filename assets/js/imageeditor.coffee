@@ -142,8 +142,8 @@ imageEditor = (pasteboard) ->
 			scrollImage 0, 0
 
 		$document
-			.on("click.imageeditorevent", ".upload-button", uploadImage)
-			.on("click.imageeditorevent", ".delete-button", hide)
+			.on("click.imageeditorevent", ".image-editor .confirm", uploadImage)
+			.on("click.imageeditorevent", ".image-editor .cancel", hide)
 			.on("mousewheel.imageeditorevent" + (if ("onmousewheel" of document) then "" else " DOMMouseScroll.imageeditorevent"), ".image-container", scrollWheelHandler)
 			.on("mousedown.imageeditorevent", ".image-container .image", mouseCropHandler)
 			.on("mousedown.imageeditorevent", ".image-editor .y-scroll-bar, .image-editor .x-scroll-bar", mouseScrollHandler)
@@ -173,7 +173,7 @@ imageEditor = (pasteboard) ->
 			$scrollBar[coordinate].track = $scrollBar[coordinate].bar.find(".track");
 			$scrollBar[coordinate].handle = $scrollBar[coordinate].track.find(".handle");
 
-		$uploadButton = $imageEditor.find(".upload-button")
+		$uploadButton = $imageEditor.find(".confirm")
 			
 	# Changes the upload button text
 	setUploadText = (isCropped) ->
