@@ -19,12 +19,11 @@
   src: local('Droid Sans Bold'), local('DroidSans-Bold'), url(http://themes.googleusercontent.com/static/fonts/droidsans/v3/EFpQQyG9GqCrobXxL-KRMQFhaRv2pGgT5Kf0An0s4MM.woff) format('woff');
 }
 
-::selection {
-	background: transparent;
-}
 * {
 	box-sizing: border-box; 
-	user-select: none; 
+}
+*:not(input) {
+	user-select: none;
 }
 body {
 	background-color: @background-color;

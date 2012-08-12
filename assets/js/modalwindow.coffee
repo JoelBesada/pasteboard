@@ -36,7 +36,7 @@ modalWindow = (pasteboard) ->
 
 					# Events
 					$window.on "resize.modalwindowevents", setPosition
-					$document.on "click.modalwindowevents", ".modal-window .cancel", @hide
+					$document.on "click.modalwindowevents", ".modal-window .cancel, .modal-window .confirm", @hide
 			)
 
 		hide: () ->

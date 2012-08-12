@@ -48,6 +48,5 @@ $ ->
 	pasteboard.copyAndPaste.init()
 	pasteboard.modalWindow.init()
 
-
 	drawBackgroundOverlay()
 	$window.resize drawBackgroundOverlay
