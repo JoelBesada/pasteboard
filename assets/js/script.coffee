@@ -43,10 +43,7 @@ $ ->
  	# Used to prevent transition "flashing" on load with -prefix-free
 	$("body").addClass "loaded"
 
-	pasteboard.socketConnection.init()
-	pasteboard.dragAndDrop.init()
-	pasteboard.copyAndPaste.init()
-	pasteboard.modalWindow.init()
+	pasteboard.appFlow.start()
 
 	drawBackgroundOverlay()
 	$window.resize drawBackgroundOverlay

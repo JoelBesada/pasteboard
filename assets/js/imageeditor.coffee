@@ -142,8 +142,8 @@ imageEditor = (pasteboard) ->
 			scrollImage 0, 0
 
 		$document
-			.on("click.imageeditorevent", ".image-editor .confirm", uploadImage)
-			.on("click.imageeditorevent", ".image-editor .cancel", hide)
+			.on("click.imageeditorevent", ".image-editor .confirm", () -> $(self).trigger "confirm")
+			.on("click.imageeditorevent", ".image-editor .cancel", () -> $(self).trigger "cancel")
 			.on("mousewheel.imageeditorevent" + (if ("onmousewheel" of document) then "" else " DOMMouseScroll.imageeditorevent"), ".image-container", scrollWheelHandler)
 			.on("mousedown.imageeditorevent", ".image-container .image", mouseCropHandler)
 			.on("mousedown.imageeditorevent", ".image-editor .y-scroll-bar, .image-editor .x-scroll-bar", mouseScrollHandler)
@@ -411,33 +411,6 @@ imageEditor = (pasteboard) ->
 			)
 			
 
-	# Uploads the image
-	uploadImage = () ->
-		pasteboard.fileHandler.uploadFile cropSelection.getCropCoordinates()
-		# Prevent multiple uploads
-		$document.off "click", ".upload-button", uploadImage
-
-	# Hides the image editor and cleans up
-	hide = () ->
-		# Let the server know that the preuploaded image can be removed
-		$.post("/clearfile", 
-			id: pasteboard.socketConnection.getID()
-		);
-		# Abort any ongoing preupload
-		pasteboard.fileHandler.abortPreupload()
-
-		removeEvents()
-
-		# Set up the "splash screen"
-		$(".splash").show()
-		$imageEditor.transition(
-			opacity: 0
-			scale: 0.95
-		, 500, () ->
-			pasteboard.dragAndDrop.init()
-			pasteboard.copyAndPaste.init()
-			$imageEditor.remove()
-		)
 
 
 	self = 
@@ -457,11 +430,21 @@ imageEditor = (pasteboard) ->
 			imagePosition.x = 0
 			imagePosition.y = 0
 
-			pasteboard.dragAndDrop.hide()
-			pasteboard.copyAndPaste.hide()
-			$(".splash").hide()
-
 			addEvents()
+
+		# Hides the image editor and cleans up event listeners
+		hide: () ->
+			removeEvents()
+			$imageEditor.transition(
+				opacity: 0
+				scale: 0.95
+			, 500, () ->
+				$imageEditor.remove()
+			)
+
+		# Uploads the image
+		uploadImage: () ->
+			pasteboard.fileHandler.uploadFile cropSelection.getCropCoordinates()
 
 		getImage: () -> return image
 			

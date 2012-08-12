@@ -23,7 +23,7 @@ modalWindow = (pasteboard) ->
 
 		# Displays the modal window of the given type.
 		# Compiles the modal window template using the params
-		show: (modalType, params) ->
+		show: (modalType, params, callback) ->
 			pasteboard.template.compile(
 				TEMPLATE_URL,
 				$.extend({modalType: modalType}, templateDefaults, params),
@@ -37,6 +37,8 @@ modalWindow = (pasteboard) ->
 					# Events
 					$window.on "resize.modalwindowevents", setPosition
 					$document.on "click.modalwindowevents", ".modal-window .cancel, .modal-window .confirm", @hide
+					
+					callback $modal if callback
 			)
 
 		hide: () ->

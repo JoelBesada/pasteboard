@@ -34,24 +34,22 @@ fileHandler = (pasteboard) ->
 			currentFile = file
 			# Try creating a file URL first
 			if url = window.URL || window.webkitURL
-				pasteboard.imageEditor.init url.createObjectURL(file)
+				$(pasteboard).trigger "imageinserted", image: url.createObjectURL(file)
 			
 			# Else create a data URL
 			else if window.FileReader
 				fileReader = new FileReader()
 				fileReader.onload = (e) ->
-					pasteboard.imageEditor.init e.target.result
+					$(pasteboard).trigger "imageinserted", image: e.target.result
 
 				fileReader.readAsDataURL file
 			
-			@preuploadFile()
 
 		# Converts the given data into a file, and sends the data
 		# to the image editor
 		readData: (data) ->
 			currentFile = dataURLtoBlob data
-			pasteboard.imageEditor.init data
-			@preuploadFile()
+			$(pasteboard).trigger "imageinserted", image: data
 
 		# Converts the data to a file object and uploads
 		# it to the server, while tracking the progress.
@@ -67,18 +65,25 @@ fileHandler = (pasteboard) ->
 				log "no id"
 				$(pasteboard.socketConnection).on "idReceive", self.preuploadFile
 
-		# Aborts a preupload
+		# Aborts the preupload
 		abortPreupload: () ->
 			if preuploadXHR
 				preuploadXHR.abort()
 				$(pasteboard.socketConnection).off "idReceive"
 				preuploadXHR = null
 
+		# Clears partially or preuploaded files from the server
+		clearFile: () ->
+			$.post("/clearfile", 
+				id: pasteboard.socketConnection.getID()
+			);
+
 		# Uploads the file. If the file is already preuploaded, just
 		# send the client ID so that the server can upload the file to 
 		# the cloud.
 		uploadFile: (cropSettings, forceUpload) ->
 			if preuploadXHR and not forceUpload
+				# Image is already uploaded
 				if preuploadXHR.readyState is 4
 					postData = 	
 						id: pasteboard.socketConnection.getID()
@@ -87,12 +92,8 @@ fileHandler = (pasteboard) ->
 						postData.crop = cropSettings 
 
 					preuploadXHR = null
-					$.post("/upload", postData, (data) ->
-							# Temporary way to get to your image
-							# log data.url
-							window.location = data.url
-							
-					).error((err) -> log err)
+					
+					return xhr: $.post("/upload", postData), inProgress: false
 				else 
 					if cropSettings
 						# Estimate if it's faster to wait for the
@@ -113,15 +114,19 @@ fileHandler = (pasteboard) ->
 							# the cropped part (might need some tweaking)
 							if blob.size * 1.1 < remainingSize
 								currentFile = blob;
-								@uploadFile null, true
+								# Reupload cropped part
+								return @uploadFile null, true
 							else 
-								preuploadXHR.addEventListener "load", () =>
+								xhr = preuploadXHR.addEventListener "load", () =>
 									@uploadFile cropSettings
 
+								return xhr: xhr, inProgress: true
 					else
 						# Wait for the file to preupload
-						preuploadXHR.addEventListener "load", () =>
+						xhr = preuploadXHR.addEventListener "load", () =>
 							@uploadFile()
+
+						return xhr: xhr, inProgress: true
 			else
 				# Force upload
 				$(pasteboard.socketConnection).off "idReceive"
@@ -129,13 +134,7 @@ fileHandler = (pasteboard) ->
 				fd = new FormData()
 				fd.append "file", currentFile
 
-				sendFileXHR("/upload", fd).addEventListener("load", (e) ->
-					try
-						data = JSON.parse(e.target.response)
-						window.location = data.url
-					catch e
-						log e.target.response
-				)
+				return xhr: sendFileXHR("/upload", fd), inProgress: true
 					
 
 
