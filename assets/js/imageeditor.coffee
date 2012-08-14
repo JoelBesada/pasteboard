@@ -433,13 +433,14 @@ imageEditor = (pasteboard) ->
 			addEvents()
 
 		# Hides the image editor and cleans up event listeners
-		hide: () ->
+		hide: (callback) ->
 			removeEvents()
 			$imageEditor.transition(
 				opacity: 0
 				scale: 0.95
 			, 500, () ->
 				$imageEditor.remove()
+				callback() if callback
 			)
 
 		# Uploads the image

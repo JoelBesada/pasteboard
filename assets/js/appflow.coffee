@@ -59,8 +59,7 @@ appFlow = (pasteboard) ->
 					pasteboard.fileHandler.abortPreupload()
 
 					# Go back to the previous state
-					pasteboard.imageEditor.hide()
-					setState --state
+					pasteboard.imageEditor.hide () -> setState --state
 
 				# Triggered when clicking the upload button
 				$imageEditor.on "confirm.stateevents", (e) ->
@@ -208,8 +207,7 @@ appFlow = (pasteboard) ->
 				$modalWindow.on "confirm.stateevents", () ->
 					$modalWindow.off ".stateevents"
 					pasteboard.modalWindow.hide()
-					pasteboard.imageEditor.hide()
-					setState states.insertingImage, backtracked: true
+					pasteboard.imageEditor.hide () -> setState states.insertingImage, backtracked: true
 		
 	self =
 		# Starts the application flow
