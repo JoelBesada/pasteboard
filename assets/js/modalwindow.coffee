@@ -7,6 +7,10 @@ modalWindow = (pasteboard) ->
 	templateDefaults =
 		title: ""
 		content: ""
+		showCancel: false
+		showConfirm: false
+		confirmText: "OK"
+		cancelText: "Cancel"
 
 	$document = $ document
 	$window = $ window
@@ -36,7 +40,11 @@ modalWindow = (pasteboard) ->
 
 					# Events
 					$window.on "resize.modalwindowevents", setPosition
-					$document.on "click.modalwindowevents", ".modal-window .cancel, .modal-window .confirm", @hide
+					$document.on("click.modalwindowevents", 
+							".modal-window .cancel", () -> $(self).trigger("cancel"))
+							.on("click.modalwindowevents", 
+							".modal-window .confirm", () -> $(self).trigger("confirm"))
+
 					
 					callback $modal if callback
 			)

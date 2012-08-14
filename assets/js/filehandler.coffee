@@ -6,13 +6,13 @@
 fileHandler = (pasteboard) ->
 	preuploadXHR = null
 	currentFile = null
-	currentUploadProgress = 0
+	currentUploadLoaded = 0
 
 	# Creates an XHR object and sends the given FormData to the url
 	sendFileXHR = (url, formData) ->
 		onProgress = (e) ->
-			currentUploadProgress = e.loaded / e.total
-			log "#{Math.floor(currentUploadProgress * 100)}%"
+			currentUploadLoaded = e.loaded
+			log "#{Math.floor(e.loaded / e.total * 100)}%"
 		onSuccess = (e) ->
 			log e.target.response
 		onError = (e) ->
@@ -26,9 +26,22 @@ fileHandler = (pasteboard) ->
 		xhr.send formData
 		return xhr
 
+	# Crops an image and returns the new file with the callback
+	# (If no crop settings are given, the callback is called with
+	# the current, uncropped file)
+	cropImage = (cropSettings, callback) ->
+		return callback currentFile unless cropSettings
+
+		canvas = document.createElement "canvas"
+		canvas.width = cropSettings.width
+		canvas.height = cropSettings.height
+		context = canvas.getContext "2d"
+		context.drawImage pasteboard.imageEditor.getImage(), -cropSettings.x, -cropSettings.y
+		canvas.toBlob callback
+
 	self = 
 		isSupported: () -> window.FileReader or window.URL or window.webkitURL
-		
+		getCurrentUploadLoaded: () -> currentUploadLoaded
 		# Reads a file and sends it over to the image editor.
 		readFile: (file) ->
 			currentFile = file
@@ -62,7 +75,6 @@ fileHandler = (pasteboard) ->
 				fd.append "file", currentFile
 				preuploadXHR = sendFileXHR "/preupload", fd
 			else
-				log "no id"
 				$(pasteboard.socketConnection).on "idReceive", self.preuploadFile
 
 		# Aborts the preupload
@@ -81,9 +93,9 @@ fileHandler = (pasteboard) ->
 		# Uploads the file. If the file is already preuploaded, just
 		# send the client ID so that the server can upload the file to 
 		# the cloud.
-		uploadFile: (cropSettings, forceUpload) ->
-			if preuploadXHR and not forceUpload
-				# Image is already uploaded
+		uploadFile: (cropSettings, callback) ->
+			if preuploadXHR
+				# The image is already uploaded
 				if preuploadXHR.readyState is 4
 					postData = 	
 						id: pasteboard.socketConnection.getID()
@@ -92,49 +104,43 @@ fileHandler = (pasteboard) ->
 						postData.crop = cropSettings 
 
 					preuploadXHR = null
+					xhr = $.post("/upload", postData)
+							.error((error) -> log error) 
 					
-					return xhr: $.post("/upload", postData), inProgress: false
+					callback xhr: xhr, inProgress: false
+				# The image is preuploading
 				else 
 					if cropSettings
 						# Estimate if it's faster to wait for the
 						# preupload to finish and crop the image server-side,
 						# or send a new cropped image instead
 						
-						remainingSize = (1.0 - currentUploadProgress) * currentFile.size
+						remainingSize = currentFile.size - currentUploadLoaded
 						
 						# Crop the image and check the file size
-						canvas = document.createElement "canvas"
-						canvas.width = cropSettings.width
-						canvas.height = cropSettings.height
-						context = canvas.getContext "2d"
-						context.drawImage pasteboard.imageEditor.getImage(), -cropSettings.x, -cropSettings.y
-						canvas.toBlob (blob) => 
+						cropImage cropSettings, (blob) => 
 							# Add 10% to the cropped size when comparing
 							# to make sure we'll benefit from reuploading
 							# the cropped part (might need some tweaking)
 							if blob.size * 1.1 < remainingSize
-								currentFile = blob;
 								# Reupload cropped part
-								return @uploadFile null, true
-							else 
-								xhr = preuploadXHR.addEventListener "load", () =>
-									@uploadFile cropSettings
-
-								return xhr: xhr, inProgress: true
+								currentFile = blob;
+								preuploadXHR.abort() 
+								preuploadXHR = null
+								@uploadFile null, callback
+							else
+								callback xhr: preuploadXHR, inProgress: true, preuploading: true
 					else
-						# Wait for the file to preupload
-						xhr = preuploadXHR.addEventListener "load", () =>
-							@uploadFile()
-
-						return xhr: xhr, inProgress: true
+						callback xhr: preuploadXHR, inProgress: true, preuploading: true
 			else
 				# Force upload
 				$(pasteboard.socketConnection).off "idReceive"
-				preuploadXHR.abort() if preuploadXHR
-				fd = new FormData()
-				fd.append "file", currentFile
+				# This only crops if we have crop settings
+				cropImage cropSettings, (file) ->
+					fd = new FormData()
+					fd.append "file", file
 
-				return xhr: sendFileXHR("/upload", fd), inProgress: true
+					callback xhr: sendFileXHR("/upload", fd), inProgress: true
 					
 
 

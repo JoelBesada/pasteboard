@@ -409,9 +409,6 @@ imageEditor = (pasteboard) ->
 					setSize()
 					setPosition()
 			)
-			
-
-
 
 	self = 
 		# Initializes the image editor.
@@ -443,9 +440,9 @@ imageEditor = (pasteboard) ->
 			)
 
 		# Uploads the image
-		uploadImage: () ->
-			pasteboard.fileHandler.uploadFile cropSelection.getCropCoordinates()
-
+		uploadImage: (callback) ->
+			pasteboard.fileHandler.uploadFile cropSelection.getCropCoordinates(), callback
+			
 		getImage: () -> return image
 			
 window.moduleLoader.addModule "imageEditor", imageEditor

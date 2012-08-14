@@ -21,9 +21,9 @@
 
 * {
 	box-sizing: border-box; 
-}
-*:not(input) {
-	user-select: none;
+	&:not(input) {
+		user-select: none;
+	}
 }
 body {
 	background-color: @background-color;
@@ -110,7 +110,7 @@ button {
 	top: 0;
 	left: 0;
 	opacity: 0;
-	animation: fadeInAlt 0.5s both;
+	animation: fadeIn 0.5s both;
 
 	.no-cssanimations & {
 		opacity: 1;
@@ -128,7 +128,7 @@ button {
 	width: 100%;
 	height: 100%;
 	opacity: 0;
-	animation: fadeInAlt 1.5s both;
+	animation: fadeIn 1.5s both;
 	.no-cssanimations & { opacity: 1 }
 
 	.splash-instructions {
@@ -223,7 +223,7 @@ button {
 	position: relative;
 	margin: 0 auto;
 	margin-top: -50px;
-	animation: fadeIn 0.5s;
+	animation: fadeInScale 0.5s;
 
 	.image-container {
 		width: 100%;
@@ -414,11 +414,11 @@ button {
 		width: 400px;
 		margin: auto;
 		border-radius: 5px;
+		padding: 15px 20px 10px 20px;
 		overflow: hidden;
 
 		background-color: @modal-background;
 		background-image: url("../images/modal-bg.png");
-							//linear-gradient(transparent, rgba(0,0,0,.05));
 
 		color: #eee;
 		font-size: 14px;
@@ -430,27 +430,124 @@ button {
 
 		animation: fadeInModalWindow 0.3s;
 
-		.content {
-			min-height: 100px;
-			padding: 10px;
-
-			p {
-				margin-top: 0;
+		.status {
+			position: relative;
+			height: 15px;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			li {
+				position: absolute;
+				width: 100%;
+				text-align: center;
+				top: 0;
+				opacity: 0;
+				transition: opacity 0.5s 0.25s;
 			}
-		
+		}
+		&.default .status li:first-child {
+			opacity: 1;
+			transition-delay: 0.5s;
+		} 
+		&.generating .status li.generating {
+			opacity: 1;
+			transition-delay: 0.5s;
+		}
+		&.done .status li.done {
+			opacity: 1;
+			transition-delay: 0.5s;
+		}
+		.image-link {
+			background-color: darken(@background-color, 30%);
+			color: #eee;
+			border-radius: 12px;
+			border: 1px solid black;
+			padding: 5px 10px;
+			margin: 0 auto;
+			text-align: center;
+			width: 300px;
+			height: 24px;
+			box-shadow: 1px 1px 1px rgba(255,255,255,0.10),
+						0 0 5px rgba(255,255,255, 0.05),
+						inset 0 0 5px rgba(0,0,0,0.5),
+						inset 5px 5px 10px rgba(0,0,0,0.3);
+
+			transition-property: background-color, color, box-shadow;
+			transition-duration: 0.25s;
+			cursor: pointer;
+
+			&:focus {
+				outline: none;
+				box-shadow: 1px 1px 1px rgba(255,255,255,0.10),
+						0 0 5px rgba(255,255,255, 0.1),
+						inset 0 0 5px rgba(0,0,0,0.5),
+						inset 5px 5px 10px rgba(0,0,0,0.3),
+						0 0 10px rgba(125,200,255,0.25);
+				background-color: darken(@background-color, 25%);
+			}
+		}
+		.action-bar {
+			margin-top: 15px;
+			button {
+					margin: 0 auto;
+					height: 32px;
+				&:not(:active) {
+					box-shadow: inset 0 1px 1px rgba(255,255,255,0.15),
+					inset 0 0 5px rgba(255,255,255, 0.05),
+					0 0 5px rgba(0,0,25,0.3),
+					0 3px 5px rgba(0,0,25,0.1);
+				}
+			}
+		}
+
+		&.upload-link {
+			min-height: 75px;
+			.status {
+				margin-bottom: 5px;
+			}
+			.image-link-wrapper {
+				height: 0;
+				overflow: hidden;
+				opacity: 0;
+			}
+			.action-bar {
+				height: 0;
+				opacity: 0;
+				margin-top: 0;
+				overflow: hidden;
+			}
+			&.done {
+				.image-link-wrapper {
+					animation: showLinkWrapper 1.5s both;
+					.image-link {
+						animation: showLink 1s 0.75s both;
+					}
+				}
+				.action-bar {
+					animation: showActionBar 1.5s 2s both;
+				}
+			}
+		}
+
+		&.upload-progress {
+			.status {
+				margin-bottom: 10px;
+			}
 			.upload-bar {
 				margin: auto;
+				height: 14px;
 
 				.track {
 					position: relative;
 					width: 300px;
 					margin: auto;
 					background-color: darken(@background-color, 30%);
-					border-radius: 7px;
+					border-radius: 12px;
 					overflow: hidden;
 					border: 1px solid black;
 					padding: 2px;
-					height: 14px;
+					height: 100%;
 					box-shadow: 1px 1px 1px rgba(255,255,255,0.10),
 								0 0 5px rgba(255,255,255, 0.05),
 								inset 0 0 5px rgba(0,0,0,0.5),
@@ -462,35 +559,66 @@ button {
 						background-color: #166F16;
 						border-radius: 4px;
 						overflow: hidden;
-						background-image: linear-gradient(0deg, #E2A63C, #8BB324, #166F16);
+						background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(255,255,255,0.3) 5px, rgba(255,255,255,0.3) 10px),
+							linear-gradient(0deg, #E2A63C, #8BB324, #166F16);
 						background-size: 300px;
 						box-shadow: inset 1px 1px 0 rgba(255,255,255,0.15),
 									inset 0 0 5px rgba(255,255,255, 0.05),
 									0 0 5px rgba(0,0,0,0.5),
 									3px 3px 3px rgba(0,0,0,0.5);
-						animation: progressBarTest 10s linear infinite;
-
+						transition: width 0.15s;
 					}
+				}
+			}
+			.image-link {
+				display: none;
+				height: 14px;
+			}
+			.confirm {
+				display: none;
+				opacity: 0;
+			}
+			&.generating { 
+				.progress-bar {
+					animation: pulse 2.5s infinite;
+				}
+			}
 
+			&.done {
+				.progress-bar {
+					animation: fadeOut 0.5s both;
+				}
+				.upload-bar {
+					opacity: 0;
+					transition: opacity 0s 0.5s;
+				}
+				.image-link {
+					&.appear {
+						animation: uploadShowLink 0.75s both;
+					}
 				}
 			}
 
 		}
-
-
 	}
 }
 
-@keyframes fadeIn {
+@keyframes fadeInScale {
 	0% {
 		opacity: 0;
 		transform: scale(0.95);
 	}
 }
 
-@keyframes fadeInAlt {
+@keyframes fadeIn {
 	100% {
 		opacity: 1;
+	}
+}
+
+@keyframes fadeOut {
+	100% {
+		opacity: 0;
 	}
 }
 
@@ -510,5 +638,66 @@ button {
 @keyframes shadow {
 	0% {
 		box-shadow: none;
+	}
+}
+
+@keyframes showLinkWrapper {
+	30% {
+		opacity: 0;
+		height: 30px;
+	}
+	100% {
+		opacity: 1;
+		height: 30px;
+		padding-top: 5px;
+	}
+}
+
+@keyframes showLink {
+	0% {
+		opacity: 0;
+		width: 0;
+		color: rgba(255,255,255,0);
+	}
+	80% {
+		width: 300px;
+		color: rgba(255,255,255,0);
+	}
+}
+
+@keyframes showActionBar {
+	30% {
+		height: 35px;
+		margin-top: 15px;
+	}
+	60% {
+		height: 35px;
+		margin-top: 15px;
+		opacity: 0;
+	}
+	100% {
+		height: 35px;
+		margin-top: 15px;
+		opacity: 1;
+	}
+}
+
+@keyframes pulse {
+	33% {
+		opacity: 0.5;
+	}
+	66% {}
+}
+
+@keyframes uploadShowLink {
+	0% {
+		color: rgba(255,255,255,0);
+	}
+	80% {
+		height: 24px;
+		color: rgba(255,255,255,0);
+	}
+	100% {
+		height: 24px;
 	}
 }
