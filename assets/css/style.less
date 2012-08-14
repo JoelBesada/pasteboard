@@ -313,7 +313,6 @@ button {
 		bottom: 0;
 		height: 50px;
 		width: 100%;
-		padding-right: 50px;
 
 		.track {
 			width: 95%;
@@ -332,7 +331,6 @@ button {
 		top: 0;
 		width: 50px;
 		height: 100%;
-		padding-bottom: 50px;
 
 		.track {
 			height: 95%;
@@ -356,6 +354,15 @@ button {
 	&.scroll-y {
 		.y-scroll-bar {
 			display: block;
+		}
+	}
+
+	&.scroll-x.scroll-y {
+		.x-scroll-bar {
+			padding-right: 50px;
+		}
+		.y-scroll-bar {
+			padding-bottom: 50px;
 		}
 	}
 

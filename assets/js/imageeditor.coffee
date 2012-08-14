@@ -223,7 +223,12 @@ imageEditor = (pasteboard) ->
 		if $imageContainer.width() < image.width
 			scrollable.x = true
 			$imageEditor.addClass("scroll-x")
-			$imageContainer.css("height", height - $scrollBar.x.bar.outerHeight())
+			newHeight = height - $scrollBar.x.bar.outerHeight()
+			if newHeight < maxHeight
+				$imageEditor.css "height", height + $scrollBar.x.bar.outerHeight()
+				$imageContainer.css "height", height
+			else
+				$imageContainer.css "height", height - (newHeight - maxHeight)
 
 			# Make the scroll handle represent the visible image width
 			# relative to the track
@@ -237,7 +242,12 @@ imageEditor = (pasteboard) ->
 		if $imageContainer.height() < image.height
 			scrollable.y = true
 			$imageEditor.addClass("scroll-y")
-			$imageContainer.css "width", width - $scrollBar.y.bar.outerWidth()
+			newWidth = width - $scrollBar.y.bar.outerWidth()
+			if newWidth < maxWidth
+				$imageEditor.css "width", width + $scrollBar.y.bar.outerWidth()
+				$imageContainer.css "width", width
+			else
+				$imageContainer.css "width", width - (newWidth - maxWidth)
 
 			# Make the scroll handle represent the visible image height
 			# relative to the track
