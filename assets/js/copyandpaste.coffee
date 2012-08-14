@@ -26,7 +26,7 @@ copyAndPaste = (pasteboard) ->
 		pasteArea.html("")
 
 		if child 
-			if child.tagName is "IMG"
+			if child.tagName is "IMG" and /^data:image/i.test child.src
 				pasteboard.fileHandler.readData child.src
 				return
 
