@@ -103,6 +103,8 @@ imageEditor = (pasteboard) ->
 					y: 0
 					width: 0
 					height: 0
+					
+				isCropped = false
 			init: (startX, startY) ->
 				element = $image.find(".crop-selection")
 				x = startX
