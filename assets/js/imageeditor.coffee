@@ -36,11 +36,6 @@ imageEditor = (pasteboard) ->
 		style = null 
 		element = null
 		isCropped = false
-		style = 
-			x: x
-			y: y
-			width: width
-			height: height
 
 		# Sets the CSS styles from the coordinates / dimensions
 		updateStyle = () ->
@@ -102,12 +97,19 @@ imageEditor = (pasteboard) ->
 
 		self =
 			getCropCoordinates: () -> if isCropped then style else null
+			reset: () ->
+				style = 
+					x: 0
+					y: 0
+					width: 0
+					height: 0
 			init: (startX, startY) ->
 				element = $image.find(".crop-selection")
 				x = startX
 				y = startY
 				width = 0
 				height = 0
+				
 				updateStyle();
 
 			resize: (newX, newY) ->
@@ -426,6 +428,7 @@ imageEditor = (pasteboard) ->
 			dragOffset.y = 0
 			imagePosition.x = 0
 			imagePosition.y = 0
+			cropSelection.reset()
 
 			addEvents()
 
