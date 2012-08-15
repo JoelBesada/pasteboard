@@ -1,0 +1,150 @@
+// NOTE: Vendor prefixes are automatically added with -prefix-free (http://leaverou.github.com/prefixfree/)
+@import "../stylesheets/normalize.css";
+
+@background-color: #61687E;
+@text-color: #070C16;
+@text-highlight-color: #E0E6F3;
+@font-stack: 'Droid Sans', sans-serif;
+
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Droid Sans'), local('DroidSans'), url(http://themes.googleusercontent.com/static/fonts/droidsans/v3/s-BiyweUPV0v-yRb-cjciBsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Droid Sans Bold'), local('DroidSans-Bold'), url(http://themes.googleusercontent.com/static/fonts/droidsans/v3/EFpQQyG9GqCrobXxL-KRMQFhaRv2pGgT5Kf0An0s4MM.woff) format('woff');
+}
+
+* {
+	box-sizing: border-box;
+	user-select: none;
+	-moz-user-select: -moz-none;
+}
+input, textarea {
+	user-select: text !important;
+}
+body {
+	background-color: @background-color;
+	background-image: url("../images/bg.png");
+
+	font-family: @font-stack;
+	text-align: center;
+	color: @text-color;
+	overflow: hidden;
+}
+
+
+button, .button {
+	@base-color: #3D4555;
+	padding: 0.5em 1em;
+	border-radius: 3px;
+
+	color: #eee;
+	text-shadow: 0 1px 0 black;
+	font-family: @font-stack;
+	text-decoration: none;
+
+	background: @base-color;
+	background-image: linear-gradient(transparent, rgba(0,0,0,.2));
+	border: 1px solid darken(@base-color, 30%);
+	box-shadow: inset 0 1px 1px rgba(255,255,255,0.15),
+				inset 0 0 5px rgba(255,255,255, 0.05),
+				0 0 5px rgba(0,0,25,0.5),
+				0 5px 10px rgba(0,0,25,0.3);
+
+	.loaded & {
+		transition: background-color 0.15s; 
+	}
+
+	&:hover {
+		background-color: lighten(@base-color, 5%);
+	}
+
+	&:active {
+		transition: none;
+		background: darken(@base-color, 5%);
+
+		box-shadow: 0 1px 1px rgba(255,255,255,0.10),
+					0 0 5px rgba(255,255,255, 0.05),
+					inset 0 0 5px rgba(0,0,0,0.4),
+					inset 0 5px 10px rgba(0,0,0,0.2);
+	}
+
+	&.confirm {
+		@base-color: #166F16;
+		background-color: @base-color;
+		border-color: darken(@base-color, 30%);
+
+		&:hover {
+			background-color: lighten(@base-color, 5%);
+		}
+
+		&:active {
+			background-color: darken(@base-color, 5%);
+		}
+	}
+
+	&.cancel {
+		@base-color: #8D1D1D;
+		background-color: @base-color;
+		border-color: darken(@base-color, 30%);
+
+		&:hover {
+			background-color: lighten(@base-color, 5%);
+		}
+
+		&:active {
+			background-color: darken(@base-color, 5%);
+		}
+	}
+}
+
+.shadow {
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	animation: fadeIn 0.5s both;
+
+	.no-cssanimations & {
+		opacity: 1;
+	}
+}
+
+.about {
+	position: absolute;
+	z-index: 11;
+	bottom: 20px;
+	right: 30px;
+	font-size: 0.9em;
+	text-shadow: 0 1px 1px rgba(255,255,255,0.12);
+	h1 {
+		margin: 0.1em;
+		font-size: 1.8em;
+	}
+	.title a, .author a {
+		color: @text-color;
+		text-decoration: none;
+		font-weight: bold;
+
+		&:hover {
+			color: @text-highlight-color;
+			text-shadow: 0 0 5px rgba(255,255,255,0.7);
+		}
+
+		.loaded & {
+			transition-property: text-shadow, color;
+			transition-duration: 0.35s;
+		}
+	}
+}
+
+@keyframes fadeIn {
+	100% {
+		opacity: 1;
+	}
+}

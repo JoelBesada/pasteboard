@@ -1,0 +1,59 @@
+// NOTE: Vendor prefixes are automatically added with -prefix-free (http://leaverou.github.com/prefixfree/)
+@import "common.less";
+
+body {
+	overflow: auto;
+	&.full-screen { overflow: hidden; }
+}
+
+.image-container {
+	position: relative;
+	z-index: 10;
+	margin-right: 190px;
+	padding: 30px;
+	overflow: auto;
+
+	.image {
+		max-width: 100%;
+		box-shadow: 0 0 20px rgba(0,0,25,0.7);
+		cursor: zoom-in;
+	}
+
+	.full-screen & {
+		margin-right: 0;
+		.image {
+			max-width: none;
+			cursor: zoom-out;
+		}
+	}
+
+	.broken & {
+		display: none;
+	}
+}
+
+.broken-link {
+	display: none;
+	margin-top: 200px;
+	font-size: 36px;
+	font-weight: bold;
+	text-shadow: 0 1px 1px rgba(255,255,255,0.2);
+
+	.broken & {
+		display: block;
+	}
+}
+.about {
+	width: 180px;
+	top: 40px;
+	right: 20px;
+
+	.author {
+		display: block;
+		padding-bottom: 25px;
+	}
+
+	.full-screen & {
+		display: none;
+	}
+}

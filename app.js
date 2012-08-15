@@ -35,6 +35,7 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.get('/:image', routes.image);
 app.post('/upload', routes.upload);
 app.post('/preupload', routes.preupload);
 app.post('/clearfile', routes.clearfile);

@@ -19,8 +19,12 @@ if (amazonAuth.S3_KEY && amazonAuth.S3_SECRET && amazonAuth.S3_BUCKET) {
 }
 
 /* GET home page */
-exports.index =  function(req, res){
+exports.index =  function(req, res) {
 	res.render("index", { title: "Pasteboard", port: req.app.get("port") });
+};
+
+exports.image = function(req, res) {
+	res.render("image", { title: "Pasteboard - Image", imageURL: "http://" + amazonAuth.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image });
 };
 
 /* POST, preuploads an image and stores it in /tmp */
@@ -101,8 +105,7 @@ exports.upload = function(req, res) {
 				fileExt = fileType.replace("image/", "");
 				// Use microtime to generate a unique file name
 				fileName = microtime.now() + "." + (fileExt === "jpeg" ? "jpg" : fileExt);
-				// Prefix with rm_ so that an Amazon S3 file expiration filter can be used
-				targetPath = "/images/rm_" + fileName;
+				targetPath = "/images/" + fileName;
 
 				uploadToAmazon = function(sourcePath) {
 					knoxClient.putFile(
@@ -111,11 +114,10 @@ exports.upload = function(req, res) {
 						{ "Content-Type": fileType },
 						function(err, putRes) {
 							if (putRes) {
-								var url = "http://" + amazonAuth.S3_BUCKET + ".s3.amazonaws.com" + targetPath;
 								fs.unlink(sourcePath); // Remove tmp file
 
 								if (putRes.statusCode === 200) {
-									res.json({url: url});
+									res.json({url: fileName});
 								} else {
 									console.log("Error: ", err);
 									res.send("Failure", putRes.statusCode);
