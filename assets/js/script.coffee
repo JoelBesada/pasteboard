@@ -18,6 +18,7 @@ pasteboard =
 window.moduleLoader.loadAll(pasteboard)
 
 # Draws a canvas overlay for the vignette effect
+# TODO: Use a CSS gradient instead?
 drawBackgroundOverlay = () ->
 	$canvas ||= $(".shadow")
 	return unless $canvas[0].getContext
