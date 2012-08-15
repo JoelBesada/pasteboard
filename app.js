@@ -19,7 +19,7 @@ app.configure(function(){
   app.set('clients', clients);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
-  app.use(express.favicon());
+  app.use(express.favicon(__dirname + "/public/images/favicon.ico"));
   app.use(express.logger('dev'));
   app.use(express.limit('10mb'));
   //app.use(express.bodyParser());
