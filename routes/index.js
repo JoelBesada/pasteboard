@@ -31,11 +31,11 @@ if (amazonAuth.S3_KEY && amazonAuth.S3_SECRET && amazonAuth.S3_BUCKET) {
 
 /* GET home page */
 exports.index =  function(req, res) {
-	res.render("index", { title: "Pasteboard", port: req.app.get("port") });
+	res.render("index", { port: req.app.get("port") });
 };
 
 exports.image = function(req, res) {
-	res.render("image", { title: "Pasteboard - Image", imageURL: "http://" + amazonAuth.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image });
+	res.render("image", { imageURL: "http://" + amazonAuth.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image });
 };
 
 /* POST, preuploads an image and stores it in /tmp */
