@@ -6,7 +6,7 @@ dragAndDrop = (pasteboard) ->
 	$body = $ "body"
 	$dropArea = $("<div>")
 					.addClass("drop-area")
-					
+
 	onDragStart = (e) ->
 		$body.addClass "dragging"	
 
@@ -32,10 +32,13 @@ dragAndDrop = (pasteboard) ->
 
 
 	self = 
-		isSupported: () -> Modernizr.draganddrop and pasteboard.fileHandler.isSupported()
+		isSupported: () -> !!(Modernizr.draganddrop and pasteboard.fileHandler.isSupported())
 		# Initializes the module
 		init: () ->
-			return unless this.isSupported()
+			unless @isSupported()
+				$("html").addClass("no-draganddrop-pb") # add -pb to prevent conflict with Modernizr
+				return
+
 			$body.prepend $dropArea
 			$dropArea.on
 					"dragenter.dragevent": onDragStart

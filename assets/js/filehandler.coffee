@@ -38,6 +38,8 @@ fileHandler = (pasteboard) ->
 		return callback currentFile unless cropSettings
 
 		canvas = document.createElement "canvas"
+		return callback currentFile, true unless canvas.toBlob
+
 		canvas.width = cropSettings.width
 		canvas.height = cropSettings.height
 		context = canvas.getContext "2d"
@@ -45,7 +47,7 @@ fileHandler = (pasteboard) ->
 		canvas.toBlob callback
 
 	self = 
-		isSupported: () -> window.FileReader or window.URL or window.webkitURL
+		isSupported: () -> !!(window.FileReader or window.URL or window.webkitURL)
 		getCurrentUploadLoaded: () -> currentUploadLoaded
 		getFileSizeLimit: () -> FILE_SIZE_LIMIT
 		# Reads a file and sends it over to the image editor.
@@ -54,10 +56,15 @@ fileHandler = (pasteboard) ->
 			if checkFileSize currentFile
 				# Try creating a file URL first
 				if url = window.URL || window.webkitURL
-					$(pasteboard).trigger "imageinserted", image: url.createObjectURL(file)
-				
+					objectURL = url.createObjectURL(file)
+					
+					# Opera just returns the file again, why?
+					if typeof objectURL is "string"
+						$(pasteboard).trigger "imageinserted", image: objectURL
+						return
+
 				# Else create a data URL
-				else if window.FileReader
+				if window.FileReader
 					fileReader = new FileReader()
 					fileReader.onload = (e) ->
 						$(pasteboard).trigger "imageinserted", image: e.target.result
@@ -143,10 +150,15 @@ fileHandler = (pasteboard) ->
 			else
 				# Force upload
 				$(pasteboard.socketConnection).off "idReceive"
+				
 				# This only crops if we have crop settings
-				cropImage cropSettings, (file) ->
+				cropImage cropSettings, (file, doServerCrop) ->
 					fd = new FormData()
 					fd.append "file", file
+					# Couldn't crop on client
+					if doServerCrop
+						fd.append "cropImage", true
+						fd.append "crop[#{key}]", val for key, val of cropSettings
 
 					callback xhr: sendFileXHR("/upload", fd), inProgress: true
 					

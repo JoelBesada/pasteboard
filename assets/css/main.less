@@ -25,6 +25,12 @@ body {
 	animation: fadeIn 1.5s both;
 	.no-cssanimations & { opacity: 1 }
 
+	p {
+		font-size: 28px;
+		font-weight: bold;
+		text-shadow: 0 1px 1px rgba(255,255,255,0.12);
+	}
+
 	.splash-instructions {
 		position: absolute;
 		height: 350px;
@@ -34,6 +40,10 @@ body {
 		margin-top: -175px;
 		margin-left: -290px;
 		text-align: center;
+
+		.no-draganddrop-pb.no-copyandpaste & {
+			display: none;
+		}
 
 		.splash-image {
 			position: relative;
@@ -70,10 +80,21 @@ body {
 		}
 
 		p {
-			font-size: 28px;
-			font-weight: bold;
-			text-shadow: 0 1px 1px rgba(255,255,255,0.12);
 			margin-top: 5px;
+
+			.no-copyandpaste & {
+				.copyandpaste {
+					text-decoration: line-through;
+					opacity: 0.4;
+				}
+			}
+
+			.no-draganddrop-pb & {
+				.draganddrop {
+					text-decoration: line-through;
+					opacity: 0.4;
+				}
+			}
 
 			.loaded & {
 				transition-property: text-shadow, color;
@@ -87,6 +108,20 @@ body {
 		}
 	}
 
+	.not-supported {
+		display: none;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin-top: -150px;
+		margin-left: -250px;
+		height: 300px;
+		width: 500px;
+
+		.no-draganddrop-pb.no-copyandpaste & {
+			display: block;
+		}
+	}
 }
 
 .source {
@@ -392,7 +427,7 @@ body {
 			color: #eee;
 			border-radius: 12px;
 			border: 1px solid black;
-			padding: 5px 10px;
+			padding: 3px 10px;
 			margin: 0 auto;
 			text-align: center;
 			width: 300px;

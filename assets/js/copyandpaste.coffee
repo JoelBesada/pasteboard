@@ -12,13 +12,18 @@ copyAndPaste = (pasteboard) ->
 					.css( "opacity", 0)
 	onPaste = (e) ->
 		if e.originalEvent.clipboardData
-			for item in e.originalEvent.clipboardData.items
+			items = e.originalEvent.clipboardData.items
+			unless items
+				$("html").addClass("no-copyandpaste")
+				return
+
+			for item in items
 				if /image/.test item.type
 					pasteboard.fileHandler.readFile item.getAsFile()
 					return
 
 			pasteboard.noImageError()
-		else 
+		else
 			setTimeout parsePaste, 1
 
 	parsePaste = () ->
@@ -36,8 +41,13 @@ copyAndPaste = (pasteboard) ->
 		pasteArea.focus() 
 
 	self = 
+		isSupported: () -> "onpaste" of document
 		# Initializes the module
 		init: () ->
+			unless @isSupported()
+				$("html").addClass("no-copyandpaste")
+				return
+
 			# Clipboard fallback
 			unless window.Clipboard
 				pasteArea

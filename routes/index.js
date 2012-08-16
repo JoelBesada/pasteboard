@@ -161,7 +161,7 @@ exports.upload = function(req, res) {
 										shortURLRequest.on("complete", function(response) {
 											var json;
 											if (response.statusCode === 200) {
-												json = JSON.parse(body);
+												json = JSON.parse(response.body);
 												if (json.status_code === 200) {
 													res.json({url: json.data.url});
 													return;
