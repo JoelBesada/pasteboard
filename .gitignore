@@ -1,6 +1,7 @@
 builtAssets/
 node_modules/
 auth/amazon.js
+auth/bitly.js
 
 .DS_Store
 

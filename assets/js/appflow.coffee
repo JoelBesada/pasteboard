@@ -158,7 +158,7 @@ appFlow = (pasteboard) ->
 							.removeClass("default generating")
 							.addClass("done")
 
-						stateData.modal.find(".image-link").val(pasteboard.imageURL(data.url))
+						stateData.modal.find(".image-link").val(data.url)
 							
 				else
 					# Some animations to transition from displaying 
@@ -193,7 +193,7 @@ appFlow = (pasteboard) ->
 
 					if stateData.jQueryXHR 
 						stateData.xhr.success (data) ->
-							showLink pasteboard.imageURL(data.url)
+							showLink data.url
 					else
 						stateData.xhr.addEventListener "load", (e) ->
 							json = {}
@@ -201,7 +201,7 @@ appFlow = (pasteboard) ->
 								json = JSON.parse e.target.response
 							catch e
 								log e.target.response
-							showLink(if json.url then pasteboard.imageURL(json.url) else "Something went wrong")
+							showLink(if json.url then json.url else "Something went wrong")
 							
 				# Go back to uploading another image
 				$modalWindow.on "confirm.stateevents", () ->

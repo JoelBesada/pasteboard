@@ -9,7 +9,6 @@ window.log = ->
 		window.console.log.apply window.console, arguments
 
 pasteboard = 
-	imageURL: (url) -> window.location.href + url
 	noImageError: () ->
 		log "no images found"
 

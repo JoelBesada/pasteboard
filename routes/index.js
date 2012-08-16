@@ -2,12 +2,18 @@ var knox = require("knox"),
 	formidable = require("formidable"),
 	microtime = require("microtime"),
 	easyimage = require("easyimage"),
+	request = require('request'),
 	fs = require('fs'),
 	amazonAuth = {},
+	bitlyAuth = {},
 	knoxClient = null;
 
 try	{
 	amazonAuth = require("../auth/amazon.js");
+} catch (e) {}
+
+try {
+	bitlyAuth = require("../auth/bitly.js");
 } catch (e) {}
 
 if (amazonAuth.S3_KEY && amazonAuth.S3_SECRET && amazonAuth.S3_BUCKET) {
@@ -87,6 +93,9 @@ exports.upload = function(req, res) {
 				targetPath,
 				cropPath,
 				uploadToAmazon,
+				longURL,
+				shortURL,
+				shortURLRequest,
 				canvas;
 
 			if (fields.id) {
@@ -106,7 +115,27 @@ exports.upload = function(req, res) {
 				// Use microtime to generate a unique file name
 				fileName = microtime.now() + "." + (fileExt === "jpeg" ? "jpg" : fileExt);
 				targetPath = "/images/" + fileName;
+				longURL = req.app.get("domain") + "/" + fileName;
 
+				// Start requesting a short URL
+				if(bitlyAuth.LOGIN && bitlyAuth.API_KEY) {
+					shortURLRequest = request("http://api.bitly.com/v3/shorten?login=" +
+							bitlyAuth.LOGIN + "&apiKey=" + bitlyAuth.API_KEY +
+							"&longUrl=" + encodeURIComponent(longURL),
+					function(error, response, body){
+						var json;
+						if (!error && response.statusCode === 200) {
+							json = JSON.parse(body);
+							if (json.status_code === 200) {
+								shortURL = json.data.url;
+								return;
+							}
+						}
+						shortURL = false;
+						return;
+					});
+				}
+				
 				uploadToAmazon = function(sourcePath) {
 					knoxClient.putFile(
 						sourcePath,
@@ -115,9 +144,26 @@ exports.upload = function(req, res) {
 						function(err, putRes) {
 							if (putRes) {
 								fs.unlink(sourcePath); // Remove tmp file
-
 								if (putRes.statusCode === 200) {
-									res.json({url: fileName});
+									if(shortURL === false || !shortURLRequest) {
+										res.json({url: longURL});
+									} else if (shortURL === undefined) {
+										shortURLRequest.on("complete", function(response) {
+											var json;
+											if (response.statusCode === 200) {
+												json = JSON.parse(body);
+												if (json.status_code === 200) {
+													res.json({url: json.data.url});
+													return;
+												}
+											}
+											res.json({url: longURL});
+										}).on("error", function() {
+											res.json({url: longURL});
+										});
+									} else {
+										res.json({url: shortURL});
+									}
 								} else {
 									console.log("Error: ", err);
 									res.send("Failure", putRes.statusCode);

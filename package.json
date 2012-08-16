@@ -15,6 +15,7 @@
     "microtime": "*",
     "formidable": "*",
     "websocket": "*",
-    "easyimage": "*"
+    "easyimage": "*",
+    "request": "*"
   }
 }
