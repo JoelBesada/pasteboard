@@ -36,10 +36,11 @@ appFlow = (pasteboard) ->
 				# An image has been inserted
 				$pasteboard.on "imageinserted.stateevents", (e, eventData) ->
 					$pasteboard.off ".stateevents"
+					$modalWindow.off "cancel"
 					setState ++state, image: eventData.image
 
 				# The image that the user is trying to insert is too large
-				$pasteboard.on "filetoolarge.stateevents", (e, eventData) ->
+				$pasteboard.on "filetoolarge.stateevents", (e) ->
 					pasteboard.modalWindow.show("error",
 						content: "The file size of the image you are trying to
 								  insert exceeds the current limit of 
@@ -47,9 +48,24 @@ appFlow = (pasteboard) ->
 								  <br><br>Please try another image."
 						showCancel: true
 					)
-					$modalWindow.on "cancel", () ->
-						$modalWindow.off "cancel"
-						pasteboard.modalWindow.hide()
+
+				# The user tried to insert something other than an image
+				$pasteboard.on "noimagefound.stateevents", (e, eventData) ->
+					content = "No image found"
+					if eventData.paste
+						content = "No image data was found in your clipboard,
+									copy an image first (or take a screenshot)."
+					else if eventData.drop
+						content = "The object you dragged in is not an image file."
+
+					pasteboard.modalWindow.show("error",
+						content: content
+						showCancel: true
+					)
+				
+				$modalWindow.on "cancel", () ->
+					pasteboard.modalWindow.hide()
+
 
 			# State 3: User is looking at / editing the image
 			when states.editingImage

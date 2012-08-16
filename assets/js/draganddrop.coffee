@@ -28,8 +28,7 @@ dragAndDrop = (pasteboard) ->
 				pasteboard.fileHandler.readFile file
 				return
 
-		pasteboard.noImageError()
-
+		$(pasteboard).trigger "noimagefound", drop: true
 
 	self = 
 		isSupported: () -> !!(Modernizr.draganddrop and pasteboard.fileHandler.isSupported())

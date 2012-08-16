@@ -22,7 +22,7 @@ copyAndPaste = (pasteboard) ->
 					pasteboard.fileHandler.readFile item.getAsFile()
 					return
 
-			pasteboard.noImageError()
+			$(pasteboard).trigger "noimagefound", paste: true
 		else
 			setTimeout parsePaste, 1
 
@@ -35,7 +35,7 @@ copyAndPaste = (pasteboard) ->
 				pasteboard.fileHandler.readData child.src
 				return
 
-		pasteboard.noImageError()
+		$(pasteboard).trigger "noimagefound", paste: true
 	
 	focusPasteArea = () ->
 		pasteArea.focus() 

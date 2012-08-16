@@ -8,9 +8,7 @@ window.log = ->
 	if window.console
 		window.console.log.apply window.console, arguments
 
-pasteboard = 
-	noImageError: () ->
-		log "no images found"
+pasteboard = {}
 
 window.moduleLoader.loadAll(pasteboard)
 
