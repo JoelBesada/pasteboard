@@ -11,11 +11,15 @@ var knox = require("knox"),
 
 try	{
 	amazonAuth = require("../auth/amazon.js");
-} catch (e) {}
+} catch (e) {
+	console.log("Missing /auth/amazon.js");
+}
 
 try {
 	bitlyAuth = require("../auth/bitly.js");
-} catch (e) {}
+} catch (e) {
+	console.log("Missing /auth/bitly.js");
+}
 
 if (amazonAuth.S3_KEY && amazonAuth.S3_SECRET && amazonAuth.S3_BUCKET) {
 	knoxClient = knox.createClient({
