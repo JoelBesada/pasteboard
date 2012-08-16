@@ -31,9 +31,12 @@ $ () ->
 			if $image.height() > 0
 				clearInterval interval
 				setPosition()
+				$image.addClass("appear")
+				window.drawBackgroundOverlay()
 		, 250)
 	else
 		setPosition()
+		$image.addClass("appear")
 	
 	$window.on "resize", setPosition
 	

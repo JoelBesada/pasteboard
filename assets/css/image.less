@@ -14,9 +14,18 @@ body {
 	overflow: auto;
 
 	.image {
+		opacity: 0;
 		max-width: 100%;
 		box-shadow: 0 0 20px rgba(0,0,25,0.7);
 		cursor: zoom-in;
+	
+		.no-js & {
+			opacity: 1;
+		}
+		&.appear {
+			opacity: 1;
+			transition: opacity 1s;
+		}
 	}
 
 	.full-screen & {

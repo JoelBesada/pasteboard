@@ -11,7 +11,7 @@ window.log = ->
 
 # Draws a canvas overlay for the vignette effect
 # TODO: Use a CSS gradient instead?
-drawBackgroundOverlay = () ->
+window.drawBackgroundOverlay = () ->
 	$canvas ||= $(".shadow")
 	return unless $canvas[0].getContext
 	
