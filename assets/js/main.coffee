@@ -1,7 +1,7 @@
 #= require common
 #= require_tree lib
-#= require moduleloader
-#= require_tree .
+#= require modules/moduleloader
+#= require_tree modules
 
 # Global console.log shorthand
 window.log = ->

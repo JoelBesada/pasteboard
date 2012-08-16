@@ -4,12 +4,7 @@
     <title>Pasteboard &mdash; Uploaded Image</title>
     <meta name="description" content="Super simple and lightning fast image uploads using Copy &amp; Paste or Drag &amp; Drop">
     <%- css("image") %>
-    <script type="text/javascript" src="javascripts/prefixfree.min.js"></script>
-    <script type="text/javascript">
-      window.brokenLink = function() {
-        document.body.className += " broken"
-      }
-    </script>
+    <%- js("head") %>
   </head>
   <body>
     <canvas class="shadow"></canvas>
