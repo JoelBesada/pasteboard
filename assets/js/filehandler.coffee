@@ -12,15 +12,11 @@ fileHandler = (pasteboard) ->
 	sendFileXHR = (url, formData) ->
 		onProgress = (e) ->
 			currentUploadLoaded = e.loaded
-			log "#{Math.floor(e.loaded / e.total * 100)}%"
-		onSuccess = (e) ->
-			log e.target.response
 		onError = (e) ->
 			log "Error: ", e
 
 		xhr = new XMLHttpRequest()
 		xhr.upload.addEventListener "progress", onProgress
-		xhr.addEventListener "load", onSuccess
 		xhr.addEventListener "error", onError
 		xhr.open "POST", url
 		xhr.send formData
