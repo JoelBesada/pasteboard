@@ -33,9 +33,23 @@ appFlow = (pasteboard) ->
 				# Show the splash screen
 				$(".splash").show()
 
-				$pasteboard.on "imageinserted", (e, eventData) ->
-					$pasteboard.off "imageinserted"
+				# An image has been inserted
+				$pasteboard.on "imageinserted.stateevents", (e, eventData) ->
+					$pasteboard.off ".stateevents"
 					setState ++state, image: eventData.image
+
+				# The image that the user is trying to insert is too large
+				$pasteboard.on "filetoolarge.stateevents", (e, eventData) ->
+					pasteboard.modalWindow.show("error",
+						content: "The file size of the image you are trying to
+								  insert exceeds the current limit of 
+								  #{pasteboard.fileHandler.getFileSizeLimit() / (1024 * 1024)} MB. 
+								  <br><br>Please try another image."
+						showCancel: true
+					)
+					$modalWindow.on "cancel", () ->
+						$modalWindow.off "cancel"
+						pasteboard.modalWindow.hide()
 
 			# State 3: User is looking at / editing the image
 			when states.editingImage

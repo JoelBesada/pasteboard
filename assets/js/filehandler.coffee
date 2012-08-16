@@ -4,9 +4,18 @@
 ###
 
 fileHandler = (pasteboard) ->
+	FILE_SIZE_LIMIT = 10 * 1024 * 1024 # 10MB
 	preuploadXHR = null
 	currentFile = null
 	currentUploadLoaded = 0
+
+	# Checks the size of the file. If the size
+	# exceeds the limit, trigger an error event
+	checkFileSize = (file) ->
+		if file.size > FILE_SIZE_LIMIT
+			$(pasteboard).trigger("filetoolarge")
+			return false
+		return true
 
 	# Creates an XHR object and sends the given FormData to the url
 	sendFileXHR = (url, formData) ->
@@ -38,27 +47,30 @@ fileHandler = (pasteboard) ->
 	self = 
 		isSupported: () -> window.FileReader or window.URL or window.webkitURL
 		getCurrentUploadLoaded: () -> currentUploadLoaded
+		getFileSizeLimit: () -> FILE_SIZE_LIMIT
 		# Reads a file and sends it over to the image editor.
 		readFile: (file) ->
 			currentFile = file
-			# Try creating a file URL first
-			if url = window.URL || window.webkitURL
-				$(pasteboard).trigger "imageinserted", image: url.createObjectURL(file)
-			
-			# Else create a data URL
-			else if window.FileReader
-				fileReader = new FileReader()
-				fileReader.onload = (e) ->
-					$(pasteboard).trigger "imageinserted", image: e.target.result
+			if checkFileSize currentFile
+				# Try creating a file URL first
+				if url = window.URL || window.webkitURL
+					$(pasteboard).trigger "imageinserted", image: url.createObjectURL(file)
+				
+				# Else create a data URL
+				else if window.FileReader
+					fileReader = new FileReader()
+					fileReader.onload = (e) ->
+						$(pasteboard).trigger "imageinserted", image: e.target.result
 
-				fileReader.readAsDataURL file
+					fileReader.readAsDataURL file
 			
 
 		# Converts the given data into a file, and sends the data
 		# to the image editor
 		readData: (data) ->
 			currentFile = dataURLtoBlob data
-			$(pasteboard).trigger "imageinserted", image: data
+			if checkFileSize currentFile
+				$(pasteboard).trigger "imageinserted", image: data
 
 		# Converts the data to a file object and uploads
 		# it to the server, while tracking the progress.

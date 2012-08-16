@@ -324,7 +324,6 @@ body {
 }
 
 .modal {
-	@top-bar-background: #5B6280;
 	@modal-background: rgba(70, 75, 105, 0.85);
 	position: fixed;
 	top: 0;
@@ -355,6 +354,10 @@ body {
 
 
 		animation: fadeInModalWindow 0.3s;
+
+		p {
+			text-align: left;
+		}
 
 		.status {
 			position: relative;
@@ -424,6 +427,12 @@ body {
 					0 0 5px rgba(0,0,25,0.3),
 					0 3px 5px rgba(0,0,25,0.1);
 				}
+			}
+		}
+
+		&.error {
+			p {
+				margin-bottom: 20px
 			}
 		}
 

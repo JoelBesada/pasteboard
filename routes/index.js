@@ -6,7 +6,8 @@ var knox = require("knox"),
 	fs = require('fs'),
 	amazonAuth = {},
 	bitlyAuth = {},
-	knoxClient = null;
+	knoxClient = null,
+	FILE_SIZE_LIMIT = 10 * 1024 * 1024; // 10 MB
 
 try	{
 	amazonAuth = require("../auth/amazon.js");
@@ -110,6 +111,11 @@ exports.upload = function(req, res) {
 				client.uploading[file.path] = true;
 			}
 			if (file) {
+				if (file.size > FILE_SIZE_LIMIT) {
+					res.send("File too large", 500);
+					return;
+				}
+
 				fileType = file.type;
 				fileExt = fileType.replace("image/", "");
 				// Use microtime to generate a unique file name
