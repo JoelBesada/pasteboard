@@ -15,6 +15,7 @@ var app = express(),
     wsServer;
 
 app.configure(function(){
+  app.set('localrun', process.env.LOCAL || false);
   app.set('port', process.env.PORT || 3000);
   app.set('clients', clients);
   app.set('domain', 'http://pasteboard.co');

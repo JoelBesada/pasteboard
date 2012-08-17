@@ -18,12 +18,33 @@ if (auth.amazon) {
 
 /* GET, home page */
 exports.index =  function(req, res) {
-	res.render("index", { port: req.app.get("port") });
+	var params = {
+		port: req.app.get("port"),
+		useAnalytics: false,
+		trackingCode: ""
+	};
+
+	if (!req.app.get('localrun') && auth.google_analytics) {
+		params.useAnalytics = true;
+		params.trackingCode = req.app.settings.env === "development" ? auth.google_analytics.development : auth.google_analytics.production;
+	}
+
+	res.render("index", params);
 };
 
 /* GET, image display page */
 exports.image = function(req, res) {
-	res.render("image", { imageURL: "http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image });
+	var params = {
+		imageURL: "http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image,
+		useAnalytics: false,
+		trackingCode: ""
+	};
+
+	if (!req.app.get('localrun') && auth.google_analytics) {
+		params.useAnalytics = true;
+		params.trackingCode = req.app.settings.env === "development" ? auth.google_analytics.development : auth.google_analytics.production;
+	}
+	res.render("image", params);
 };
 
 /* GET, returns the short url for the given file name.

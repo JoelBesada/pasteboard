@@ -15,3 +15,10 @@ window.moduleLoader.loadAll(pasteboard)
 $ () ->
 	pasteboard.appFlow.start()
 
+	# Analytics
+	if window._gaq
+		$(".source").on "click", () ->
+			_gaq.push ['_trackEvent', 'main page', 'click', 'github link']
+
+		$(".author a").on "click", () ->
+			_gaq.push ['_trackEvent', 'main page', 'click', 'twitter link']
