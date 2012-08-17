@@ -4,28 +4,15 @@ var knox = require("knox"),
 	easyimage = require("easyimage"),
 	request = require('request'),
 	fs = require('fs'),
-	amazonAuth = {},
-	bitlyAuth = {},
+	auth = require('../auth'),
 	knoxClient = null,
 	FILE_SIZE_LIMIT = 10 * 1024 * 1024; // 10 MB
 
-try	{
-	amazonAuth = require("../auth/amazon.js");
-} catch (e) {
-	console.log("Missing /auth/amazon.js");
-}
-
-try {
-	bitlyAuth = require("../auth/bitly.js");
-} catch (e) {
-	console.log("Missing /auth/bitly.js");
-}
-
-if (amazonAuth.S3_KEY && amazonAuth.S3_SECRET && amazonAuth.S3_BUCKET) {
+if (auth.amazon) {
 	knoxClient = knox.createClient({
-			key: amazonAuth.S3_KEY,
-			secret: amazonAuth.S3_SECRET,
-			bucket: amazonAuth.S3_BUCKET
+			key: auth.amazon.S3_KEY,
+			secret: auth.amazon.S3_SECRET,
+			bucket: auth.amazon.S3_BUCKET
 		});
 }
 
@@ -35,7 +22,7 @@ exports.index =  function(req, res) {
 };
 
 exports.image = function(req, res) {
-	res.render("image", { imageURL: "http://" + amazonAuth.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image });
+	res.render("image", { imageURL: "http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image });
 };
 
 /* POST, preuploads an image and stores it in /tmp */
@@ -128,9 +115,9 @@ exports.upload = function(req, res) {
 				longURL = req.app.get("domain") + "/" + fileName;
 
 				// Start requesting a short URL
-				if(bitlyAuth.LOGIN && bitlyAuth.API_KEY) {
+				if(auth.bitly) {
 					shortURLRequest = request("http://api.bitly.com/v3/shorten?login=" +
-							bitlyAuth.LOGIN + "&apiKey=" + bitlyAuth.API_KEY +
+							auth.bitly.LOGIN + "&apiKey=" + auth.bitly.API_KEY +
 							"&longUrl=" + encodeURIComponent(longURL),
 					function(error, response, body){
 						var json;
