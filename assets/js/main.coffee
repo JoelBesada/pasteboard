@@ -15,6 +15,22 @@ window.moduleLoader.loadAll(pasteboard)
 $ () ->
 	pasteboard.appFlow.start()
 
+	# Display welcome message (to users redirected from pasteshack.net)
+	if window.location.hash is "#r"
+		
+		# Clear hash
+		window.location.hash = ""
+		if history and history.pushState
+			history.pushState("", document.title, window.location.pathname)
+
+		$(".welcome")
+			.css("display", "block")
+			.delay(1500)
+			.transition(
+				top: 0
+				opacity: 1
+			)
+
 	# Analytics
 	if window._gaq
 		$(".source").on "click", () ->

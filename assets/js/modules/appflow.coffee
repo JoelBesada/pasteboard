@@ -69,6 +69,11 @@ appFlow = (pasteboard) ->
 
 			# State 3: User is looking at / editing the image
 			when states.editingImage
+				$(".welcome").transition(
+					top: -50
+					opacity: 0
+				, () -> $(this).remove() )
+
 				unless stateData.backtracked
 					# Start preuploading the image right away
 					pasteboard.fileHandler.preuploadFile()
