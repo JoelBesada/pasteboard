@@ -296,7 +296,11 @@ imageEditor = (pasteboard) ->
 	scrollWheelHandler = (e) ->
 		e.preventDefault()
 		deltaX = e.originalEvent.wheelDeltaX or 0
-		deltaY = e.originalEvent.wheelDeltaY or e.originalEvent.wheelDelta or 0
+		deltaY = e.originalEvent.wheelDeltaY
+		deltaY = e.originalEvent.wheelDelta or 0 if deltaY is undefined
+
+		log deltaX, deltaY
+		
 		# Firefox
 		if e.type is "DOMMouseScroll"
 			# Set better delta values than what firefox throws out
