@@ -1,0 +1,120 @@
+// NOTE: Vendor prefixes are automatically added with -prefix-free (http://leaverou.github.com/prefixfree/)
+@import "common.less";
+
+body {
+	overflow: auto;
+	&.full-screen { overflow: hidden; }
+}
+
+input {
+	background-color: darken(@background-color, 30%);
+	color: #eee;
+	border-radius: 12px;
+	border: 1px solid black;
+	padding: 3px 10px;
+	margin: 0 auto;
+	text-align: center;
+	width: 165px;
+	height: 24px;
+	box-shadow: 1px 1px 1px rgba(255,255,255,0.10),
+				0 0 5px rgba(255,255,255, 0.05),
+				inset 0 0 5px rgba(0,0,0,0.5),
+				inset 5px 5px 10px rgba(0,0,0,0.3);
+
+	transition-property: background-color, color, box-shadow;
+	transition-duration: 0.25s;
+	cursor: text;
+	text-overflow: ellipsis;
+
+	&:focus {
+		outline: none;
+		box-shadow: 1px 1px 1px rgba(255,255,255,0.10),
+				0 0 5px rgba(255,255,255, 0.1),
+				inset 0 0 5px rgba(0,0,0,0.5),
+				inset 5px 5px 10px rgba(0,0,0,0.3),
+				0 0 10px rgba(125,200,255,0.25);
+		background-color: darken(@background-color, 25%);
+	}
+}
+
+.image-container {
+	position: relative;
+	z-index: 10;
+	margin-right: 190px;
+	padding: 30px;
+	overflow: auto;
+
+	.image {
+		opacity: 0;
+		max-width: 100%;
+		box-shadow: 0 0 20px rgba(0,0,25,0.7);
+		cursor: zoom-in;
+	
+		.no-js & {
+			opacity: 1;
+		}
+		&.appear {
+			opacity: 1;
+			transition: opacity 1s;
+		}
+	}
+
+	.full-screen & {
+		margin-right: 0;
+		.image {
+			max-width: none;
+			cursor: zoom-out;
+		}
+	}
+
+	.broken & {
+		display: none;
+	}
+}
+
+.broken-link {
+	display: none;
+	margin-top: 200px;
+	font-size: 36px;
+	font-weight: bold;
+	text-shadow: 0 1px 1px rgba(255,255,255,0.2);
+
+	.broken & {
+		display: block;
+	}
+}
+.about {
+	width: 180px;
+	top: 40px;
+	right: 20px;
+
+	.author {
+		display: block;
+		padding-bottom: 25px;
+	}
+
+	.full-screen & {
+		display: none;
+	}
+
+	.raw-url span, .short-url span {
+		display: block;
+		font-weight: bold;
+		font-size: 1.05em;
+		margin-bottom: 5px;		
+	}
+
+	.raw-url {
+		margin-top: 40px;
+	}
+
+	.short-url {
+		opacity: 0;
+		margin-top: 20px;
+
+		&.appear {
+			opacity: 1;
+			transition: opacity 1s;
+		}
+	}
+}

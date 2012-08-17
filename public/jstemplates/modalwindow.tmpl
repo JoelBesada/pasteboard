@@ -1,0 +1,41 @@
+<div class="modal">
+	<div class="modal-window <%= modalType %> default">
+		<div class="content">
+			<% switch(modalType) { 
+			    case "error": %>
+					<p><%= content %></p>
+				<% break; 
+				case "upload-progress": %>
+					<ul class="status">
+						<li class="in-progress">Uploading &mdash; <span class="progress-number">00</span>%</li>
+						<li class="generating">Generating URL&#8230;</li>
+						<li class="done">Here's your link:</li>
+					</ul>
+					<div class="upload-bar">
+						<div class="track">
+							<div class="progress-bar"></div>
+						</div>
+					</div>
+					<input type="text" readonly onClick="this.select()" class="image-link">
+				<% break; 
+				case "upload-link": %>
+					<ul class="status">
+						<li class="generating">Generating URL&#8230;</li>
+						<li class="done">Here's your link:</li>
+					</ul>
+					<div class="image-link-wrapper"><input type="text" readonly onClick="this.select()" class="image-link"></div>
+				<% break; 
+				default: %> 	
+					<%= content %>
+			<% } %>
+		</div>
+		<div class="action-bar">
+			<% if (showCancel) { %>
+				<button class="cancel"><%= cancelText %></button>
+			<% } %>
+			<% if (showConfirm) { %>
+				<button class="confirm"><%= confirmText %></button>
+			<% } %>
+		</div>
+	</div>
+</div>

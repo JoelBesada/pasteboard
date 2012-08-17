@@ -1,21 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html class="no-js">
   <head>
-    <title><%= title %></title>
-    <%- css("style") %>
-    <script type="text/javascript" src="javascripts/prefixfree.min.js"></script>
-    <!-- Deploy succeeded! -->
+    <title>Pasteboard &mdash; Easy Image Uploads</title>
+    <meta name="description" content="Super simple and lightning fast image uploads using Copy &amp; Paste or Drag &amp; Drop">
+    <%- css("main") %>
+    <%- js("head") %>
+    <!-- Globals -->
+    <script type="text/javascript">
+      window.SOCKET_PORT = <%= port %>;
+    </script>
+    <% if (useAnalytics) { %>
+      <!-- Google Analytics -->
+      <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', '<%= trackingCode %>']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      </script>
+    <% } %>
   </head>
   <body>
-  	<div class="splash">
-  		<div class="splash-image">
+    <canvas class="shadow"></canvas>
+    <section class="splash">
+      <div class="splash-instructions">
+        <div class="splash-image">
         <div class="image-regular"></div>
         <div class="image-shine"></div>  
+        </div>
+        <p>
+          <span class="copyandpaste">Copy &amp; Paste</span> or <span class="draganddrop">Drag &amp; Drop</span> <br>
+          <span class="sub-text">the image you want to upload.</span> 
+        </p>
       </div>
-  		<p class="instructions">
-  			Copy & Paste / Drag & Drop
-  		</p>
-  	</div>
-  	<%- js("script") %>
+      <div class="not-supported">
+        <p>
+          This browser is not supported because of missing HTML5 features.
+        </p>
+      </div>
+    </section>
+    <a href="https://github.com/JoelBesada/pasteboard" class="source button" target="__blank"><span class="icon"></span>Source</a>
+    <div class="about">
+      <h1 class="title">Pasteboard</h1>
+      <span class="author">By <a href="https://twitter.com/JoelBesada" target="__blank">@JoelBesada</a></span>
+    </div>
+  	<%- js("main") %>
   </body>
 </html>
