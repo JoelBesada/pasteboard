@@ -66,6 +66,6 @@ $ () ->
 	# Analytics
 	if window._gaq
 		$(".author a").on "click", () ->
-			_gaq.push ['_trackEvent', 'main page', 'click', 'twitter link']
+			_gaq.push ['_trackEvent', 'image page', 'click', 'twitter link']
 
 
