@@ -16,13 +16,48 @@ if (auth.amazon) {
 		});
 }
 
-/* GET home page */
+/* GET, home page */
 exports.index =  function(req, res) {
 	res.render("index", { port: req.app.get("port") });
 };
 
+/* GET, image display page */
 exports.image = function(req, res) {
 	res.render("image", { imageURL: "http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image });
+};
+
+/* GET, returns the short url for the given file name.
+ * Assumes a Parse database has been set up with the
+ * class short_url with columns fileName and shortURL.
+ *
+ * TODO: Set correct status codes
+ */
+exports.shorturl = function(req, res) {
+	if (!auth.parse) {
+		res.send("Missing Parse.com credentials", 500);
+		return;
+	}
+	if (!req.params.fileName) {
+		res.send("Missing fileName parameter", 500);
+	}
+	query = encodeURIComponent('{"fileName":"' + req.params.fileName + '"}');
+	request({
+		method: "GET",
+		uri: "https://api.parse.com/1/classes/short_url?where=" + query,
+		headers: {
+			"X-Parse-Application-Id": auth.parse.APP_ID,
+			"X-Parse-REST-API-Key": auth.parse.API_KEY
+		}
+	}, function(error, response, body) {
+		if(!error && response.statusCode === 200) {
+			var result = JSON.parse(body).results[0];
+			if (result) {
+				res.json({url: result.shortURL});
+				return;
+			}
+		}
+		res.send("Not found", 500);
+	});
 };
 
 /* POST, preuploads an image and stores it in /tmp */
@@ -125,6 +160,22 @@ exports.upload = function(req, res) {
 							json = JSON.parse(body);
 							if (json.status_code === 200) {
 								shortURL = json.data.url;
+
+								// Store the short URL in the Parse.com database
+								if (auth.parse) {
+									request({
+										method: "POST",
+										uri: "https://api.parse.com/1/classes/short_url",
+										headers: {
+											"X-Parse-Application-Id": auth.parse.APP_ID,
+											"X-Parse-REST-API-Key": auth.parse.API_KEY
+										},
+										json: {
+											fileName: fileName,
+											shortURL: shortURL
+										}
+									});
+								}
 								return;
 							}
 						}

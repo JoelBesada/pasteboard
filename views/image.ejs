@@ -12,11 +12,19 @@
       <img src="<%= imageURL %>" alt="uploaded image" class="image" onerror="brokenLink()">
     </div>
     <div class="broken-link">Image not found</div>
-    <div class="about">
+    <aside class="about">
       <h1 class="title"><a href="/">Pasteboard</a></h1>
       <span class="author">By <a href="https://twitter.com/JoelBesada">@JoelBesada</a></span>
       <a href="/" class="button confirm">Upload an Image</a>
-    </div>
+      <div class="raw-url">
+        <span>Raw Image URL:</span>
+        <input type="text" readonly onClick="this.select();" value="<%= imageURL %>">
+      </div>
+      <div class="short-url">
+        <span>Short URL:</span>
+        <input type="text" readonly onClick="this.select();">
+      </div>
+    </aside>
     <%- js("image") %>
   </body>
 </html>

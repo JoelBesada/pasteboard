@@ -40,6 +40,14 @@ $ () ->
 	
 	$window.on "resize", setPosition
 	
+	# Fetch the shortlink
+	if window.location.pathname
+		$.get "/shorturl/" + window.location.pathname.replace("/", ""), (data) ->
+			$(".short-url")
+				.addClass("appear")
+				.find("input").val(data.url)
+
+	# Toggle between fullscreen and regular view
 	$image.on "click", () ->
 		fullScreen = !fullScreen
 		$("body").toggleClass("full-screen")
