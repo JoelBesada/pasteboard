@@ -8,6 +8,7 @@ fileHandler = (pasteboard) ->
 	preuploadXHR = null
 	currentFile = null
 	currentUploadLoaded = 0
+	currentUploadRatio = 0
 
 	# Checks the size of the file. If the size
 	# exceeds the limit, trigger an error event
@@ -21,6 +22,7 @@ fileHandler = (pasteboard) ->
 	sendFileXHR = (url, formData) ->
 		onProgress = (e) ->
 			currentUploadLoaded = e.loaded
+			currentUploadRatio = e.loaded / e.total
 		onError = (e) ->
 			log "Error: ", e
 
@@ -49,6 +51,7 @@ fileHandler = (pasteboard) ->
 	self = 
 		isSupported: () -> !!(window.FileReader or window.URL or window.webkitURL)
 		getCurrentUploadLoaded: () -> currentUploadLoaded
+		getCurrentUploadRatio: () -> currentUploadRatio
 		getFileSizeLimit: () -> FILE_SIZE_LIMIT
 		# Reads a file and sends it over to the image editor.
 		readFile: (file) ->

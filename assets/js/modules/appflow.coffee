@@ -129,28 +129,37 @@ appFlow = (pasteboard) ->
 								.end().find(".progress-number")
 									.text(if ("" + percent).length < 2 then "0#{percent}" else percent)
 
-								# The upload is complete (but still waiting for response from the server)
-								if percent is 100 
-									modal.find(".modal-window")
+								onComplete() if percent is 100 
+									
+							# This runs when the upload is complete but we're still waiting for 
+							# a response from the server
+							onComplete = () ->
+								modal.find(".modal-window")
 										.removeClass("default")
 										.addClass("generating")
 									
-									# The upload can no longer be cancelled
-									$modalWindow.off "cancel"
+								# The upload can no longer be cancelled
+								$modalWindow.off "cancel"
 
-									if stateData.upload.preuploading
-										# In the case of a continued preupload we need
-										# to send another request to upload the preuploaded
-										# image from the server to the cloud
-										stateData.upload.xhr.addEventListener "load", () ->
-											pasteboard.imageEditor.uploadImage (upload) ->
-												setState ++state, $.extend(upload, jQueryXHR: true, modal: modal)
-									else
-										setState ++state,
-											xhr: stateData.upload.xhr
-											modal: modal
+								if stateData.upload.preuploading
+									# In the case of a continued preupload we need
+									# to send another request to upload the preuploaded
+									# image from the server to the cloud
+									stateData.upload.xhr.addEventListener "load", () ->
+										pasteboard.imageEditor.uploadImage (upload) ->
+											setState ++state, $.extend(upload, jQueryXHR: true, modal: modal)
+								else
+									setState ++state,
+										xhr: stateData.upload.xhr
+										modal: modal
 
-							stateData.upload.xhr.upload.addEventListener "progress", progressHandler
+							# The user clicked upload right between the
+							# preupload completing (no more progress events will fire)
+							# and the http request completing
+							if pasteboard.fileHandler.getCurrentUploadRatio() is 1
+								onComplete()
+							else
+								stateData.upload.xhr.upload.addEventListener "progress", progressHandler
 						)
 				
 				# Image is already uploaded, just waiting for
