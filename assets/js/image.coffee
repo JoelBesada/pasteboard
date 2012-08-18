@@ -51,6 +51,7 @@ $ () ->
 	$image.on "click", () ->
 		fullScreen = !fullScreen
 		$("body").toggleClass("full-screen")
+		$(window).scrollTop(0)
 
 		if fullScreen
 			setSize()
