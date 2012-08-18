@@ -146,10 +146,9 @@ body {
 	}
 }
 
-.source {
+.source, .tweet {
 	position: absolute;
 	z-index: 11;
-	bottom: 20px;
 	left: 20px;
 	width: 35px;
 	height: 35px;
@@ -172,10 +171,8 @@ body {
 		position: absolute;
 		top: 0;
 		left: 0;
-		background-image: url("../images/github-icon.png");
 		background-size: 35px;
 		background-repeat: no-repeat;
-		background-position: center 2px;
 	}
 	&:hover, &:active {
 		opacity: 1;
@@ -188,10 +185,22 @@ body {
 			transition-delay: 0s;
 		}
 	}
-	&:active {
-		&:after {
-			background-position: center 3px;
-		}
+}
+
+.tweet {
+	bottom: 65px;
+
+	.icon {
+		background-image: url("../images/twitter-icon.png");
+		background-position: center;
+	}
+}
+.source {
+	bottom: 20px;
+
+	.icon {
+		background-image: url("../images/github-icon.png");
+		background-position: center 2px;
 	}
 }
 	
