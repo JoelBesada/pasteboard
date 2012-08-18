@@ -1,6 +1,5 @@
 # Pasteboard
-Pasteboard is my redesigned and renamed update to PasteShack, a web app for easy image uploading. The live version is available at [http://pasteboard.co](http://pasteboard.co), and a development version that's running the code
-from the dev branch is up at [http://dev.pasteboard.co](http://dev.pasteboard.co).
+Pasteboard is my redesigned and renamed update to PasteShack, a web app for easy image uploading. The live version is available at [http://pasteboard.co](http://pasteboard.co), and a development version that's running the code from the dev branch is up at [http://dev.pasteboard.co](http://dev.pasteboard.co).
 
 MIT Licensed (http://www.opensource.org/licenses/mit-license.php)   
 Copyright 2012, Joel Besada
