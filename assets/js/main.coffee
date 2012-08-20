@@ -16,13 +16,7 @@ $ () ->
 	pasteboard.appFlow.start()
 
 	# Display welcome message (to users redirected from pasteshack.net)
-	if window.location.hash is "#r"
-		
-		# Clear hash
-		window.location.hash = ""
-		if history and history.pushState
-			history.pushState("", document.title, window.location.pathname)
-
+	if $(".welcome").length > 0
 		$(".welcome")
 			.css("display", "block")
 			.delay(1500)

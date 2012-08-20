@@ -25,6 +25,7 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.limit('10mb'));
   //app.use(express.bodyParser());
+  app.use(express.cookieParser());
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(require('connect-assets')());
@@ -38,6 +39,7 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.get('/redirected', routes.redirected);
 app.get('/:image', routes.image);
 app.get('/shorturl/:fileName', routes.shorturl);
 app.post('/upload', routes.upload);

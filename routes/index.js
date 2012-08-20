@@ -20,6 +20,7 @@ if (auth.amazon) {
 exports.index =  function(req, res) {
 	var params = {
 		port: req.app.get("port"),
+		redirected: false,
 		useAnalytics: false,
 		trackingCode: ""
 	};
@@ -28,8 +29,16 @@ exports.index =  function(req, res) {
 		params.useAnalytics = true;
 		params.trackingCode = req.app.settings.env === "development" ? auth.google_analytics.development : auth.google_analytics.production;
 	}
-
+	if (req.cookies.redirected) {
+		params.redirected = true;
+		res.clearCookie('redirected');
+	}
 	res.render("index", params);
+};
+
+exports.redirected = function(req, res) {
+	res.cookie("redirected", true);
+	res.redirect('/');
 };
 
 /* GET, image display page */
