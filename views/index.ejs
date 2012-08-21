@@ -24,7 +24,7 @@
       </script>
     <% } %>
   </head>
-  <body>
+  <body data-page="Main Page">
     <% if (redirected) { %>
     <div class="welcome">Welcome to the next version of PasteShack, I hope you like the new design and features.</div>
     <% } %>
@@ -48,10 +48,10 @@
     </section>
     <a href="https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Ftwitter.com%2Fabout%2Fresources%2Fbuttons&source=tweetbutton&text=Pasteboard%20-%20Easy%20Image%20Uploads&url=http%3A%2F%2Fpasteboard.co&via=JoelBesada" class="tweet button" target="__blank"><span class="icon"></span>Tweet</a>
 
-    <a href="https://github.com/JoelBesada/pasteboard" class="source button" target="__blank"><span class="icon"></span>Source</a>
+    <a href="https://github.com/JoelBesada/pasteboard" class="source button" target="__blank" data-track="Github"><span class="icon"></span>Source</a>
     <div class="about">
       <h1 class="title">Pasteboard</h1>
-      <span class="author">By <a href="https://twitter.com/JoelBesada" target="__blank">@JoelBesada</a></span>
+      <span class="author">By <a href="https://twitter.com/JoelBesada" target="__blank" data-track="Twitter">@JoelBesada</a></span>
     </div>
   	<%- js("main") %>
   </body>

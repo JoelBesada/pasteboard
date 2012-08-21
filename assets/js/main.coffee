@@ -13,6 +13,7 @@ pasteboard = {}
 window.moduleLoader.loadAll(pasteboard)
 
 $ () ->
+	pasteboard.analytics.init()
 	pasteboard.appFlow.start()
 
 	# Display welcome message (to users redirected from pasteshack.net)
@@ -24,11 +25,4 @@ $ () ->
 				top: 0
 				opacity: 1
 			)
-
-	# Analytics
-	if window._gaq
-		$(".source").on "click", () ->
-			_gaq.push ['_trackEvent', 'main page', 'click', 'github link']
-
-		$(".author a").on "click", () ->
-			_gaq.push ['_trackEvent', 'main page', 'click', 'twitter link']
+	

@@ -19,7 +19,7 @@ copyAndPaste = (pasteboard) ->
 
 			for item in items
 				if /image/.test item.type
-					pasteboard.fileHandler.readFile item.getAsFile()
+					pasteboard.fileHandler.readFile item.getAsFile(), "Copy and Paste"
 					return
 
 			$(pasteboard).trigger "noimagefound", paste: true
@@ -32,7 +32,7 @@ copyAndPaste = (pasteboard) ->
 
 		if child 
 			if child.tagName is "IMG" and /^data:image/i.test child.src
-				pasteboard.fileHandler.readData child.src
+				pasteboard.fileHandler.readData child.src, "Copy and Paste"
 				return
 
 		$(pasteboard).trigger "noimagefound", paste: true

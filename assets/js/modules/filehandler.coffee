@@ -12,9 +12,11 @@ fileHandler = (pasteboard) ->
 
 	# Checks the size of the file. If the size
 	# exceeds the limit, trigger an error event
-	checkFileSize = (file) ->
+	checkFileSize = (file, action) ->
 		if file.size > FILE_SIZE_LIMIT
-			$(pasteboard).trigger("filetoolarge")
+			$(pasteboard).trigger "filetoolarge", 
+				size: file.size
+				action: action
 			return false
 		return true
 
@@ -54,33 +56,43 @@ fileHandler = (pasteboard) ->
 		getCurrentUploadRatio: () -> currentUploadRatio
 		getFileSizeLimit: () -> FILE_SIZE_LIMIT
 		# Reads a file and sends it over to the image editor.
-		readFile: (file) ->
+		readFile: (file, action) ->
 			currentFile = file
-			if checkFileSize currentFile
+			if checkFileSize currentFile, action
 				# Try creating a file URL first
 				if url = window.URL || window.webkitURL
 					objectURL = url.createObjectURL(file)
 					
 					# Opera just returns the file again, why?
 					if typeof objectURL is "string"
-						$(pasteboard).trigger "imageinserted", image: objectURL
+						$(pasteboard).trigger "imageinserted", 
+							image: objectURL
+							action: action
+							size: currentFile.size
+							
 						return
 
 				# Else create a data URL
 				if window.FileReader
 					fileReader = new FileReader()
 					fileReader.onload = (e) ->
-						$(pasteboard).trigger "imageinserted", image: e.target.result
+						$(pasteboard).trigger "imageinserted", 
+							image: e.target.result
+							action: action
+							size: currentFile.size
 
 					fileReader.readAsDataURL file
 			
 
 		# Converts the given data into a file, and sends the data
 		# to the image editor
-		readData: (data) ->
+		readData: (data, action) ->
 			currentFile = dataURLtoBlob data
 			if checkFileSize currentFile
-				$(pasteboard).trigger "imageinserted", image: data
+				$(pasteboard).trigger "imageinserted", 
+					image: data
+					action: action
+					size: currentFile.size
 
 		# Converts the data to a file object and uploads
 		# it to the server, while tracking the progress.

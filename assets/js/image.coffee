@@ -1,4 +1,6 @@
 #= require common
+#= require modules/moduleloader
+#= require modules/analytics
 
 $window = $(window)
 $imageContainer = null
@@ -20,9 +22,14 @@ setPosition = () ->
 		$imageContainer.css
 			top: ""
 
+pasteboard = {}
+window.moduleLoader.load("analytics", pasteboard)
+
 $ () ->
 	$imageContainer = $(".image-container")	
 	$image = $imageContainer.find(".image")
+
+	pasteboard.analytics.init()
 
 	if $image.height() is 0
 		# Periodically check the height until
@@ -63,10 +70,3 @@ $ () ->
 				height: ""
 		
 		setPosition()
-
-	# Analytics
-	if window._gaq
-		$(".author a").on "click", () ->
-			_gaq.push ['_trackEvent', 'image page', 'click', 'twitter link']
-
-

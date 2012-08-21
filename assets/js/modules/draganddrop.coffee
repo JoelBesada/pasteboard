@@ -25,7 +25,7 @@ dragAndDrop = (pasteboard) ->
 
 		for file in e.originalEvent.dataTransfer.files
 			if /image/.test file.type
-				pasteboard.fileHandler.readFile file
+				pasteboard.fileHandler.readFile file, "Drag and Drop"
 				return
 
 		$(pasteboard).trigger "noimagefound", drop: true
