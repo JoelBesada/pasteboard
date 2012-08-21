@@ -9,8 +9,10 @@ modalWindow = (pasteboard) ->
 		content: ""
 		showCancel: false
 		showConfirm: false
+		showLink: false
 		confirmText: "OK"
 		cancelText: "Cancel"
+		linkText: ""
 
 	$document = $ document
 	$window = $ window

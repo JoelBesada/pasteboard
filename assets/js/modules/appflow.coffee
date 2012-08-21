@@ -113,6 +113,8 @@ appFlow = (pasteboard) ->
 							showCancel: true
 							showConfirm: true
 							confirmText: "Upload More"
+							showLink: true,
+							linkText: "Go to image"
 						, (modal) ->
 							alreadyLoaded = pasteboard.fileHandler.getCurrentUploadLoaded()
 
@@ -174,6 +176,8 @@ appFlow = (pasteboard) ->
 					pasteboard.modalWindow.show("upload-link", 
 						showConfirm: true
 						confirmText: "Upload more"
+						showLink: true,
+						linkText: "Go to image"
 					, (modal) ->
 						setState ++state, 
 							xhr: stateData.upload.xhr,
@@ -202,8 +206,14 @@ appFlow = (pasteboard) ->
 							.removeClass("default generating")
 							.addClass("done")
 
-						stateData.modal.find(".image-link").val(data.url)
-							
+						stateData.modal
+							.find(".image-link")
+								.val(data.url)
+								.end()
+							.find(".link.button")
+								.attr("href", data.url)
+
+
 				else
 					# Some animations to transition from displaying 
 					# the upload bar to showing the image link
@@ -223,15 +233,20 @@ appFlow = (pasteboard) ->
 								opacity: 0
 							, 500, () ->
 								$(this).css "display", "none"
-								stateData.modal.find(".confirm")
-									.css("display", "block")
+								stateData.modal.find(".confirm, .link.button")
+									.css("display", "inline-block")
 									.transition({
 										opacity: 1
 									}, 500)
 							)
 
 							setTimeout(() ->
-								stateData.modal.find(".image-link").val(url)
+								stateData.modal
+									.find(".image-link")
+										.val(url)
+										.end()
+									.find(".link.button")
+										.attr("href", url)
 							, 500)
 						, 500)
 
