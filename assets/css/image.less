@@ -83,15 +83,15 @@ input {
 		display: block;
 	}
 }
-.about {
-	width: 180px;
-	top: 40px;
-	right: 20px;
-
-	.author {
-		display: block;
-		padding-bottom: 25px;
-	}
+aside {
+	position: absolute;
+	width: 190px;
+	padding: 10px;
+	height: 100%;
+	right: 0;
+	top: 0;
+	font-size: 0.9em;
+	text-shadow: 0 1px 1px rgba(255,255,255,0.12);
 
 	.full-screen & {
 		display: none;
@@ -110,11 +110,23 @@ input {
 
 	.short-url {
 		opacity: 0;
-		margin-top: 20px;
+		margin: 20px auto 30px auto;
 
 		&.appear {
 			opacity: 1;
 			transition: opacity 1s;
 		}
+	}
+	.button {
+		display: block;
+		width: 145px;
+		margin: 20px auto;
+	}
+}
+
+.about {
+	position: fixed;
+	.full-screen & {
+		display: none;
 	}
 }

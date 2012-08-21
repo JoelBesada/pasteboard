@@ -36,14 +36,29 @@ exports.index =  function(req, res) {
 	res.render("index", params);
 };
 
+/* GET, handle redirects from pasteshack */
 exports.redirected = function(req, res) {
 	res.cookie("redirected", true);
 	res.redirect('/');
 };
 
+/* GET, force an image to download */
+exports.download = function(req, res) {
+	if(knoxClient) {
+		var imgReq =request("http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image);
+		res.set("Content-Disposition", "attachment");
+		imgReq.pipe(res);
+	} else {
+		console.log("Missing Amazon S3 credentials (/auth/amazon.js)");
+		res.send("Missing Amazon S3 credentials", 500);
+	}
+
+};
+
 /* GET, image display page */
 exports.image = function(req, res) {
 	var params = {
+		imageName: req.params.image,
 		imageURL: "http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image,
 		useAnalytics: false,
 		trackingCode: ""
@@ -67,10 +82,11 @@ exports.shorturl = function(req, res) {
 		res.send("Missing Parse.com credentials", 500);
 		return;
 	}
-	if (!req.params.fileName) {
-		res.send("Missing fileName parameter", 500);
+	if (!req.params.image) {
+		res.send("Missing image parameter", 500);
+		return;
 	}
-	query = encodeURIComponent('{"fileName":"' + req.params.fileName + '"}');
+	query = encodeURIComponent('{"fileName":"' + req.params.image + '"}');
 	request({
 		method: "GET",
 		uri: "https://api.parse.com/1/classes/short_url?where=" + query,

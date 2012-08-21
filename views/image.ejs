@@ -26,10 +26,7 @@
       <img src="<%= imageURL %>" alt="uploaded image" class="image" onerror="brokenLink()">
     </div>
     <div class="broken-link">Image not found</div>
-    <aside class="about">
-      <h1 class="title"><a href="/">Pasteboard</a></h1>
-      <span class="author">By <a href="https://twitter.com/JoelBesada" target="__blank" data-track="Twitter">@JoelBesada</a></span>
-      <a href="/" class="button confirm" data-track="Home">Upload an Image</a>
+    <aside>
       <div class="raw-url">
         <span>Raw Image URL:</span>
         <input type="text" readonly onClick="this.select();" value="<%= imageURL %>">
@@ -38,7 +35,14 @@
         <span>Short URL:</span>
         <input type="text" readonly onClick="this.select();">
       </div>
+      <a href="/download/<%= imageName %>" class="button" data-track="Download">Download image</a>
+      <a href="/" class="button confirm" data-track="Home">Upload an image</a>
+
     </aside>
+    <div class="about">
+      <h1 class="title"><a href="/">Pasteboard</a></h1>
+      <span class="author">By <a href="https://twitter.com/JoelBesada" target="__blank" data-track="Twitter">@JoelBesada</a></span>
+    </div>
     <%- js("image") %>
   </body>
 </html>
