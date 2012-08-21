@@ -60,7 +60,7 @@ modalWindow = (pasteboard) ->
 				$modal.remove()
 			)
 			$document.off ".modalwindowevents"
-			$window.off "modalwindowevents"
+			$window.off ".modalwindowevents"
 
 
 window.moduleLoader.addModule "modalWindow", modalWindow
