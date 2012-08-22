@@ -1,7 +1,7 @@
 ###
 # Tracks events with Google Analytics
 ###
-
+window._gaq = []
 analytics = (pasteboard) ->
 	page = ""
 	$document = null
@@ -12,7 +12,8 @@ analytics = (pasteboard) ->
 	track = (category, action, label, value) ->
 		eventArray = ['_trackEvent', "#{page} - #{category}", action]
 		eventArray.push label if label
-		eventArray.push value if value
+		eventArray.push parseInt(value, 10) if value
+		log eventArray
 		_gaq.push eventArray
 
 	trackOutboundLinks = () ->
@@ -30,11 +31,11 @@ analytics = (pasteboard) ->
 	trackInsertedImages = () ->
 		$pasteboard.on 
 			"filetoolarge": (e, eventData) ->
-				mb = eventData.size / (1024 * 1024)
-				track "Image Inserted", eventData.action, "Too Large", mb.toFixed(1)
+				kB = eventData.size / 1024
+				track "Image Inserted", eventData.action, "Too Large", kB
 			"imageinserted": (e, eventData) ->
-				mb = eventData.size / (1024 * 1024)
-				track "Image Inserted", eventData.action, "Successfully", mb.toFixed(1)
+				kB = eventData.size / 1024
+				track "Image Inserted", eventData.action, "Successfully", kB
 
 	trackErrors = () ->
 		$(window).on "error", (e) ->
