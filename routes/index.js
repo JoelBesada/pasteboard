@@ -5,6 +5,7 @@ var knox = require("knox"),
 	request = require('request'),
 	fs = require('fs'),
 	auth = require('../auth'),
+  options = require("../options"),
 	knoxClient = null,
 	FILE_SIZE_LIMIT = 10 * 1024 * 1024; // 10 MB
 
@@ -48,9 +49,9 @@ exports.redirected = function(req, res) {
 exports.download = function(req, res) {
   var imgReq;
 	if(knoxClient) {
-		imgReq =request("http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image);
+		imgReq =request("http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/" + auth.amazon.S3_IMAGE_FOLDER + req.params.image);
 	} else {
-    imgReq = request("http://" + req.headers.host + "/storage/" + req.params.image);
+    imgReq = request("http://" + req.headers.host + options.LOCAL_STORAGE_URL + req.params.image);
 	}
   res.set("Content-Disposition", "attachment");
   imgReq.pipe(res);
@@ -60,9 +61,9 @@ exports.download = function(req, res) {
 exports.image = function(req, res) {
   var imageURL;
   if(knoxClient) {
-		imageURL = "http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image;
+		imageURL = "http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/" + auth.amazon.S3_IMAGE_FOLDER + req.params.image;
   } else {
-    imageURL = "http://" + req.headers.host + "/storage/" + req.params.image;
+    imageURL = "http://" + req.headers.host + options.LOCAL_STORAGE_URL + req.params.image;
   }
     
 	var params = {
@@ -170,7 +171,6 @@ exports.upload = function(req, res) {
       fileType,
       fileExt,
       fileName,
-      targetPath,
       cropPath,
       uploadToAmazon,
       uploadToFS,
@@ -201,84 +201,83 @@ exports.upload = function(req, res) {
       fileExt = fileType.replace("image/", "");
       // Use microtime to generate a unique file name
       fileName = microtime.now() + "." + (fileExt === "jpeg" ? "jpg" : fileExt);
-      targetPath = "/images/" + fileName;
-      longURL = req.app.get("domain") + "/" + fileName;
+      longURL = (req.app.get("localrun") ? "http://" + req.headers.host : req.app.get("domain")) + "/" + fileName;
 
-      // Start requesting a short URL
-      if(auth.bitly) {
-        shortURLRequest = request("http://api.bitly.com/v3/shorten?login=" +
-            auth.bitly.LOGIN + "&apiKey=" + auth.bitly.API_KEY +
-            "&longUrl=" + encodeURIComponent(longURL),
-        function(error, response, body){
-          var json;
-          if (!error && response.statusCode === 200) {
-            json = JSON.parse(body);
-            if (json.status_code === 200) {
-              shortURL = json.data.url;
 
-              // Store the short URL in the Parse.com database
-              if (auth.parse) {
-                request({
-                  method: "POST",
-                  uri: "https://api.parse.com/1/classes/short_url",
-                  headers: {
-                    "X-Parse-Application-Id": auth.parse.APP_ID,
-                    "X-Parse-REST-API-Key": auth.parse.API_KEY
-                  },
-                  json: {
-                    fileName: fileName,
-                    shortURL: shortURL
-                  }
-                });
-              }
-              return;
-            }
-          }
-          shortURL = false;
-          return;
-        });
-      }
-      
       if(knoxClient) {
-      uploadToAmazon = function(sourcePath) {
-        knoxClient.putFile(
-          sourcePath,
-          targetPath,
-          { "Content-Type": fileType },
-          function(err, putRes) {
-            if (putRes) {
-              fs.unlink(sourcePath); // Remove tmp file
-              if (putRes.statusCode === 200) {
-                if(shortURL === false || !shortURLRequest) {
-                  res.json({url: longURL});
-                } else if (shortURL === undefined) {
-                  shortURLRequest.on("complete", function(response) {
-                    var json;
-                    if (response.statusCode === 200) {
-                      json = JSON.parse(response.body);
-                      if (json.status_code === 200) {
-                        res.json({url: json.data.url});
-                        return;
-                      }
+        // Start requesting a short URL
+        if(auth.bitly && !req.app.get("localrun")) {
+          shortURLRequest = request("http://api.bitly.com/v3/shorten?login=" +
+              auth.bitly.LOGIN + "&apiKey=" + auth.bitly.API_KEY +
+              "&longUrl=" + encodeURIComponent(longURL),
+          function(error, response, body){
+            var json;
+            if (!error && response.statusCode === 200) {
+              json = JSON.parse(body);
+              if (json.status_code === 200) {
+                shortURL = json.data.url;
+
+                // Store the short URL in the Parse.com database
+                if (auth.parse) {
+                  request({
+                    method: "POST",
+                    uri: "https://api.parse.com/1/classes/short_url",
+                    headers: {
+                      "X-Parse-Application-Id": auth.parse.APP_ID,
+                      "X-Parse-REST-API-Key": auth.parse.API_KEY
+                    },
+                    json: {
+                      fileName: fileName,
+                      shortURL: shortURL
                     }
-                    res.json({url: longURL});
-                  }).on("error", function() {
-                    res.json({url: longURL});
                   });
-                } else {
-                  res.json({url: shortURL});
                 }
-              } else {
-                console.log("Error: ", err);
-                res.send("Failure", putRes.statusCode);
+                return;
               }
             }
-        });
-      };
+            shortURL = false;
+            return;
+          });
+        }
+
+        uploadToAmazon = function(sourcePath) {
+          knoxClient.putFile(
+            sourcePath,
+            "/" + auth.amazon.S3_IMAGE_FOLDER + fileName,
+            { "Content-Type": fileType },
+            function(err, putRes) {
+              if (putRes) {
+                fs.unlink(sourcePath); // Remove tmp file
+                if (putRes.statusCode === 200) {
+                  if(shortURL === false || !shortURLRequest) {
+                    res.json({url: longURL});
+                  } else if (shortURL === undefined) {
+                    shortURLRequest.on("complete", function(response) {
+                      var json;
+                      if (response.statusCode === 200) {
+                        json = JSON.parse(response.body);
+                        if (json.status_code === 200) {
+                          res.json({url: json.data.url});
+                          return;
+                        }
+                      }
+                      res.json({url: longURL});
+                    }).on("error", function() {
+                      res.json({url: longURL});
+                    });
+                  } else {
+                    res.json({url: shortURL});
+                  }
+                } else {
+                  res.send("Failure", putRes.statusCode);
+                }
+              }
+          });
+        };
       }
 
       uploadToFS = function(sourcePath) {
-        var destFile = 'public/storage/' + fileName;
+        var destFile = options.LOCAL_STORAGE_PATH + fileName;
         fs.rename(sourcePath, destFile, function(err) {
           res.json({url: longURL});
         });

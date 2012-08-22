@@ -7,7 +7,8 @@ var express = require('express')
   , routes = require('./routes')
   , WebSocketServer = require('websocket').server
   , fs = require('fs')
-  , http = require('http');
+  , http = require('http')
+  , options = require('./options');
 
 var app = express(),
     clients = {},
@@ -18,7 +19,7 @@ app.configure(function(){
   app.set('localrun', process.env.LOCAL || false);
   app.set('port', process.env.PORT || 3000);
   app.set('clients', clients);
-  app.set('domain', 'http://pasteboard.co');
+  app.set('domain', options.PRODUCTION_DOMAIN);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   app.use(express.favicon(__dirname + "/public/images/favicon.ico"));
@@ -34,7 +35,7 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.set('port', process.env.PORT || 4000);
-  app.set('domain', 'http://dev.pasteboard.co');
+  app.set('domain', options.DEVELOPMENT_DOMAIN);
   app.use(express.errorHandler());
 });
 
