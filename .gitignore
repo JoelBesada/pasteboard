@@ -5,6 +5,8 @@ auth/*
 !auth/index.js
 !auth/*.example.js
 
+public/storage/*
+
 .DS_Store
 
 deploy_master
