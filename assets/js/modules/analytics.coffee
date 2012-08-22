@@ -13,7 +13,6 @@ analytics = (pasteboard) ->
 		eventArray = ['_trackEvent', "#{page} - #{category}", action]
 		eventArray.push label if label
 		eventArray.push parseInt(value, 10) if value
-		log eventArray
 		_gaq.push eventArray
 
 	trackOutboundLinks = () ->
