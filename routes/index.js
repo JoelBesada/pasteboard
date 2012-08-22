@@ -14,6 +14,8 @@ if (auth.amazon) {
 			secret: auth.amazon.S3_SECRET,
 			bucket: auth.amazon.S3_BUCKET
 		});
+} else {
+  console.log("Missing Amazon S3 credentials (/auth/amazon.js)");
 }
 
 /* GET, home page */
@@ -44,22 +46,28 @@ exports.redirected = function(req, res) {
 
 /* GET, force an image to download */
 exports.download = function(req, res) {
+  var imgReq;
 	if(knoxClient) {
-		var imgReq =request("http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image);
-		res.set("Content-Disposition", "attachment");
-		imgReq.pipe(res);
+		imgReq =request("http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image);
 	} else {
-		console.log("Missing Amazon S3 credentials (/auth/amazon.js)");
-		res.send("Missing Amazon S3 credentials", 500);
+    imgReq = request("http://" + req.headers.host + "/storage/" + req.params.image);
 	}
-
+  res.set("Content-Disposition", "attachment");
+  imgReq.pipe(res);
 };
 
 /* GET, image display page */
 exports.image = function(req, res) {
+  var imageURL;
+  if(knoxClient) {
+		imageURL = "http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image;
+  } else {
+    imageURL = "http://" + req.headers.host + "/storage/" + req.params.image;
+  }
+    
 	var params = {
 		imageName: req.params.image,
-		imageURL: "http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/images/" + req.params.image,
+		imageURL: imageURL,
 		useAnalytics: false,
 		trackingCode: ""
 	};
@@ -153,152 +161,167 @@ exports.clearfile = function(req, res) {
    upload the file that should have been posted with this request */
 
 exports.upload = function(req, res) {
-	if (knoxClient) {
-		var form = new formidable.IncomingForm(),
-			incomingFiles = [];
+  var form = new formidable.IncomingForm(),
+    incomingFiles = [];
 
-		form.parse(req, function(err, fields, files) {
-			var client,
-				file,
-				fileType,
-				fileExt,
-				fileName,
-				targetPath,
-				cropPath,
-				uploadToAmazon,
-				longURL,
-				shortURL,
-				shortURLRequest,
-				canvas;
+  form.parse(req, function(err, fields, files) {
+    var client,
+      file,
+      fileType,
+      fileExt,
+      fileName,
+      targetPath,
+      cropPath,
+      uploadToAmazon,
+      uploadToFS,
+      uploadToStore,
+      longURL,
+      shortURL,
+      shortURLRequest,
+      canvas;
 
-			if (fields.id) {
-				client = req.app.get("clients")[fields.id];
-			}
+    if (fields.id) {
+      client = req.app.get("clients")[fields.id];
+    }
 
-			// Check for either a posted or preuploaded file
-			if (files.file) {
-				file = files.file;
-			} else if (client && client.file && !client.uploading[client.file.path]) {
-				file = client.file;
-				client.uploading[file.path] = true;
-			}
-			if (file) {
-				if (file.size > FILE_SIZE_LIMIT) {
-					res.send("File too large", 500);
-					return;
-				}
+    // Check for either a posted or preuploaded file
+    if (files.file) {
+      file = files.file;
+    } else if (client && client.file && !client.uploading[client.file.path]) {
+      file = client.file;
+      client.uploading[file.path] = true;
+    }
+    if (file) {
+      if (file.size > FILE_SIZE_LIMIT) {
+        res.send("File too large", 500);
+        return;
+      }
 
-				fileType = file.type;
-				fileExt = fileType.replace("image/", "");
-				// Use microtime to generate a unique file name
-				fileName = microtime.now() + "." + (fileExt === "jpeg" ? "jpg" : fileExt);
-				targetPath = "/images/" + fileName;
-				longURL = req.app.get("domain") + "/" + fileName;
+      fileType = file.type;
+      fileExt = fileType.replace("image/", "");
+      // Use microtime to generate a unique file name
+      fileName = microtime.now() + "." + (fileExt === "jpeg" ? "jpg" : fileExt);
+      targetPath = "/images/" + fileName;
+      longURL = req.app.get("domain") + "/" + fileName;
 
-				// Start requesting a short URL
-				if(auth.bitly) {
-					shortURLRequest = request("http://api.bitly.com/v3/shorten?login=" +
-							auth.bitly.LOGIN + "&apiKey=" + auth.bitly.API_KEY +
-							"&longUrl=" + encodeURIComponent(longURL),
-					function(error, response, body){
-						var json;
-						if (!error && response.statusCode === 200) {
-							json = JSON.parse(body);
-							if (json.status_code === 200) {
-								shortURL = json.data.url;
+      // Start requesting a short URL
+      if(auth.bitly) {
+        shortURLRequest = request("http://api.bitly.com/v3/shorten?login=" +
+            auth.bitly.LOGIN + "&apiKey=" + auth.bitly.API_KEY +
+            "&longUrl=" + encodeURIComponent(longURL),
+        function(error, response, body){
+          var json;
+          if (!error && response.statusCode === 200) {
+            json = JSON.parse(body);
+            if (json.status_code === 200) {
+              shortURL = json.data.url;
 
-								// Store the short URL in the Parse.com database
-								if (auth.parse) {
-									request({
-										method: "POST",
-										uri: "https://api.parse.com/1/classes/short_url",
-										headers: {
-											"X-Parse-Application-Id": auth.parse.APP_ID,
-											"X-Parse-REST-API-Key": auth.parse.API_KEY
-										},
-										json: {
-											fileName: fileName,
-											shortURL: shortURL
-										}
-									});
-								}
-								return;
-							}
-						}
-						shortURL = false;
-						return;
-					});
-				}
-				
-				uploadToAmazon = function(sourcePath) {
-					knoxClient.putFile(
-						sourcePath,
-						targetPath,
-						{ "Content-Type": fileType },
-						function(err, putRes) {
-							if (putRes) {
-								fs.unlink(sourcePath); // Remove tmp file
-								if (putRes.statusCode === 200) {
-									if(shortURL === false || !shortURLRequest) {
-										res.json({url: longURL});
-									} else if (shortURL === undefined) {
-										shortURLRequest.on("complete", function(response) {
-											var json;
-											if (response.statusCode === 200) {
-												json = JSON.parse(response.body);
-												if (json.status_code === 200) {
-													res.json({url: json.data.url});
-													return;
-												}
-											}
-											res.json({url: longURL});
-										}).on("error", function() {
-											res.json({url: longURL});
-										});
-									} else {
-										res.json({url: shortURL});
-									}
-								} else {
-									console.log("Error: ", err);
-									res.send("Failure", putRes.statusCode);
-								}
-							}
-					});
-				};
-				if (!fields.cropImage) {
-					uploadToAmazon(file.path);
-				} else {
-					// Crop the image
-					cropPath = "/tmp/" + fileName;
-					easyimage.crop({
-						src: file.path,
-						dst: cropPath,
-						cropwidth: fields["crop[width]"],
-						cropheight: fields["crop[height]"],
-						x: fields["crop[x]"],
-						y: fields["crop[y]"],
-						gravity: "NorthWest"
-					}, function() {
-						fs.unlink(file.path);
-						uploadToAmazon(cropPath);
-					});
-				}
-				
-			} else {
-				res.send("Missing file", 500);
-			}
-		});
-		form.on("fileBegin", function(name, file) {
-			incomingFiles.push(file);
-		});
-		form.on("aborted", function() {
-			// Remove temporary files that were in the process of uploading
-			for (var i = 0; i < incomingFiles.length; i++) {
-				fs.unlink(incomingFiles[i].path);
-			}
-		});
-	} else {
-		console.log("Missing Amazon S3 credentials (/auth/amazon.js)");
-		res.send("Missing Amazon S3 credentials", 500);
-	}
+              // Store the short URL in the Parse.com database
+              if (auth.parse) {
+                request({
+                  method: "POST",
+                  uri: "https://api.parse.com/1/classes/short_url",
+                  headers: {
+                    "X-Parse-Application-Id": auth.parse.APP_ID,
+                    "X-Parse-REST-API-Key": auth.parse.API_KEY
+                  },
+                  json: {
+                    fileName: fileName,
+                    shortURL: shortURL
+                  }
+                });
+              }
+              return;
+            }
+          }
+          shortURL = false;
+          return;
+        });
+      }
+      
+      if(knoxClient) {
+      uploadToAmazon = function(sourcePath) {
+        knoxClient.putFile(
+          sourcePath,
+          targetPath,
+          { "Content-Type": fileType },
+          function(err, putRes) {
+            if (putRes) {
+              fs.unlink(sourcePath); // Remove tmp file
+              if (putRes.statusCode === 200) {
+                if(shortURL === false || !shortURLRequest) {
+                  res.json({url: longURL});
+                } else if (shortURL === undefined) {
+                  shortURLRequest.on("complete", function(response) {
+                    var json;
+                    if (response.statusCode === 200) {
+                      json = JSON.parse(response.body);
+                      if (json.status_code === 200) {
+                        res.json({url: json.data.url});
+                        return;
+                      }
+                    }
+                    res.json({url: longURL});
+                  }).on("error", function() {
+                    res.json({url: longURL});
+                  });
+                } else {
+                  res.json({url: shortURL});
+                }
+              } else {
+                console.log("Error: ", err);
+                res.send("Failure", putRes.statusCode);
+              }
+            }
+        });
+      };
+      }
+
+      uploadToFS = function(sourcePath) {
+        var destFile = 'public/storage/' + fileName;
+        fs.rename(sourcePath, destFile, function(err) {
+          res.json({url: longURL});
+        });
+      };
+
+      uploadToStore = function(sourcePath) {
+        if (knoxClient) {
+          uploadToAmazon(sourcePath);
+        } else {
+          uploadToFS(sourcePath);
+        }
+      };
+      
+      if (!fields.cropImage) {
+        uploadToStore(file.path);
+      } else {
+        // Crop the image
+        cropPath = "/tmp/" + fileName;
+        easyimage.crop({
+          src: file.path,
+          dst: cropPath,
+          cropwidth: fields["crop[width]"],
+          cropheight: fields["crop[height]"],
+          x: fields["crop[x]"],
+          y: fields["crop[y]"],
+          gravity: "NorthWest"
+        }, function() {
+          fs.unlink(file.path);
+          uploadToStore(cropPath);
+        });
+      }
+      
+    } else {
+      res.send("Missing file", 500);
+    }
+  });
+  form.on("fileBegin", function(name, file) {
+    incomingFiles.push(file);
+  });
+  form.on("aborted", function() {
+    // Remove temporary files that were in the process of uploading
+    for (var i = 0; i < incomingFiles.length; i++) {
+      fs.unlink(incomingFiles[i].path);
+    }
+  });
 };
