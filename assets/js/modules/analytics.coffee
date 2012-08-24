@@ -1,7 +1,6 @@
 ###
 # Tracks events with Google Analytics
 ###
-window._gaq = []
 analytics = (pasteboard) ->
 	page = ""
 	$document = null
