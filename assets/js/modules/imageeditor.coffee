@@ -138,6 +138,10 @@ imageEditor = (pasteboard) ->
 	$window = $(window)
 	$document = $(document)
 
+	# Use 3D translate transforms when possible, fall back to 2D
+	compatibleTranslate = (x, y, z) ->
+		if Modernizr.csstransforms3d then "translate3d(#{x}px, #{y}px, #{z}px)" else "translate(#{x}px, #{y}px)"
+
 	# Add all the event listeners, use a namespace to make removing them easier		
 	addEvents = () ->
 		$window.on "resize.imageeditorevent", () -> 
@@ -351,13 +355,13 @@ imageEditor = (pasteboard) ->
 		imagePosition.y = -y
 
 		# Use 3D transforms for GPU acceleration
-		$image.css "transform", "translate3d(#{-x}px, #{-y}px, 0)"
+		$image.css "transform", compatibleTranslate(-x, -y, 0)
 
 		# Set the handle positions
 		val = Math.round((y / ($image.height() - $imageContainer.height())) * ($scrollBar.y.track.height() - $scrollBar.y.handle.height() ))
-		$scrollBar.y.handle.css "transform", "translate3d(0, #{val}px, 0)"
+		$scrollBar.y.handle.css "transform", compatibleTranslate(0, val, 0)
 		val = Math.round((x / ($image.width() - $imageContainer.width())) * ($scrollBar.x.track.width() - $scrollBar.x.handle.width() ))
-		$scrollBar.x.handle.css "transform", "translate3d(#{val}px, 0, 0)"
+		$scrollBar.x.handle.css "transform", compatibleTranslate(val, 0, 0)
 
 	# Handle cropping (click)
 	# Sets the crop selection starting position
