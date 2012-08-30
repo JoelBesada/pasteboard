@@ -37,15 +37,11 @@ analytics = (pasteboard) ->
 
 	trackErrors = () ->
 		$(window).on "error", (e) ->
-			if window.JSON
-				browser = JSON.stringify $.browser
-			else
-				browser = window.navigator.userAgent
-
 			# Prevent logging the same error multiple times
 			unless loggedErrors[e.originalEvent.message]
 				loggedErrors[e.originalEvent.message] = true
-				track "Error", e.originalEvent.message, "#{e.originalEvent.filename} :#{e.originalEvent.lineno}", browser
+				track "Error", e.originalEvent.message, "#{e.originalEvent.filename} :#{e.originalEvent.lineno}"
+				
 
 	self =
 		init: () ->
