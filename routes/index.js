@@ -49,12 +49,17 @@ exports.redirected = function(req, res) {
 exports.download = function(req, res) {
   var imgReq;
 	if(knoxClient) {
-		imgReq =request("http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/" + auth.amazon.S3_IMAGE_FOLDER + req.params.image);
+		imgReq = request("http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/" + auth.amazon.S3_IMAGE_FOLDER + req.params.image);
 	} else {
     imgReq = request("http://" + req.headers.host + options.LOCAL_STORAGE_URL + req.params.image);
 	}
   res.set("Content-Disposition", "attachment");
   imgReq.pipe(res);
+};
+
+/* GET, proxy to external images to avoid cross origin restrictions */
+exports.imageproxy = function(req, res) {
+  request(decodeURIComponent(req.params.image)).pipe(res);
 };
 
 /* GET, image display page */

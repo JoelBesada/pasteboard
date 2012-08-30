@@ -23,9 +23,47 @@ dragAndDrop = (pasteboard) ->
 		e.stopPropagation()
 		$body.removeClass "dragging"
 
+		# Look for files
 		for file in e.originalEvent.dataTransfer.files
 			if /image/.test file.type
-				pasteboard.fileHandler.readFile file, "Drag and Drop"
+				pasteboard.fileHandler.readFile file, drop: true
+				return
+
+		# Look for HTML data
+		if htmlData = e.originalEvent.dataTransfer.getData("text/html")
+			foundImage = false
+			# Loop through everything in the dragged in HTML data to search for images
+			$(htmlData).each(() ->
+				if this.tagName is "IMG" and this.src
+					img = this
+				else 
+					img = $(this).find("img")[0]
+
+				if img
+					# Base64 encoded
+					if /^data:image/i.test img.src
+						pasteboard.fileHandler.readData img.src, drop: true
+						foundImage = true
+						return false
+					# External image URL
+					if /^http(s?):\/\//i.test img.src
+						pasteboard.fileHandler.readExternalImage img.src, drop: true
+						foundImage = true
+						return false
+
+			)
+			return if foundImage
+
+		# Look for plain text data
+		if textData = e.originalEvent.dataTransfer.getData("text/plain")
+			# Base64 encoded
+			if /^data:image/i.test img.src
+				pasteboard.fileHandler.readData textData, drop: true
+				return
+
+			# External image URL
+			if /^http(s?):\/\//i.test textData
+				pasteboard.fileHandler.readExternalImage textData, drop: true
 				return
 
 		$(pasteboard).trigger "noimagefound", drop: true

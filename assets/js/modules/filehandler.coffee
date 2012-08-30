@@ -88,11 +88,40 @@ fileHandler = (pasteboard) ->
 		# to the image editor
 		readData: (data, action) ->
 			currentFile = dataURLtoBlob data
-			if checkFileSize currentFile
+			if checkFileSize currentFile, action
 				$(pasteboard).trigger "imageinserted", 
 					image: data
 					action: action
 					size: currentFile.size
+
+		# Reads data from an external image url and creates a file
+		readExternalImage: (url, action) ->
+			# Use a local proxy to access the image to avoid going against 
+			# canvas cross origin policies
+			proxyURL = "/imageproxy/" + encodeURIComponent(url)
+			image = new Image()
+			image.onload = () ->
+				canvas = document.createElement "canvas"
+				
+				return $(pasteboard).trigger "noimagefound", action unless canvas.toBlob
+
+				canvas.width = image.width
+				canvas.height = image.height
+				context = canvas.getContext "2d"
+				context.drawImage image, 0, 0
+				canvas.toBlob (blob) ->
+					currentFile = blob
+					if checkFileSize currentFile, action
+						$(pasteboard).trigger "imageinserted", 
+							image: proxyURL
+							action: action
+							size: currentFile.size
+
+				
+			image.onerror = (err) ->
+				$(pasteboard).trigger "noimagefound", action
+
+			image.src = proxyURL
 
 		# Converts the data to a file object and uploads
 		# it to the server, while tracking the progress.

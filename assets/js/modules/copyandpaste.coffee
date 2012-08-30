@@ -19,7 +19,7 @@ copyAndPaste = (pasteboard) ->
 
 			for item in items
 				if /image/.test item.type
-					pasteboard.fileHandler.readFile item.getAsFile(), "Copy and Paste"
+					pasteboard.fileHandler.readFile item.getAsFile(), paste: true
 					return
 
 			$(pasteboard).trigger "noimagefound", paste: true
@@ -30,10 +30,16 @@ copyAndPaste = (pasteboard) ->
 		child = pasteArea[0].childNodes[0]
 		pasteArea.html("")
 
-		if child 
-			if child.tagName is "IMG" and /^data:image/i.test child.src
-				pasteboard.fileHandler.readData child.src, "Copy and Paste"
+		if child and child.tagName is "IMG"
+			# Base64 encoded
+			if /^data:image/i.test child.src
+				pasteboard.fileHandler.readData child.src, paste: true
 				return
+			# External image URL
+			else if /^http(s?):\/\//i.test child.src
+				pasteboard.fileHandler.readExternalImage child.src, paste: true
+				return
+
 
 		$(pasteboard).trigger "noimagefound", paste: true
 	

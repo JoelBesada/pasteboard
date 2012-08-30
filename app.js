@@ -44,6 +44,7 @@ app.get('/redirected', routes.redirected);
 app.get('/:image', routes.image);
 app.get('/download/:image', routes.download);
 app.get('/shorturl/:image', routes.shorturl);
+app.get('/imageproxy/:image', routes.imageproxy);
 app.post('/upload', routes.upload);
 app.post('/preupload', routes.preupload);
 app.post('/clearfile', routes.clearfile);

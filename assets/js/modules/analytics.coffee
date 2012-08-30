@@ -7,7 +7,6 @@ analytics = (pasteboard) ->
 	$pasteboard = $(pasteboard)
 	loggedErrors = {}
 
-
 	track = (category, action, label, value) ->
 		eventArray = ['_trackEvent', "#{page} - #{category}", action]
 		eventArray.push label if label
@@ -30,10 +29,10 @@ analytics = (pasteboard) ->
 		$pasteboard.on 
 			"filetoolarge": (e, eventData) ->
 				kB = eventData.size / 1024
-				track "Image Inserted", eventData.action, "Too Large", kB
+				track "Image Inserted", actionString(eventData.action), "Too Large", kB
 			"imageinserted": (e, eventData) ->
 				kB = eventData.size / 1024
-				track "Image Inserted", eventData.action, "Successfully", kB
+				track "Image Inserted", actionString(eventData.action), "Successfully", kB
 
 	trackErrors = () ->
 		$(window).on "error", (e) ->
@@ -41,7 +40,11 @@ analytics = (pasteboard) ->
 			unless loggedErrors[e.originalEvent.message]
 				loggedErrors[e.originalEvent.message] = true
 				track "Error", e.originalEvent.message, "#{e.originalEvent.filename} :#{e.originalEvent.lineno}"
-				
+	
+	actionString = (action) ->
+		return "Copy and Paste" if action.paste
+		return "Drag and Drop" if action.Drop
+		return "Unknown Action"
 
 	self =
 		init: () ->
