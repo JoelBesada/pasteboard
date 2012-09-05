@@ -59,7 +59,11 @@ exports.download = function(req, res) {
 
 /* GET, proxy to external images to avoid cross origin restrictions */
 exports.imageproxy = function(req, res) {
-  request(decodeURIComponent(req.params.image)).pipe(res);
+  try {
+    request(decodeURIComponent(req.params.image)).pipe(res);
+  } catch (err) {
+    res.send("Failure", 500);
+  }
 };
 
 /* GET, image display page */
