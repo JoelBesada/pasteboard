@@ -59,7 +59,6 @@ exports.download = function(req, res) {
 
 /* GET, proxy to external images to avoid cross origin restrictions */
 exports.imageproxy = function(req, res) {
-  console.log("test", req.params.image);
   request(decodeURIComponent(req.params.image)).pipe(res);
 };
 

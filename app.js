@@ -41,7 +41,6 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/redirected', routes.redirected);
-app.get('/testroute', function(req, res) { console.log("testroute"); res.send("test");});
 app.get('/download/:image', routes.download);
 app.get('/shorturl/:image', routes.shorturl);
 app.get('/imageproxy/:image', routes.imageproxy);

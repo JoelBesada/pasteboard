@@ -97,8 +97,9 @@ fileHandler = (pasteboard) ->
 		# Reads data from an external image url and creates a file
 		readExternalImage: (url, action) ->
 			# Use a local proxy to access the image to avoid going against 
-			# canvas cross origin policies
-			proxyURL = "/imageproxy/" + encodeURIComponent(url)
+			# canvas cross origin policies. Escape % as %25 because nginx
+			# automatically decodes urls otherwise.
+			proxyURL = "/imageproxy/" + encodeURIComponent(url).replace(/%/g, "%25")
 			image = new Image()
 			image.onload = () ->
 				canvas = document.createElement "canvas"
