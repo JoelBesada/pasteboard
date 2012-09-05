@@ -41,10 +41,11 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/redirected', routes.redirected);
-app.get('/:image', routes.image);
+app.get('/testroute', function(req, res) { console.log("testroute"); res.send("test");});
 app.get('/download/:image', routes.download);
 app.get('/shorturl/:image', routes.shorturl);
 app.get('/imageproxy/:image', routes.imageproxy);
+app.get('/:image', routes.image);
 app.post('/upload', routes.upload);
 app.post('/preupload', routes.preupload);
 app.post('/clearfile', routes.clearfile);
