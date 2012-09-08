@@ -57,7 +57,7 @@ dragAndDrop = (pasteboard) ->
 		# Look for plain text data
 		if textData = e.originalEvent.dataTransfer.getData("text/plain")
 			# Base64 encoded
-			if /^data:image/i.test img.src
+			if /^data:image/i.test textData
 				pasteboard.fileHandler.readData textData, drop: true
 				return
 
