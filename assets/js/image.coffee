@@ -29,22 +29,13 @@ $ () ->
 	$imageContainer = $(".image-container")	
 	$image = $imageContainer.find(".image")
 
-	pasteboard.analytics.init()
-
-	if $image.height() is 0
-		# Periodically check the height until
-		# it has been set
-		interval = setInterval(() ->
-			if $image.height() > 0
-				clearInterval interval
-				setPosition()
-				$image.addClass("appear")
-				window.drawBackgroundOverlay()
-		, 250)
-	else
+	$image.on "load", (e) ->
 		setPosition()
 		$image.addClass("appear")
-	
+		window.drawBackgroundOverlay()
+
+	pasteboard.analytics.init()
+
 	$window.on "resize", setPosition
 	
 	# Fetch the shortlink
