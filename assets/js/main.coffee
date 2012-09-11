@@ -25,4 +25,21 @@ $ () ->
 				top: 0
 				opacity: 1
 			)
+
+	# Load the "about" text and display the modal when clicking the button
+	pasteboard.template.compile \
+		"jstemplates/about.tmpl", 
+		{}, 
+		(compiledTemplate) ->
+			$(document).on "click", ".show-about", (e) ->
+				e.preventDefault()
+				pasteboard.modalWindow.show "text", 
+						content: compiledTemplate
+						showClose: true
+					, (modal) ->
+						aboutModal = modal
+		    
+
+
+
 	

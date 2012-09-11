@@ -25,6 +25,9 @@
 					</ul>
 					<div class="image-link-wrapper"><input type="text" readonly onClick="this.select()" class="image-link"></div>
 				<% break; 
+				case "text": %>
+					<%= content %>
+				<% break; 
 				default: %> 	
 					<%= content %>
 			<% } %>
@@ -32,6 +35,9 @@
 		<div class="action-bar">
 			<% if (showCancel) { %>
 				<button class="cancel"><%= cancelText %></button>
+			<% } %>
+			<% if (showClose) { %>
+				<button class="close"><%= closeText %></button>
 			<% } %>
 			<% if (showLink) { %>
 				<a href="" class="link button"><%= linkText %></a>
