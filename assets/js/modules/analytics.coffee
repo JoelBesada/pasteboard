@@ -43,7 +43,7 @@ analytics = (pasteboard) ->
 	
 	actionString = (action) ->
 		return "Copy and Paste" if action.paste
-		return "Drag and Drop" if action.Drop
+		return "Drag and Drop" if action.drop
 		return "Unknown Action"
 
 	self =
