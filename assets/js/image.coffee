@@ -1,4 +1,5 @@
 #= require common
+#= require lib/spin.min.js
 #= require modules/moduleloader
 #= require modules/analytics
 
@@ -28,8 +29,19 @@ window.moduleLoader.load("analytics", pasteboard)
 $ () ->
 	$imageContainer = $(".image-container")	
 	$image = $imageContainer.find(".image")
+	
+	spinner = new Spinner(
+		color: "#eee"
+		lines: 12
+		length: 5
+		width: 3
+		radius: 6
+		hwaccel: true
+		className: "spin"
+	).spin($(".spinner")[0]);
 
 	$image.on "load", (e) ->
+		spinner.stop()
 		setPosition()
 		$image.addClass("appear")
 		window.drawBackgroundOverlay()
