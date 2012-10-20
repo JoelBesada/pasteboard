@@ -25,9 +25,10 @@ if (auth.amazon) {
    to be unique for 115 days (10^13 microseconds).
  */
 function generateFileName(type) {
-  var fileExt = "." + (type === "image/jpeg" ? "jpg" : type.replace("image/", "")),
+  var fileExt = "." + (type === "jpeg" ? "jpg" : type.replace("image/", "")),
     timeString = "" + microtime.now();
-  
+
+
   timeString = timeString.substr(timeString.length - 13); // 13 last digits
 
   return base62Encode(parseInt(timeString, 10)) + fileExt;
