@@ -49,7 +49,7 @@ input {
 		max-width: 100%;
 		box-shadow: 0 0 20px rgba(0,0,25,0.7);
 		cursor: zoom-in;
-	
+
 		.no-js & {
 			opacity: 1;
 		}
@@ -90,6 +90,10 @@ input {
 	top: 50%;
 	margin-left: -95px;
 	opacity: 0.5;
+
+	.broken & {
+		display: none;
+	}
 }
 
 aside {
@@ -110,7 +114,7 @@ aside {
 		display: block;
 		font-weight: bold;
 		font-size: 1.05em;
-		margin-bottom: 5px;		
+		margin-bottom: 5px;
 	}
 
 	.raw-url {
