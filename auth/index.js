@@ -2,7 +2,8 @@ var authFiles = [
 	"amazon",
 	"bitly",
 	"parse",
-	"google_analytics"
+	"google_analytics",
+	"hashing"
 ];
 
 for(var i = 0; i < authFiles.length; i++) {

@@ -48,6 +48,7 @@ app.get('/:image', routes.image);
 app.post('/upload', routes.upload);
 app.post('/preupload', routes.preupload);
 app.post('/clearfile', routes.clearfile);
+app.post('/delete/:image', routes["delete"]);
 
 server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

@@ -1,4 +1,5 @@
 #= require lib/jquery.min.js
+#= require lib/jquery.transit.min.js
 
 $window = $(window)
 $body = $("body")
@@ -14,7 +15,7 @@ window.log = ->
 window.drawBackgroundOverlay = () ->
 	$canvas ||= $(".shadow")
 	return unless $canvas[0].getContext
-	
+
 	ctx = $canvas[0].getContext("2d")
 
 	$canvas.css(

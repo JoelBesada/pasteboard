@@ -1,10 +1,11 @@
 <div class="modal">
 	<div class="modal-window <%= modalType %> default">
 		<div class="content">
-			<% switch(modalType) { 
+			<% switch(modalType) {
+				case "confirm":
 			    case "error": %>
 					<p><%= content %></p>
-				<% break; 
+				<% break;
 				case "upload-progress": %>
 					<ul class="status">
 						<li class="in-progress">Uploading &mdash; <span class="progress-number">00</span>%</li>
@@ -17,18 +18,18 @@
 						</div>
 					</div>
 					<input type="text" readonly onClick="this.select()" class="image-link">
-				<% break; 
+				<% break;
 				case "upload-link": %>
 					<ul class="status">
 						<li class="generating">Generating URL&#8230;</li>
 						<li class="done">Here's your link:</li>
 					</ul>
 					<div class="image-link-wrapper"><input type="text" readonly onClick="this.select()" class="image-link"></div>
-				<% break; 
+				<% break;
 				case "text": %>
 					<%= content %>
-				<% break; 
-				default: %> 	
+				<% break;
+				default: %>
 					<%= content %>
 			<% } %>
 		</div>

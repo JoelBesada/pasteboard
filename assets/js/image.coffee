@@ -2,6 +2,8 @@
 #= require lib/spin.min.js
 #= require modules/moduleloader
 #= require modules/analytics
+#= require modules/template
+#= require modules/modalwindow
 
 $window = $(window)
 $imageContainer = null
@@ -25,11 +27,13 @@ setPosition = () ->
 
 pasteboard = {}
 window.moduleLoader.load("analytics", pasteboard)
+window.moduleLoader.load("template", pasteboard)
+window.moduleLoader.load("modalWindow", pasteboard)
 
 $ () ->
-	$imageContainer = $(".image-container")	
+	$imageContainer = $(".image-container")
 	$image = $imageContainer.find(".image")
-	
+
 	spinner = new Spinner(
 		color: "#eee"
 		lines: 12
@@ -47,9 +51,12 @@ $ () ->
 		window.drawBackgroundOverlay()
 
 	pasteboard.analytics.init()
+	pasteboard.modalWindow.init()
+	$modalWindow = $ pasteboard.modalWindow
+
 
 	$window.on "resize", setPosition
-	
+
 	# Fetch the shortlink
 	if window.location.pathname
 		$.get "/shorturl/" + window.location.pathname.replace("/", ""), (data) ->
@@ -71,5 +78,27 @@ $ () ->
 			$imageContainer.css
 				width: ""
 				height: ""
-		
+
 		setPosition()
+
+	# Confirm on image delete
+	$(".delete").click (e) ->
+		image =  $(this).data("image")
+		pasteboard.modalWindow.show "confirm",
+			content: "Are you sure?",
+			showConfirm: true,
+			confirmText: "Yes",
+			showCancel: true
+			cancelText: "No"
+
+		$modalWindow.on "confirm", ->
+			$modalWindow.off "confirm cancel"
+			$.post "delete/" + image, ->
+				window.location = "/"
+
+		$modalWindow.on "cancel", ->
+			$modalWindow.off "confirm cancel"
+			pasteboard.modalWindow.hide()
+
+
+

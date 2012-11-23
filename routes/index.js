@@ -1,14 +1,14 @@
 var knox = require("knox"),
   formidable = require("formidable"),
-  microtime = require("microtime"),
   easyimage = require("easyimage"),
-  request = require('request'),
-  fs = require('fs'),
-  auth = require('../auth'),
+  request = require("request"),
+  fs = require("fs"),
+  helpers = require("../helpers/common"),
+  auth = require("../auth"),
   options = require("../options"),
+
   knoxClient = null,
-  FILE_SIZE_LIMIT = 10 * 1024 * 1024, // 10 MB
-  BASE62_CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  FILE_SIZE_LIMIT = 10 * 1024 * 1024; // 10 MB
 
 if (auth.amazon) {
   knoxClient = knox.createClient({
@@ -18,33 +18,6 @@ if (auth.amazon) {
     });
 } else {
   console.log("Missing Amazon S3 credentials (/auth/amazon.js)");
-}
-
-/* Generates a unique file name with the given file type.
-   This current method generates names that are guaranteed
-   to be unique for 115 days (10^13 microseconds).
- */
-function generateFileName(type) {
-  var fileExt = "." + (type === "jpeg" ? "jpg" : type.replace("image/", "")),
-    timeString = "" + microtime.now();
-
-  timeString = timeString.substr(timeString.length - 13); // 13 last digits
-  return base62Encode(parseInt(timeString, 10)) + fileExt;
-}
-
-/* Converts an integer from base 10 to 62 */
-function base62Encode(n) {
-  var arr = [], r;
-
-  if (n === 0) return BASE62_CHARS[0];
-  
-  while (n) {
-    r = n % 62;
-    n = (n - r) / 62;
-    arr.push(BASE62_CHARS[r]);
-  }
-
-  return arr.reverse().join("");
 }
 
 /* GET, home page */
@@ -85,6 +58,21 @@ exports.download = function(req, res) {
   imgReq.pipe(res);
 };
 
+/* POST, deletes an image if the requester is the owner of it */
+exports["delete"] = function(req, res) {
+	if (helpers.isImageOwner(req, req.params.image)) {
+		if(knoxClient) {
+			knoxClient.deleteFile("/" + auth.amazon.S3_IMAGE_FOLDER + req.params.image, function(){ });
+		} else {
+      fs.unlink(options.LOCAL_STORAGE_PATH + req.params.image);
+		}
+
+    helpers.removeImageOwner(res, req.params.image);
+		res.send("Success");
+	}
+	res.send("Forbidden", 403);
+};
+
 /* GET, proxy to external images to avoid cross origin restrictions */
 exports.imageproxy = function(req, res) {
   try {
@@ -102,11 +90,11 @@ exports.image = function(req, res) {
   } else {
     imageURL = "http://" + req.headers.host + options.LOCAL_STORAGE_URL + req.params.image;
   }
-    
   var params = {
     imageName: req.params.image,
     imageURL: imageURL,
     useAnalytics: false,
+    isImageOwner: helpers.isImageOwner(req, req.params.image),
     trackingCode: ""
   };
 
@@ -156,7 +144,7 @@ exports.shorturl = function(req, res) {
 exports.preupload = function(req, res) {
   var form = new formidable.IncomingForm(),
     incomingFiles = [];
-  
+
   form.parse(req, function(err, fields, files) {
     var client = req.app.get("clients")[fields.id];
     if (client) {
@@ -234,7 +222,7 @@ exports.upload = function(req, res) {
       }
 
       fileType = file.type;
-      fileName = generateFileName(fileType.replace("image/", ""));
+      fileName = helpers.generateFileName(fileType.replace("image/", ""));
       longURL = (req.app.get("localrun") ? "http://" + req.headers.host : req.app.get("domain")) + "/" + fileName;
 
 
@@ -274,7 +262,7 @@ exports.upload = function(req, res) {
           });
         }
 
-        uploadToAmazon = function(sourcePath) {
+        uploadToAmazon = function(sourcePath, callback) {
           knoxClient.putFile(
             sourcePath,
             "/" + auth.amazon.S3_IMAGE_FOLDER + fileName,
@@ -284,47 +272,62 @@ exports.upload = function(req, res) {
                 fs.unlink(sourcePath); // Remove tmp file
                 if (putRes.statusCode === 200) {
                   if(shortURL === false || !shortURLRequest) {
-                    res.json({url: longURL});
+                    callback({url: longURL});
                   } else if (shortURL === undefined) {
                     shortURLRequest.on("complete", function(response) {
                       var json;
                       if (response.statusCode === 200) {
                         json = JSON.parse(response.body);
                         if (json.status_code === 200) {
-                          res.json({url: json.data.url});
+                          callback({url: json.data.url});
                           return;
                         }
                       }
-                      res.json({url: longURL});
+                      callback({url: longURL});
                     }).on("error", function() {
-                      res.json({url: longURL});
+                      callback({url: longURL});
                     });
                   } else {
-                    res.json({url: shortURL});
+                    callback({url: shortURL});
                   }
                 } else {
-                  res.send("Failure", putRes.statusCode);
+                  callback({
+                    error: {
+                      message: "Failure",
+                      status: putRes.statusCode
+                    }
+                  });
                 }
               }
           });
         };
       }
 
-      uploadToFS = function(sourcePath) {
+      uploadToFS = function(sourcePath, callback) {
         var destFile = options.LOCAL_STORAGE_PATH + fileName;
         fs.rename(sourcePath, destFile, function(err) {
-          res.json({url: longURL});
+          callback({url: longURL});
         });
       };
 
       uploadToStore = function(sourcePath) {
+
+        var callback = function(response) {
+          if (!response.error) {
+            helpers.setImageOwner(res, fileName);
+            res.json(response);
+          } else {
+            res.send(response.error, response.status);
+          }
+        };
+
         if (knoxClient) {
-          uploadToAmazon(sourcePath);
+          uploadToAmazon(sourcePath, callback);
         } else {
-          uploadToFS(sourcePath);
+          uploadToFS(sourcePath, callback);
         }
       };
-      
+
       if (!fields.cropImage) {
         uploadToStore(file.path);
       } else {
@@ -343,7 +346,7 @@ exports.upload = function(req, res) {
           uploadToStore(cropPath);
         });
       }
-      
+
     } else {
       res.send("Missing file", 500);
     }

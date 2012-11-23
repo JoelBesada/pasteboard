@@ -37,6 +37,9 @@
         <input type="text" readonly onClick="this.select();">
       </div>
       <a href="/download/<%= imageName %>" class="button" data-track="Download">Download image</a>
+      <% if (isImageOwner) { %>
+      <button class="cancel delete" data-track="Delete" data-image="<%= imageName %>">Delete image</button>
+      <% } %>
       <a href="/" class="button confirm" data-track="Home">Upload an image</a>
 
     </aside>
