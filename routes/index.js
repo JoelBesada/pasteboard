@@ -50,7 +50,12 @@ exports.redirected = function(req, res) {
 exports.download = function(req, res) {
   var imgReq;
   if(knoxClient) {
-    imgReq = request("http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/" + auth.amazon.S3_IMAGE_FOLDER + req.params.image);
+    imgReq = request({
+      url: "http://" + auth.amazon.S3_BUCKET + ".s3.amazonaws.com/" + auth.amazon.S3_IMAGE_FOLDER + req.params.image,
+      headers: {
+        "Referer": req.headers.referer
+      }
+    });
   } else {
     imgReq = request("http://" + req.headers.host + options.LOCAL_STORAGE_URL + req.params.image);
   }
