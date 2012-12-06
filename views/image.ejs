@@ -32,7 +32,7 @@
         <span>Short URL:</span>
         <input type="text" readonly onClick="this.select();">
       </div>
-      <a href="/download/<%= imageName %>" class="button" data-track="Download">Download image</a>
+      <a href="/images/<%= imageName %>/download" class="button" data-track="Download">Download image</a>
       <% if (isImageOwner) { %>
       <button class="cancel delete" data-track="Delete" data-image="<%= imageName %>">Delete image</button>
       <% } %>
