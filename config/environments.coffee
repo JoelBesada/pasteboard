@@ -19,7 +19,6 @@ exports.init = (app, express) ->
         # Set
         app.set "localrun", process.env.LOCAL or false
         app.set "port", process.env.PORT or 3000
-        # app.set "clients", clients
         app.set "domain", "http://pasteboard.co"
         app.set "views", "#{__dirname}/../views"
         app.set "view engine", "ejs"
