@@ -1,7 +1,19 @@
 // NOTE: Vendor prefixes are automatically added with -prefix-free (http://leaverou.github.com/prefixfree/)
 @import "common.less";
-
+html {
+	height: 100%;
+	width: 100%;
+	min-height: 600px;
+	min-width: 600px;
+}
 body {
+	position: relative;
+	height: 100%;
+	width: 100%;
+	min-height: 600px;
+	min-width: 600px;
+	overflow: auto;
+
 	&.loaded {
 		transition: background-color 1s;
 	}
@@ -219,7 +231,6 @@ body {
 .image-editor {
 	position: relative;
 	margin: 0 auto;
-	margin-top: -50px;
 	animation: fadeInScale 0.5s;
 
 	.image-container {
@@ -365,6 +376,7 @@ body {
 		position: absolute;
 		top: 105%;
 		width: 100%;
+		min-width: 150px;
 
 		.confirm {
 			font-size: 18px;

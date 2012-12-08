@@ -1,9 +1,11 @@
-### 
+###
 #	Image editor module, the image viewing / editing interface.
 ###
 imageEditor = (pasteboard) ->
 	MAX_WIDTH_RATIO = 0.8
 	MAX_HEIGHT_RATIO = 0.8
+	WINDOW_MAX_WIDTH = 600
+	WINDOW_MAX_HEIGHT = 600
 	SCROLL_SPEED = 25
 	TEMPLATE_URL = "jstemplates/imageeditor.tmpl"
 
@@ -20,7 +22,7 @@ imageEditor = (pasteboard) ->
 	dragOffset =
 		x: 0
 		y: 0
-	imagePosition = 
+	imagePosition =
 		x: 0
 		y: 0
 	mousePosition =
@@ -33,19 +35,19 @@ imageEditor = (pasteboard) ->
 		y = 0
 		width = 0
 		height = 0
-		style = null 
+		style = null
 		element = null
 		isCropped = false
 
 		# Sets the CSS styles from the coordinates / dimensions
 		updateStyle = () ->
-			style.x = x 
+			style.x = x
 			style.y = y
 			style.width = width
 			style.height = height
 
 			# We can't have negative dimensions, so
-			# we need to invert the dimensions 
+			# we need to invert the dimensions
 			# and set the coordinates accordingly
 			if style.width < 0
 				style.width *= -1
@@ -64,7 +66,7 @@ imageEditor = (pasteboard) ->
 
 			if style.y < 0
 				style.height += style.y
-				style.y = 0			
+				style.y = 0
 
 			if (style.y + style.height) > image.height
 				style.height = image.height - style.y
@@ -91,19 +93,19 @@ imageEditor = (pasteboard) ->
 					$imageEditor.addClass("cropped")
 					isCropped = true
 					clearTimeout(cropIntentTimeout)
-					cropIntentTimeout = setTimeout(() -> 
+					cropIntentTimeout = setTimeout(() ->
 						setUploadText(isCropped)
 					, 200)
 
 		self =
 			getCropCoordinates: () -> if isCropped then style else null
 			reset: () ->
-				style = 
+				style =
 					x: 0
 					y: 0
 					width: 0
 					height: 0
-					
+
 				isCropped = false
 			init: (startX, startY) ->
 				element = $image.find(".crop-selection")
@@ -111,7 +113,7 @@ imageEditor = (pasteboard) ->
 				y = startY
 				width = 0
 				height = 0
-				
+
 				updateStyle();
 
 			resize: (newX, newY) ->
@@ -120,11 +122,11 @@ imageEditor = (pasteboard) ->
 				updateStyle()
 
 	)()
-	
+
 	$imageEditor = null
 	$imageContainer = null
 	$image = null
-	$scrollBar = 
+	$scrollBar =
 		x:
 			bar: null
 			track: null
@@ -132,8 +134,8 @@ imageEditor = (pasteboard) ->
 		y:
 			bar: null
 			track: null
-			handle: null	
-	
+			handle: null
+
 	$uploadButton = null
 	$window = $(window)
 	$document = $(document)
@@ -142,9 +144,9 @@ imageEditor = (pasteboard) ->
 	compatibleTranslate = (x, y, z) ->
 		if Modernizr.csstransforms3d then "translate3d(#{x}px, #{y}px, #{z}px)" else "translate(#{x}px, #{y}px)"
 
-	# Add all the event listeners, use a namespace to make removing them easier		
+	# Add all the event listeners, use a namespace to make removing them easier
 	addEvents = () ->
-		$window.on "resize.imageeditorevent", () -> 
+		$window.on "resize.imageeditorevent", () ->
 			setPosition()
 			setSize()
 			scrollImage 0, 0
@@ -155,16 +157,16 @@ imageEditor = (pasteboard) ->
 			.on("mousewheel.imageeditorevent" + (if ("onmousewheel" of document) then "" else " DOMMouseScroll.imageeditorevent"), ".image-container", scrollWheelHandler)
 			.on("mousedown.imageeditorevent", ".image-container .image", mouseCropHandler)
 			.on("mousedown.imageeditorevent", ".image-editor .y-scroll-bar, .image-editor .x-scroll-bar", mouseScrollHandler)
-			.on("mouseup.imageeditorevent", () -> 
-				if isScrollDragging 
+			.on("mouseup.imageeditorevent", () ->
+				if isScrollDragging
 					isScrollDragging = false
 				if isCropDragging
 					isCropDragging = false
 					clearInterval selectionScrollInterval
 			)
-			.on("mousemove.imageeditorevent", (e) -> 
+			.on("mousemove.imageeditorevent", (e) ->
 				dragScrollHandler e if isScrollDragging
-				dragCropHandler e if isCropDragging 
+				dragCropHandler e if isCropDragging
 			)
 	# Remove the events
 	removeEvents = () ->
@@ -182,7 +184,7 @@ imageEditor = (pasteboard) ->
 			$scrollBar[coordinate].handle = $scrollBar[coordinate].track.find(".handle");
 
 		$uploadButton = $imageEditor.find(".confirm")
-			
+
 	# Changes the upload button text
 	setUploadText = (isCropped) ->
 		buttonWidth = if isCropped then 180 else 100
@@ -202,7 +204,7 @@ imageEditor = (pasteboard) ->
 
 	# Sets the vertical position of the image editor window
 	setPosition = () ->
-		y = $window.height() / 2 - $imageEditor.outerHeight() / 2
+		y = $window.height() / 2 - $imageEditor.outerHeight() / 2 - 50
 		y = 0 if $imageEditor.outerHeight() > $window.height()
 		$imageEditor.css(
 			"top": y
@@ -210,13 +212,13 @@ imageEditor = (pasteboard) ->
 
 	# Resizes the image editor window, adds scrollbars if needed
 	setSize = () ->
-		maxWidth = MAX_WIDTH_RATIO * $window.width()
-		maxHeight = MAX_HEIGHT_RATIO * $window.height()
+		maxWidth = MAX_WIDTH_RATIO * Math.max($window.width(), WINDOW_MAX_WIDTH)
+		maxHeight = MAX_HEIGHT_RATIO * Math.max($window.height(), WINDOW_MAX_HEIGHT)
 
 		width = Math.min maxWidth, image.width
 		height = Math.min maxHeight, image.height
 
-		
+
 		$imageEditor
 			.css(
 				"width": width
@@ -238,11 +240,11 @@ imageEditor = (pasteboard) ->
 			# relative to the track
 			$scrollBar.x.handle
 				.css("width", ($imageContainer.width() / image.width) * $scrollBar.x.track.width())
-		else 
+		else
 			$imageEditor.removeClass "scroll-x"
 			$imageContainer.css "height", ""
 			scrollable.x = false
-		
+
 		if $imageContainer.height() < image.height
 			scrollable.y = true
 			$imageEditor.addClass("scroll-y")
@@ -257,11 +259,11 @@ imageEditor = (pasteboard) ->
 			# relative to the track
 			$scrollBar.y.handle
 				.css("height", ($imageContainer.height() / image.height) * $scrollBar.y.track.height())
-		else 
+		else
 			$imageEditor.removeClass "scroll-y"
 			$imageContainer.css "width", ""
 			scrollable.y = false
-			
+
 	# Handles mouse scrolling (clicking and dragging)
 	mouseScrollHandler = (e) ->
 		return if e.button is not 0
@@ -323,16 +325,16 @@ imageEditor = (pasteboard) ->
 	dragScrollHandler = (e) ->
 		if dragDirection is "x"
 			x = ((e.clientX - dragOffset.x - $scrollBar.x.track.offset().left) / $scrollBar.x.track.width()) * image.width
-			scrollImageTo(x, undefined)	
+			scrollImageTo(x, undefined)
 		else if dragDirection is "y"
 			y = ((e.clientY - dragOffset.y - $scrollBar.y.track.offset().top) / $scrollBar.y.track.height()) * image.height
-			scrollImageTo(undefined, y)				
+			scrollImageTo(undefined, y)
 
 	# Scrolls the image by the given number of pixels
 	scrollImage = (x, y) ->
 		x = 0 unless scrollable.x
 		y = 0 unless scrollable.y
-		
+
 		newX = -(imagePosition.x + x)
 		newY = -(imagePosition.y + y)
 
@@ -368,7 +370,7 @@ imageEditor = (pasteboard) ->
 	mouseCropHandler = (e) ->
 		isCropDragging = true
 		cropSelection.init e.clientX - $image.offset().left, e.clientY - $image.offset().top
-		
+
 		mousePosition.x = e.clientX
 		mousePosition.y = e.clientY
 		selectionScrollInterval = setInterval selectionDragScroll, 1000 / 60
@@ -379,7 +381,7 @@ imageEditor = (pasteboard) ->
 		mousePosition.y = e.clientY
 		cropSelection.resize e.clientX - $image.offset().left, e.clientY - $image.offset().top
 
-	# Scrolls the image if the user is dragging 
+	# Scrolls the image if the user is dragging
 	# the selection outside the image container area
 	selectionDragScroll = () ->
 		scrollDir =
@@ -406,7 +408,7 @@ imageEditor = (pasteboard) ->
 			return 0.1
 		if distance < 100
 			return distance / 100
-		
+
 		return 1.0
 
 	# Loads an image and sets up the editor
@@ -419,18 +421,18 @@ imageEditor = (pasteboard) ->
 				{ url: img },
 				(compiledTemplate) ->
 					cacheElements compiledTemplate
-					
+
 					$imageEditor.appendTo "body"
 					$image.css
 						"width": image.width
 						"height": image.height
-					
+
 
 					setSize()
 					setPosition()
 			)
 
-	self = 
+	self =
 		# Initializes the image editor.
 		# Loads and displays the given image
 		init: (img) ->
@@ -464,7 +466,7 @@ imageEditor = (pasteboard) ->
 		# Uploads the image
 		uploadImage: (callback) ->
 			pasteboard.fileHandler.uploadFile cropSelection.getCropCoordinates(), callback
-			
+
 		getImage: () -> return image
-			
+
 window.moduleLoader.addModule "imageEditor", imageEditor
