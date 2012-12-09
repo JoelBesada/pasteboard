@@ -271,27 +271,27 @@ imageEditor = (pasteboard) ->
 
 		# TODO: Make this less repetitive
 		if $target.hasClass("y-scroll-bar")
-			if $scrollBar.y.handle.offset().top <= e.clientY <= $scrollBar.y.handle.offset().top + $scrollBar.y.handle.height()
+			if $scrollBar.y.handle.offset().top <= e.clientY + $window.scrollTop() <= $scrollBar.y.handle.offset().top + $scrollBar.y.handle.height()
 				dragDirection = "y"
-				dragOffset.y = e.clientY - $scrollBar.y.handle.offset().top
+				dragOffset.y = e.clientY + $window.scrollTop() - $scrollBar.y.handle.offset().top
 				isScrollDragging = true
 			else
 				# Ignore clicks on the padding
-				return if e.clientY > $scrollBar.y.bar.offset().top + $scrollBar.y.bar.height()
-				if e.clientY < $scrollBar.y.handle.offset().top
+				return if e.clientY + $window.scrollTop() > $scrollBar.y.bar.offset().top + $scrollBar.y.bar.height()
+				if e.clientY + $window.scrollTop() < $scrollBar.y.handle.offset().top
 					scrollImage 0, SCROLL_SPEED * 4
 				else
 					scrollImage 0, -SCROLL_SPEED * 4
 
 		else if $target.hasClass("x-scroll-bar")
-			if $scrollBar.x.handle.offset().left <= e.clientX <= $scrollBar.x.handle.offset().left + $scrollBar.x.handle.width()
+			if $scrollBar.x.handle.offset().left <= e.clientX + $window.scrollLeft() <= $scrollBar.x.handle.offset().left + $scrollBar.x.handle.width()
 				dragDirection = "x"
-				dragOffset.x = e.clientX - $scrollBar.x.handle.offset().left
+				dragOffset.x = e.clientX + $window.scrollLeft() - $scrollBar.x.handle.offset().left
 				isScrollDragging = true
 			else
 				# Ignore clicks on the padding
-				return if e.clientX > $scrollBar.x.bar.offset().left + $scrollBar.x.bar.width()
-				if e.clientX < $scrollBar.x.handle.offset().left
+				return if e.clientX + $window.scrollLeft() > $scrollBar.x.bar.offset().left + $scrollBar.x.bar.width()
+				if e.clientX + $window.scrollLeft() < $scrollBar.x.handle.offset().left
 					scrollImage SCROLL_SPEED, 0
 				else
 					scrollImage -SCROLL_SPEED, 0
@@ -324,10 +324,10 @@ imageEditor = (pasteboard) ->
 	# Handles dragging of the scroll bar handles
 	dragScrollHandler = (e) ->
 		if dragDirection is "x"
-			x = ((e.clientX - dragOffset.x - $scrollBar.x.track.offset().left) / $scrollBar.x.track.width()) * image.width
+			x = ((e.clientX + $window.scrollLeft() - dragOffset.x - $scrollBar.x.track.offset().left) / $scrollBar.x.track.width()) * image.width
 			scrollImageTo(x, undefined)
 		else if dragDirection is "y"
-			y = ((e.clientY - dragOffset.y - $scrollBar.y.track.offset().top) / $scrollBar.y.track.height()) * image.height
+			y = ((e.clientY + $window.scrollTop() - dragOffset.y - $scrollBar.y.track.offset().top) / $scrollBar.y.track.height()) * image.height
 			scrollImageTo(undefined, y)
 
 	# Scrolls the image by the given number of pixels
@@ -369,17 +369,19 @@ imageEditor = (pasteboard) ->
 	# Sets the crop selection starting position
 	mouseCropHandler = (e) ->
 		isCropDragging = true
-		cropSelection.init e.clientX - $image.offset().left, e.clientY - $image.offset().top
+		mousePosition.x = e.clientX + $window.scrollLeft()
+		mousePosition.y = e.clientY + $window.scrollTop()
 
-		mousePosition.x = e.clientX
-		mousePosition.y = e.clientY
+		cropSelection.init mousePosition.x - $image.offset().left, mousePosition.y - $image.offset().top
+
 		selectionScrollInterval = setInterval selectionDragScroll, 1000 / 60
 
 	# Handle cropping (drag)
 	dragCropHandler = (e) ->
-		mousePosition.x = e.clientX
-		mousePosition.y = e.clientY
-		cropSelection.resize e.clientX - $image.offset().left, e.clientY - $image.offset().top
+		mousePosition.x = e.clientX + $window.scrollLeft()
+		mousePosition.y = e.clientY + $window.scrollTop()
+
+		cropSelection.resize mousePosition.x - $image.offset().left, mousePosition.y - $image.offset().top
 
 	# Scrolls the image if the user is dragging
 	# the selection outside the image container area
