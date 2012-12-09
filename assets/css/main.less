@@ -158,6 +158,16 @@ body {
 	}
 }
 
+.webcam-button {
+	display: none;
+	position: absolute;
+	z-index: 11;
+	bottom: 30px;
+	width: 150px;
+	left: 50%;
+	margin-left: -75px;
+}
+
 .link-bar {
 	position: absolute;
 	z-index: 11;
@@ -224,8 +234,28 @@ body {
 			}
 		}
 	}
+}
 
+.webcam-window {
+	position: absolute;
+	animation: fadeInScale 0.5s;
+	top: 0;
+	left: 0;
 
+	video {
+		box-shadow: 0 0 20px rgba(0,0,25,0.7);
+		animation: shadow 0.5s both;
+	}
+
+	.action-bar {
+		position: absolute;
+		top: 105%;
+		width: 100%;
+
+		button {
+			margin-left: 5px;
+		}
+	}
 }
 
 .image-editor {

@@ -26,7 +26,7 @@ analytics = (pasteboard) ->
 				, 150)
 
 	trackInsertedImages = () ->
-		$pasteboard.on 
+		$pasteboard.on
 			"filetoolarge": (e, eventData) ->
 				kB = eventData.size / 1024
 				track "Image Inserted", actionString(eventData.action), "Too Large", kB
@@ -40,10 +40,11 @@ analytics = (pasteboard) ->
 			unless loggedErrors[e.originalEvent.message]
 				loggedErrors[e.originalEvent.message] = true
 				track "Error", e.originalEvent.message, "#{e.originalEvent.filename} :#{e.originalEvent.lineno}"
-	
+
 	actionString = (action) ->
 		return "Copy and Paste" if action.paste
 		return "Drag and Drop" if action.drop
+		return "Webcam" if action.webcam
 		return "Unknown Action"
 
 	self =

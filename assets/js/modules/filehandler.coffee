@@ -1,5 +1,5 @@
-### 
-# File handler module, takes care of reading and 
+###
+# File handler module, takes care of reading and
 # uploading files.
 ###
 
@@ -14,7 +14,7 @@ fileHandler = (pasteboard) ->
 	# exceeds the limit, trigger an error event
 	checkFileSize = (file, action) ->
 		if file.size > FILE_SIZE_LIMIT
-			$(pasteboard).trigger "filetoolarge", 
+			$(pasteboard).trigger "filetoolarge",
 				size: file.size
 				action: action
 			return false
@@ -50,7 +50,7 @@ fileHandler = (pasteboard) ->
 		context.drawImage pasteboard.imageEditor.getImage(), -cropSettings.x, -cropSettings.y
 		canvas.toBlob callback
 
-	self = 
+	self =
 		isSupported: () -> !!(window.FileReader or window.URL or window.webkitURL)
 		getCurrentUploadLoaded: () -> currentUploadLoaded
 		getCurrentUploadRatio: () -> currentUploadRatio
@@ -62,47 +62,61 @@ fileHandler = (pasteboard) ->
 				# Try creating a file URL first
 				if url = window.URL || window.webkitURL
 					objectURL = url.createObjectURL(file)
-					
+
 					# Opera just returns the file again, why?
 					if typeof objectURL is "string"
-						$(pasteboard).trigger "imageinserted", 
+						$(pasteboard).trigger "imageinserted",
 							image: objectURL
 							action: action
 							size: currentFile.size
-							
+
 						return
 
 				# Else create a data URL
 				if window.FileReader
 					fileReader = new FileReader()
 					fileReader.onload = (e) ->
-						$(pasteboard).trigger "imageinserted", 
+						$(pasteboard).trigger "imageinserted",
 							image: e.target.result
 							action: action
 							size: currentFile.size
 
 					fileReader.readAsDataURL file
-			
+
+		# Capture an image from the input video
+		readVideo: (video) ->
+			canvas = document.createElement "canvas"
+			canvas.width = video.videoWidth
+			canvas.height = video.videoHeight
+			canvas.getContext("2d").drawImage video, 0, 0
+			canvas.toBlob (blob) ->
+				currentFile = blob
+				if checkFileSize currentFile, "webcam"
+					$(pasteboard).trigger "imageinserted",
+						image: canvas.toDataURL "image/png"
+						action:
+							webcam: true
+						size: currentFile.size
 
 		# Converts the given data into a file, and sends the data
 		# to the image editor
 		readData: (data, action) ->
 			currentFile = dataURLtoBlob data
 			if checkFileSize currentFile, action
-				$(pasteboard).trigger "imageinserted", 
+				$(pasteboard).trigger "imageinserted",
 					image: data
 					action: action
 					size: currentFile.size
 
 		# Reads data from an external image url and creates a file
 		readExternalImage: (url, action) ->
-			# Use a local proxy to access the image to avoid going against 
-			# canvas cross origin policies. 
+			# Use a local proxy to access the image to avoid going against
+			# canvas cross origin policies.
 			proxyURL = "/imageproxy/" + encodeURIComponent(url)
 			image = new Image()
 			image.onload = () ->
 				canvas = document.createElement "canvas"
-				
+
 				return $(pasteboard).trigger "noimagefound", action unless canvas.toBlob
 
 				canvas.width = image.width
@@ -112,12 +126,12 @@ fileHandler = (pasteboard) ->
 				canvas.toBlob (blob) ->
 					currentFile = blob
 					if checkFileSize currentFile, action
-						$(pasteboard).trigger "imageinserted", 
+						$(pasteboard).trigger "imageinserted",
 							image: proxyURL
 							action: action
 							size: currentFile.size
 
-				
+
 			image.onerror = (err) ->
 				$(pasteboard).trigger "noimagefound", action
 
@@ -127,7 +141,7 @@ fileHandler = (pasteboard) ->
 		# it to the server, while tracking the progress.
 		preuploadFile: () ->
 			id = pasteboard.socketConnection.getID()
-			$(pasteboard.socketConnection).off "idReceive" 
+			$(pasteboard.socketConnection).off "idReceive"
 			if id
 				fd = new FormData()
 				fd.append "id", pasteboard.socketConnection.getID()
@@ -145,46 +159,46 @@ fileHandler = (pasteboard) ->
 
 		# Clears partially or preuploaded files from the server
 		clearFile: () ->
-			$.post("/clearfile", 
+			$.post("/clearfile",
 				id: pasteboard.socketConnection.getID()
 			);
 
 		# Uploads the file. If the file is already preuploaded, just
-		# send the client ID so that the server can upload the file to 
+		# send the client ID so that the server can upload the file to
 		# the cloud.
 		uploadFile: (cropSettings, callback) ->
 			if preuploadXHR
 				# The image is already uploaded
 				if preuploadXHR.readyState is 4
-					postData = 	
+					postData =
 						id: pasteboard.socketConnection.getID()
 					if cropSettings
 						postData.cropImage = true
-						postData.crop = cropSettings 
+						postData.crop = cropSettings
 
 					preuploadXHR = null
 					xhr = $.post("/upload", postData)
-							.error((error) -> log error) 
-					
+							.error((error) -> log error)
+
 					callback xhr: xhr, inProgress: false
 				# The image is preuploading
-				else 
+				else
 					if cropSettings
 						# Estimate if it's faster to wait for the
 						# preupload to finish and crop the image server-side,
 						# or send a new cropped image instead
-						
+
 						remainingSize = currentFile.size - currentUploadLoaded
-						
+
 						# Crop the image and check the file size
-						cropImage cropSettings, (blob) => 
+						cropImage cropSettings, (blob) =>
 							# Add 10% to the cropped size when comparing
 							# to make sure we'll benefit from reuploading
 							# the cropped part (might need some tweaking)
 							if blob.size * 1.1 < remainingSize
 								# Reupload cropped part
 								currentFile = blob;
-								preuploadXHR.abort() 
+								preuploadXHR.abort()
 								preuploadXHR = null
 								@uploadFile null, callback
 							else
@@ -194,7 +208,7 @@ fileHandler = (pasteboard) ->
 			else
 				# Force upload
 				$(pasteboard.socketConnection).off "idReceive"
-				
+
 				# This only crops if we have crop settings
 				cropImage cropSettings, (file, doServerCrop) ->
 					fd = new FormData()
@@ -205,7 +219,7 @@ fileHandler = (pasteboard) ->
 						fd.append "crop[#{key}]", val for key, val of cropSettings
 
 					callback xhr: sendFileXHR("/upload", fd), inProgress: true
-					
+
 
 
 window.moduleLoader.addModule "fileHandler", fileHandler
