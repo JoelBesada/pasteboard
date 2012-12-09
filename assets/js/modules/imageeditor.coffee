@@ -125,6 +125,7 @@ imageEditor = (pasteboard) ->
 
 	$imageEditor = null
 	$imageContainer = null
+	$instructions = null
 	$image = null
 	$scrollBar =
 		x:
@@ -178,6 +179,7 @@ imageEditor = (pasteboard) ->
 		$imageEditor = $(element)
 		$imageContainer = $imageEditor.find(".image-container")
 		$image = $imageContainer.find(".image")
+		$instructions = $imageContainer.find(".instructions")
 		for coordinate of $scrollBar
 			$scrollBar[coordinate].bar = $imageEditor.find(".#{coordinate}-scroll-bar");
 			$scrollBar[coordinate].track = $scrollBar[coordinate].bar.find(".track");
@@ -423,6 +425,8 @@ imageEditor = (pasteboard) ->
 				{ url: img },
 				(compiledTemplate) ->
 					cacheElements compiledTemplate
+
+					$instructions.hide() if image.width < 200 or image.height < 100
 
 					$imageEditor.appendTo "body"
 					$image.css

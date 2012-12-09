@@ -283,6 +283,7 @@ body {
 	animation: fadeInScale 0.5s;
 
 	.image-container {
+		position: relative;
 		width: 100%;
 		height: 100%;
 		overflow: hidden;
@@ -329,6 +330,38 @@ body {
 					width: 100%;
 					height: 100%;
 					background-color: rgba(0,0,25,0.3);
+				}
+			}
+		}
+		.instructions {
+			position: absolute;
+			bottom: 10px;
+			margin: 0;
+			left: 20px;
+			list-style-type: none;
+			text-align: left;
+			background-color: black;
+			background-color: rgba(0,0,0,0.8);
+			padding: 5px 15px;
+			border-radius: 40px;
+			color: white;
+			text-shadow: none;
+			animation: fadeInScale 0.5s 1s backwards, fadeOut 2s 5s forwards;
+			li {
+				height: 35px;
+			}
+			.crop {
+				.icon {
+					display: inline-block;
+					background-image: url("../images/crop-icon.png");
+					background-size: 35px;
+					width: 35px;
+					height: 35px;
+				}
+				.text {
+					position: relative;
+					top: -0.7em;
+					margin: 0 5px;
 				}
 			}
 		}
