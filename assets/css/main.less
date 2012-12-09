@@ -159,13 +159,33 @@ body {
 }
 
 .webcam-button {
+	@width: 120px;
 	display: none;
 	position: absolute;
 	z-index: 11;
 	bottom: 30px;
-	width: 150px;
+	width: @width;
 	left: 50%;
-	margin-left: -75px;
+	margin-left: -(@width / 2);
+	vertical-align: top;
+	padding: 0;
+	height: 40px;
+	text-align: left;
+
+	.icon {
+		display: inline-block;
+		background-image: url("../images/webcam-icon.png");
+		background-size: 35px;
+		width: 35px;
+		height: 35px;
+		opacity: 0.5;
+		margin: 1px 3px 0px 5px;
+	}
+
+	.text {
+		position: relative;
+		top: -0.7em;
+	}
 }
 
 .link-bar {

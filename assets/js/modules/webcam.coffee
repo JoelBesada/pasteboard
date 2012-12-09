@@ -70,7 +70,14 @@ webcam = (pasteboard) ->
 
 	self =
 		isSupported: -> !!navigator.getUserMedia and window.dataURLtoBlob
-		showButton: -> $(".webcam-button").show() if @isSupported()
+		showButton: ->
+			return unless @isSupported()
+			$(".webcam-button")
+				.show()
+				.css("opacity", 0)
+				.transition(
+					opacity: 1
+				, 500)
 		hideButton: -> $(".webcam-button").hide()
 
 		hide: (callback) ->
