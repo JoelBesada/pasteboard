@@ -68,10 +68,10 @@ wsServer.on("request", function(req) {
               v = (c === "x" ? r : (r & 0x3 | 0x8));
           return v.toString(16);
       });
-
+  console.log("incoming request", req);
   if (originIsAllowed(req.origin)) {
     connection = req.accept(null, req.origin);
-
+    console.log("accepted");
     // Send the ID to the client
     connection.sendUTF(JSON.stringify({ id: ID }));
     clients[ID] = {
