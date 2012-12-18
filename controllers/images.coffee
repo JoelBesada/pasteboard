@@ -12,7 +12,7 @@ post = {}
 get.index = (req, res) ->
 	viewData =
 		imageName: req.params.image
-		imageURL: imageURL req.params.image
+		imageURL: imageURL req
 		useAnalytics: false
 		trackingCode: ""
 		isImageOwner: helpers.isImageOwner req, req.params.image
@@ -54,18 +54,32 @@ get.shortURL = (req, res) ->
 # Image download URL
 get.download = (req, res) ->
 	imageRequest = request
-		url: imageURL req.params.image
+		url: imageURL req
 		headers:
 			"Referer": req.headers.referer
 
 	res.set "Content-Disposition", "attachment"
 	imageRequest.pipe res
 
-imageURL = (image) ->
+# Delete the image
+post.delete = (req, res) ->
+	if helpers.isImageOwner req, req.params.image
+		knox = req.app.get "knox"
+		if knox
+			knox.deleteFile "#{req.app.get "amazonFilePath"}#{req.params.image}", ->
+		else
+			(require "fs").unlink "#{req.app.get "localStorageFilePath"}#{req.params.image}"
+
+		helpers.removeImageOwner res, req.params.image
+		res.send "Success"
+
+	res.send "Forbidden", 403
+
+imageURL = (req) ->
 	if auth.amazon
-		return "http://#{auth.amazon.S3_BUCKET}.s3.amazonaws.com/#{auth.amazon.S3_IMAGE_FOLDER}#{image}"
+		return "#{req.app.get "amazonURL"}#{req.app.get "amazonFilePath"}#{req.params.image}"
 	else
-		return "http://#{req.headers.host}#{app.get "localStorageURL"}#{image}"
+		return "http://#{req.headers.host}#{req.app.get "localStorageURL"}#{req.params.image}"
 
 
 exports.routes =
