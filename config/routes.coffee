@@ -13,6 +13,9 @@ exports.init = (expressApp) ->
 	for name, controller of controllers
 		setupRoutes name, controller.routes
 
+	# Set the image route last, to give other root routes priority
+	app.get "/:image", controllers.images.index
+
 # Create the routes from the routes object in the controller
 setupRoutes = (controller, routes) ->
 	return unless routes
@@ -32,4 +35,3 @@ createURL = (controller, route) ->
 	# app.post('/upload', routes.upload);
 	# app.post('/preupload', routes.preupload);
 	# app.post('/clearfile', routes.clearfile);
-	# app.post('/delete/:image', routes["delete"]);

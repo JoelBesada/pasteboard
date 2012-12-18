@@ -9,7 +9,7 @@ get = {}
 post = {}
 
 # The image display page
-get.index = (req, res) ->
+exports.index = get.index = (req, res) ->
 	viewData =
 		imageName: req.params.image
 		imageURL: imageURL req
@@ -84,7 +84,6 @@ imageURL = (req) ->
 
 exports.routes =
 	get:
-		"/:image": get.index
 		":image/download": get.download
 		":image/shorturl": get.shortURL
 	post:
