@@ -1,2 +1,2 @@
 #!/bin/bash
-LOCAL=true node app.js
+LOCAL=true coffee app

@@ -59,7 +59,7 @@ $ () ->
 
 	# Fetch the shortlink
 	if window.location.pathname
-		$.get "/shorturl/" + window.location.pathname.replace("/", ""), (data) ->
+		$.get "/images/#{window.location.pathname.replace("/", "")}/shorturl", (data) ->
 			$(".short-url")
 				.addClass("appear")
 				.find("input").val(data.url)
@@ -93,7 +93,7 @@ $ () ->
 
 		$modalWindow.on "confirm", ->
 			$modalWindow.off "confirm cancel"
-			$.post "delete/" + image, ->
+			$.post "images/#{image}/delete", ->
 				window.location = "/"
 
 		$modalWindow.on "cancel", ->
