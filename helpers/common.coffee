@@ -43,11 +43,10 @@ imageOwnerKey = (image) ->
 base62Encode = (n) ->
 	BASE62_CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	arr = []
-	return BASE62_CHARS[0]  if n is 0
-
+	return BASE62_CHARS[0] if n is 0
 	while n
 		r = n % 62
 		n = (n - r) / 62
 		arr.push BASE62_CHARS[r]
 
-  return arr.reverse().join ""
+	return arr.reverse().join ""
