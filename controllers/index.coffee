@@ -2,7 +2,7 @@
 # Note: This is not a controller
 
 exports.init = (app) ->
-	((require "fs").readdirSync __dirname).forEach (file) ->
+	require("fs").readdirSync(__dirname).forEach (file) ->
 		controllerName = file.replace /\.(coffee|js)$/, ""
 		unless controllerName is "index"
 			controller = require "#{__dirname}/#{controllerName}"
