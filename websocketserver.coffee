@@ -46,4 +46,4 @@ generateID = ->
           return v.toString 16
 
 originIsAllowed = (origin) ->
-  app.get "localrun" or origin is app.get "domain"
+  app.get("localrun") or origin is app.get "domain"
