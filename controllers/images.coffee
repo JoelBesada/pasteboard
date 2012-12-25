@@ -38,7 +38,7 @@ get.shortURL = (req, res) ->
 		method: "GET"
 		uri: "https://api.parse.com/1/classes/short_url?where=#{query}"
 		headers: {
-      		"X-Parse-REST-API-Key": auth.parse.API_KEY
+			"X-Parse-REST-API-Key": auth.parse.API_KEY
 			"X-Parse-Application-Id": auth.parse.APP_ID
 		}
 
