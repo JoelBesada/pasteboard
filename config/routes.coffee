@@ -30,8 +30,3 @@ createURL = (controller, route) ->
 	return route if route[0] is "/"
 	# Regular route
 	return "/#{controller}/#{route}"
-
-	# # POST
-	# app.post('/upload', routes.upload);
-	# app.post('/preupload', routes.preupload);
-	# app.post('/clearfile', routes.clearfile);
