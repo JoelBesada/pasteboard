@@ -8,8 +8,8 @@ exports.init = (app, express) ->
   app.configure ->
     # Use
     app.use express.favicon("#{__dirname}/../public/images/favicon.ico")
-    app.use express.logger("dev")
     app.use express.limit("10mb")
+    app.use express.logger("dev") if process.env.LOCAL
     app.use express.cookieParser()
     app.use express.methodOverride()
     app.use app.router
