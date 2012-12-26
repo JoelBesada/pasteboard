@@ -58,6 +58,11 @@ $ () ->
 		getShortURL()
 		window.drawBackgroundOverlay()
 
+	$image.on "error", (e) ->
+		$("body").addClass "broken"
+
+	$image.attr "src", $image.data("src")
+
 	pasteboard.analytics.init()
 	pasteboard.modalWindow.init()
 	$modalWindow = $ pasteboard.modalWindow

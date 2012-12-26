@@ -23,7 +23,8 @@
   <body data-page="Image Page">
     <canvas class="shadow"></canvas>
     <div class="image-container">
-      <img src="<%= imageURL %>" alt="uploaded image" class="image" onerror="brokenLink()">
+      <img data-src="<%= imageURL %>" alt="uploaded image" class="image js">
+      <noscript> <img src="<%= imageURL %>" alt="uploaded image" class="image"> </noscript>
     </div>
     <div class="spinner"></div>
     <div class="broken-link">Image not found</div>
