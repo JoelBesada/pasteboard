@@ -27,29 +27,17 @@ exports.index = get.index = (req, res) ->
 
   res.render "image", viewData
 
-# Get the short URL for the image
 get.shortURL = (req, res) ->
-  unless auth.parse
-    res.send "Missing Parse.com credentials", 500
-    return
+  return res.send "Short URLs are disabled locally", 500 if req.app.get "localrun"
+  longURL = "#{req.app.get "domain"}/#{req.params.image}"
+  shortURLRequest = helpers.requestShortURL longURL, (url) ->
+    if url
+      res.json url: url
+    else
+      res.send "Unable to get short URL", 500
 
-  query = encodeURIComponent "{\"fileName\":\"#{req.params.image}\"}"
-  params =
-    method: "GET"
-    uri: "https://api.parse.com/1/classes/short_url?where=#{query}"
-    headers: {
-      "X-Parse-REST-API-Key": auth.parse.API_KEY
-      "X-Parse-Application-Id": auth.parse.APP_ID
-    }
+  res.send "Unable to send short URL request", 500 unless shortURLRequest
 
-  request params, (err, response, body) ->
-    if not err and response.statusCode is 200
-      result = JSON.parse(body).results[0]
-      if result
-        res.json url: result.shortURL
-        return
-
-    res.send "Not found", 500
 
 # Image download URL
 get.download = (req, res) ->

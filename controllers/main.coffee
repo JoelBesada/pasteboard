@@ -103,7 +103,7 @@ post.upload = (req, res) ->
     unless req.app.get "localrun"
       # Request a short URL
       parallels.shortURL = (callback) ->
-        requestShortURL longURL, (url) ->
+        helpers.requestShortURL longURL, (url) ->
           callback null, url
 
     if knox
@@ -145,7 +145,6 @@ post.upload = (req, res) ->
     series.push (callback) ->
       async.parallel parallels, (err, results) ->
         return res.send "Failed to upload file", 500 if err
-        saveShortURL fileName, results.shortURL if results.shortURL
         fs.unlink sourcePath
         helpers.setImageOwner res, fileName
         res.json
@@ -172,32 +171,6 @@ post.clearfile = (req, res) ->
       fs.unlink client.file.path
       client.file = null;
     res.send "Cleared"
-
-requestShortURL = (longURL, callback) ->
-  return false unless auth.bitly
-  apiEndpoint = "http://api.bitly.com/v3/shorten?login=#{auth.bitly.LOGIN}" +
-  "&apiKey=#{auth.bitly.API_KEY}" +
-  "&longURL=#{encodeURIComponent longURL}"
-  return request apiEndpoint, (error, response, body) ->
-    if not error and response.statusCode is 200
-      json = JSON.parse body
-      if json.status_code is 200
-        callback? json.data.url
-        return
-
-    callback? false
-
-saveShortURL = (fileName, shortURL) ->
-  return unless auth.parse
-  request
-    method: "POST"
-    uri: "https://api.parse.com/1/classes/short_url"
-    headers:
-      "X-Parse-Application-Id": auth.parse.APP_ID
-      "X-Parse-REST-API-Key": auth.parse.API_KEY
-    json:
-      fileName: fileName
-      shortURL: shortURL
 
 exports.routes =
   get:
