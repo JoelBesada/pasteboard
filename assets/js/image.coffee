@@ -25,6 +25,13 @@ setPosition = () ->
 		$imageContainer.css
 			top: ""
 
+getShortURL = () ->
+	if window.location.pathname
+		$.get "/images/#{window.location.pathname.replace("/", "")}/shorturl", (data) ->
+			$(".short-url")
+				.addClass("appear")
+				.find("input").val(data.url)
+
 pasteboard = {}
 window.moduleLoader.load("analytics", pasteboard)
 window.moduleLoader.load("template", pasteboard)
@@ -48,21 +55,14 @@ $ () ->
 		spinner.stop()
 		setPosition()
 		$image.addClass("appear")
+		getShortURL()
 		window.drawBackgroundOverlay()
 
 	pasteboard.analytics.init()
 	pasteboard.modalWindow.init()
 	$modalWindow = $ pasteboard.modalWindow
 
-
 	$window.on "resize", setPosition
-
-	# Fetch the shortlink
-	if window.location.pathname
-		$.get "/images/#{window.location.pathname.replace("/", "")}/shorturl", (data) ->
-			$(".short-url")
-				.addClass("appear")
-				.find("input").val(data.url)
 
 	# Toggle between fullscreen and regular view
 	$image.on "click", () ->
