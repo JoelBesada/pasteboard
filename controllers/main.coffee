@@ -112,7 +112,9 @@ post.upload = (req, res) ->
         knox.putFile(
           sourcePath,
           "#{req.app.get "amazonFilePath"}#{fileName}",
-          "Content-Type": file.type,
+            "Content-Type": file.type
+            "x-amz-acl": "private"
+          ,
           callback
         )
     else
