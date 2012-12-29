@@ -22,7 +22,7 @@ get.index = (req, res) ->
     trackingCode: ""
 
   # Use Google Analytics when not running locally
-  if not req.app.get "localrun" and auth.google_analytics
+  if not req.app.get("localrun") and auth.google_analytics
     viewData.useAnalytics = true
     viewData.trackingCode =
       if req.app.settings.env is "development"
