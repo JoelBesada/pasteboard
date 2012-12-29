@@ -3,6 +3,14 @@
   <head>
     <title>Pasteboard &mdash; Uploaded Image</title>
     <meta name="description" content="Super simple and lightning fast image sharing. Upload clipboard images with Copy &amp; Paste and image files with Drag &amp; Drop">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="photo">
+    <meta name="twitter:url" content="http://pasteboard.co/<%= imageName %>">
+    <meta name="twitter:title" content="Pasteboard &mdash; Uploaded Image">
+    <meta name="twitter:description" content="Super simple and lightning fast image sharing. Upload clipboard images with Copy &amp; Paste and image files with Drag &amp; Drop">
+    <meta name="twitter:image" content="<%= imageURL %>">
+
     <%- css("image") %>
     <%- js("head") %>
     <% if (useAnalytics) { %>
