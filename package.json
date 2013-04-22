@@ -6,7 +6,6 @@
     "start": "coffee app"
   },
   "dependencies": {
-    "express": "3.0.0beta4",
     "ejs": "*",
     "less": "*",
     "coffee-script": "*",
@@ -18,5 +17,6 @@
     "easyimage": "*",
     "request": "*",
     "async": "*"
+    "express": "3.2.0",
   }
 }
