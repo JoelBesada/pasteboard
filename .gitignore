@@ -11,3 +11,5 @@ public/storage/*
 
 deploy_master
 deploy_dev
+
+deploy.coffee
