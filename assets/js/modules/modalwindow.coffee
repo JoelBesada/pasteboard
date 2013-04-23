@@ -62,6 +62,7 @@ modalWindow = (pasteboard) ->
 			)
 
 		hide: () ->
+			return unless $modalWindow
 			$modalWindow.transition(
 				opacity: 0
 				scale: 0.85
