@@ -53,6 +53,7 @@ appFlow = (pasteboard) ->
 				$pasteboard.on "imageinserted.stateevents", (e, eventData) ->
 					$pasteboard.off ".stateevents"
 					$modalWindow.off "cancel"
+					pasteboard.modalWindow.hide()
 					setState states.editingImage, image: eventData.image
 
 				# The user tried to insert something other than an image
