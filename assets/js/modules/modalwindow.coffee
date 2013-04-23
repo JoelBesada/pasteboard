@@ -1,6 +1,6 @@
-### 
+###
 # Modal window module, displays a
-# modal window with the given content 
+# modal window with the given content
 ###
 modalWindow = (pasteboard) ->
 	TEMPLATE_URL = "jstemplates/modalwindow.tmpl"
@@ -23,10 +23,10 @@ modalWindow = (pasteboard) ->
 
 	setPosition = () ->
 		top = Math.max 50, $window.outerHeight() / 2 - $modalWindow.outerHeight() / 2
-		$modalWindow.css 
+		$modalWindow.css
 			top: top
 
-	self = 
+	self =
 		init: () ->
 			pasteboard.template.load TEMPLATE_URL
 
@@ -40,20 +40,20 @@ modalWindow = (pasteboard) ->
 				(compiledTemplate) =>
 					$modal = $ compiledTemplate
 					$modalWindow = $modal.find(".modal-window")
-					
+
 					$("body").append $modal
 					setPosition()
 
 					# Events
 					$window.on "resize.modalwindowevents", setPosition
-					$document.on("click.modalwindowevents", 
+					$document.on("click.modalwindowevents",
 							".modal-window .cancel", () -> $(self).trigger("cancel"))
-							.on("click.modalwindowevents", 
+							.on("click.modalwindowevents",
 							".modal-window .confirm", () -> $(self).trigger("confirm"))
 							.on("click.modalwindowevents",
 							".modal-window .close", () -> self.hide())
 
-					if params.showClose 
+					if params.showClose
 						# Allow clicking outside to close
 						$document.on("click.modalwindowevents", () -> self.hide())
 							.on("click.modalwindowevents", ".modal-window", (e) -> e.stopPropagation())
