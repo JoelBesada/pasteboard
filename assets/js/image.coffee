@@ -90,11 +90,11 @@ $ () ->
 	$(".delete").click (e) ->
 		image =  $(this).data("image")
 		pasteboard.modalWindow.show "confirm",
-			content: "Are you sure?",
+			content: "Are you sure you want to delete this image?",
 			showConfirm: true,
-			confirmText: "Yes",
+			confirmText: "Yes, delete",
 			showCancel: true
-			cancelText: "No"
+			cancelText: "No, cancel"
 
 		$modalWindow.on "confirm", ->
 			$modalWindow.off "confirm cancel"
