@@ -13,13 +13,14 @@ FILE_SIZE_LIMIT = 10 * 1024 * 1024 # 10 MB
 get = {}
 post = {}
 
-# The index page, where all the magic happens :)
+# The index page
 get.index = (req, res) ->
   viewData =
     port: req.app.get "port"
     redirected: false
     useAnalytics: false
     trackingCode: ""
+    uploads: []
 
   # Use Google Analytics when not running locally
   if not req.app.get("localrun") and auth.google_analytics
@@ -28,6 +29,16 @@ get.index = (req, res) ->
       if req.app.settings.env is "development"
       then auth.google_analytics.development
       else auth.google_analytics.production
+
+  # Check cookies for recent uploads
+  for name, value of req.cookies
+    continue unless /^pb_/.test name
+    image = name.replace("pb_", "")
+
+    viewData.uploads.push {
+      link: image,
+      raw: helpers.imageURL req, image
+    }
 
   # Show a welcome banner for redirects from PasteShack
   if req.cookies.redirected
@@ -40,7 +51,6 @@ get.index = (req, res) ->
 get.redirected = (req, res) ->
   res.cookie "redirected", true
   res.redirect "/"
-
 
 # Proxy for external images, used get around
 # cross origin restrictions

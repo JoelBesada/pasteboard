@@ -1,0 +1,7 @@
+<h1>Your Recent Uploads</h1>
+
+<ul>
+  <% for (var i = 0; i < images.length; i++) { %>
+    <li><a href="<%= images[i].link %>" style="background-image: url(<%= images[i].raw %>)"></a></li>
+  <% } %>
+</ul>

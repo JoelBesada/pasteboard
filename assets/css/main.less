@@ -229,7 +229,7 @@ body {
 			opacity: 1;
 			width: 80px;
 			color: #eee;
-			transition-delay: 0.4s, 0, 0;
+			transition-delay: 0.4s, 0s, 0s;
 
 			.icon {
 				opacity: 0;
@@ -247,6 +247,92 @@ body {
 				background-image: url("../images/about-icon.png");
 			}
 		}
+		&.show-uploads {
+			.icon {
+				background-image: url("../images/uploads-icon.png");
+			}
+			.num {
+				position: absolute;
+				color: white;
+				opacity: 0.5;
+				font-size: 11px;
+				left: 50%;
+				width: 19px;
+				margin-left: -11px;
+				margin-top: 1px;
+				text-align: center;
+
+				transition: all 0.4s 0.4s;
+			}
+			&:hover, &:active {
+				width: 93px;
+				.num {
+					opacity: 0;
+					transition-delay: 0s;
+				}
+			}
+		}
+	}
+}
+
+.modal .uploads {
+	width: 450px;
+
+	h1 {
+		font-size: 1.6em;
+		margin-top: 0.2em;
+	}
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		margin-bottom: 10px;
+	}
+
+	li {
+		display: inline-block;
+		width: 150px;
+		height: 100px;
+		margin: 10px;
+	}
+
+	a {
+		display: block;
+		width: 100%;
+		height: 100%;
+
+		background-repeat: no-repeat;
+		background-size: 100%;
+		background-position: 50% 50%;
+
+		box-shadow: 0 0 10px rgba(0,0,25,0.7);
+
+		transition: box-shadow 0.15s;
+
+		&:after {
+			content: "";
+			display: block;
+			background: rgba(255,255,255,0.05);
+			width: 100%;
+			height: 100%;
+			opacity: 0;
+			transition: opacity 0.15s;
+		}
+
+		&:hover {
+			box-shadow: 0 0 20px rgba(0, 0, 25, 0.9);
+		}
+
+		&:active {
+			position: relative;
+			top: 1px;
+		}
+
+		&:hover:after {
+			opacity: 1;
+		}
+
 	}
 }
 
