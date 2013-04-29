@@ -12,7 +12,7 @@ post = {}
 exports.index = get.index = (req, res) ->
   viewData =
     imageName: req.params.image
-    imageURL: imageURL req
+    imageURL: helpers.imageURL req, req.params.image
     useAnalytics: false
     trackingCode: ""
     isImageOwner: helpers.isImageOwner req, req.params.image
@@ -42,7 +42,7 @@ get.shortURL = (req, res) ->
 # Image download URL
 get.download = (req, res) ->
   imageRequest = request
-    url: imageURL req
+    url: helpers.imageURL req, req.params.image
     headers:
       "Referer": req.headers.referer
 
@@ -62,13 +62,6 @@ post.delete = (req, res) ->
     res.send "Success"
 
   res.send "Forbidden", 403
-
-imageURL = (req) ->
-  if auth.amazon
-    return "#{req.app.get "amazonURL"}#{req.app.get "amazonFilePath"}#{req.params.image}"
-  else
-    return "http://#{req.headers.host}#{req.app.get "localStorageURL"}#{req.params.image}"
-
 
 exports.routes =
   get:

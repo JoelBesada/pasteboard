@@ -35,6 +35,12 @@ exports.isImageOwner = (req, image) ->
 
   return false
 
+exports.imageURL = (req, image) ->
+  if auth.amazon
+    return "#{req.app.get "amazonURL"}#{req.app.get "amazonFilePath"}#{image}"
+  else
+    return "http://#{req.headers.host}#{req.app.get "localStorageURL"}#{image}"
+
 # Requests a short URL from Bitly. Bitly doesn't generate
 # new short URLs for the same long URL, so this can be used
 # to fetch an already generated short URL as well.
