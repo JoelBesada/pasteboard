@@ -14,13 +14,13 @@ exports.generateFileName = (type) ->
   timeString = timeString.substr timeString.length - 13 # 13 last digits
   return "#{base62Encode parseInt(timeString, 10)}#{fileExt}"
 
-# Creates a cookie to identify the user
-# as the image owner.
+# Creates a cookie to identify the user as the image owner.
 exports.setImageOwner = (res, image) ->
+  hour = 1000 * 60 * 60;
   key = imageOwnerKey image
   if key
     res.cookie "pb_#{image}", key,
-      maxAge: 604800 # 1 week
+      maxAge: hour * 24 * 7 # 1 week
 
 # Removes the owner from the image,
 # usually after the image has been deleted.
