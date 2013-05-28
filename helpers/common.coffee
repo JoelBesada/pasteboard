@@ -61,7 +61,7 @@ exports.requestShortURL = (longURL, callback) ->
 # Generate the image owner key
 imageOwnerKey = (image) ->
   return false unless auth.hashing
-  return auth.hashing.keyHash "image"
+  return auth.hashing.keyHash image
 
 # Converts an integer from base 10 to 62
 base62Encode = (n) ->
