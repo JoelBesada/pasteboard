@@ -71,13 +71,13 @@ post.preupload = (req, res) ->
   form.on "aborted", ->
     # Remove temporary files that were in the process of uploading
     for file in incomingFiles
-      fs.unlink file.path
+      fs.unlink file.path, (-> )
 
   form.parse req, (err, fields, files) ->
     client = req.app.get("clients")[fields.id]
     if client
       # Remove the old file
-      fs.unlink client.file.path if client.file
+      fs.unlink(client.file.path, (-> )) if client.file
       client.file = files.file
 
     res.send "Received file"
@@ -149,7 +149,7 @@ post.upload = (req, res) ->
           y: fields["crop[y]"]
           gravity: "NorthWest"
         , ->
-          fs.unlink sourcePath
+          fs.unlink sourcePath, (-> )
           sourcePath = cropPath
           callback null
         )
@@ -157,7 +157,7 @@ post.upload = (req, res) ->
     series.push (callback) ->
       async.parallel parallels, (err, results) ->
         return res.send "Failed to upload file", 500 if err
-        fs.unlink sourcePath
+        fs.unlink sourcePath, (-> )
         helpers.setImageOwner res, fileName
         res.json
           url: results.shortURL or longURL
@@ -170,7 +170,7 @@ post.upload = (req, res) ->
 
   form.on "aborted", ->
     # Remove temporary files that were in the process of uploading
-    fs.unlink incomingFile.path for incomingFile in incomingFiles
+    fs.unlink(incomingFile.path, (-> ))  for incomingFile in incomingFiles
 
 
 # Remove a preuploaded file from the given client ID, called
@@ -180,7 +180,7 @@ post.clearfile = (req, res) ->
   form.parse req, (err, fields, files) ->
     client = req.app.get("clients")[fields.id]
     if client and client.file
-      fs.unlink client.file.path
+      fs.unlink client.file.path, (-> )
       client.file = null;
     res.send "Cleared"
 

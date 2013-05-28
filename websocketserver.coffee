@@ -31,7 +31,7 @@ exports.init = (expressApp, webServer) ->
       connection.on "close", (reasonCode, description) ->
         if clients[ID]?.file
           # Delete the leftover file
-          (require "fs").unlink clients[ID].file.path
+          (require "fs").unlink clients[ID].file.path, (-> )
         delete clients[ID]
 
     else

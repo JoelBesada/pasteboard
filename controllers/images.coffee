@@ -56,7 +56,8 @@ post.delete = (req, res) ->
     if knox
       knox.deleteFile "#{req.app.get "amazonFilePath"}#{req.params.image}", ->
     else
-      require("fs").unlink "#{req.app.get "localStorageFilePath"}#{req.params.image}"
+      localPath = "#{req.app.get "localStorageFilePath"}#{req.params.image}"
+      require("fs").unlink localPath, (-> )
 
     helpers.removeImageOwner res, req.params.image
     res.send "Success"
