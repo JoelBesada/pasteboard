@@ -1,2 +1,2 @@
 #!/bin/bash
-LOCAL=true coffee app
+LOCAL=true coffee app.coffee
