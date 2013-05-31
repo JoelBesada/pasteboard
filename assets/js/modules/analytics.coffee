@@ -45,6 +45,7 @@ analytics = (pasteboard) ->
 		return "Copy and Paste" if action.paste
 		return "Drag and Drop" if action.drop
 		return "Webcam" if action.webcam
+		return "Extension" if action.extension
 		return "Unknown Action"
 
 	self =

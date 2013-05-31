@@ -23,6 +23,7 @@ appFlow = (pasteboard) ->
 				pasteboard.socketConnection.init()
 				pasteboard.modalWindow.init()
 				pasteboard.webcam.init()
+				pasteboard.extensionHandler.init()
 
 				# The image that the user is trying to insert is too large
 				$pasteboard.on "filetoolarge", (e) ->
