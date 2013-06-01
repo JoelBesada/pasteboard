@@ -17,6 +17,7 @@
     "websocket": "1.0.8",
     "easyimage": "0.1.3",
     "request": "2.10.0",
-    "async": "0.1.22"
+    "async": "0.1.22",
+    "ua-parser": "0.3.2"
   }
 }

@@ -212,6 +212,7 @@ body {
 			transition-duration: 0.4s;
 			transition-delay: 0s, 0.4s, 0.4s;
 		}
+
 		.icon {
 			transition: all 0.4s 0.4s;
 			opacity: 0.5;
@@ -225,6 +226,7 @@ body {
 			background-repeat: no-repeat;
 			background-position: center;
 		}
+
 		&:hover, &:active {
 			opacity: 1;
 			width: 80px;
@@ -242,11 +244,13 @@ body {
 				background-image: url("../images/twitter-icon.png");
 			}
 		}
+
 		&.show-about {
 			.icon {
 				background-image: url("../images/about-icon.png");
 			}
 		}
+
 		&.show-uploads {
 			.icon {
 				background-image: url("../images/uploads-icon.png");
@@ -271,6 +275,16 @@ body {
 					opacity: 0;
 					transition-delay: 0s;
 				}
+			}
+		}
+
+		&.extension-link {
+			.icon {
+				background-image: url("../images/chrome-icon.png");
+			}
+
+			&:hover, &:active {
+				width: 103px;
 			}
 		}
 	}

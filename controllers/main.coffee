@@ -7,6 +7,7 @@ request = require "request"
 formidable = require "formidable"
 auth = require "../auth"
 helpers = require "../helpers/common"
+uaParser = require("ua-parser")
 
 FILE_SIZE_LIMIT = 10 * 1024 * 1024 # 10 MB
 
@@ -20,6 +21,7 @@ get.index = (req, res) ->
     redirected: false
     useAnalytics: false
     trackingCode: ""
+    browser: uaParser.parseUA(req.headers["user-agent"]).family
     uploads: []
 
   # Use Google Analytics when not running locally
