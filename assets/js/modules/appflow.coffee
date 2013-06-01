@@ -251,6 +251,7 @@ appFlow = (pasteboard) ->
 
 			# State 6: The image link is being generated
 			when states.generatingLink
+				$pasteboard.trigger "imageuploaded"
 				# Image was already preuploaded when the upload
 				# button was pressed
 				if stateData.preuploaded

@@ -34,6 +34,10 @@ analytics = (pasteboard) ->
 				kB = eventData.size / 1024
 				track "Image Inserted", actionString(eventData.action), "Successfully", kB
 
+	trackUploadedImages = ->
+		$pasteboard.on "imageuploaded", ->
+			track "Image Uploaded", "N/A"
+
 	trackErrors = () ->
 		$(window).on "error", (e) ->
 			# Prevent logging the same error multiple times
@@ -56,6 +60,7 @@ analytics = (pasteboard) ->
 
 			trackOutboundLinks()
 			trackInsertedImages()
+			trackUploadedImages()
 			trackErrors()
 
 window.moduleLoader.addModule "analytics", analytics
