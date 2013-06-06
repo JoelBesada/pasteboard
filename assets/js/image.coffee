@@ -34,17 +34,29 @@ getShortURL = () ->
 				.addClass("appear")
 				.find("input").val(data.url)
 
-progressBarSupported = ->
-	!!(("FormData" of window) and # XHR 2
-	window.ArrayBuffer and
-	window.Blob and
-	URLObject and
-	(try
-		(new XMLHttpRequest()).responseType = "arraybuffer"
-		true
+blobConstructorSupported = ->
+	try
+		new window.Blob
+		return true
 	catch e
-		false
-	))
+		return false
+
+arrayBufferResponseSupported = ->
+	try
+		(new XMLHttpRequest()).responseType = "arraybuffer"
+		return true
+	catch e
+		return false
+
+progressBarSupported = ->
+	!!(
+		("FormData" of window) and # XHR 2
+		window.ArrayBuffer and
+		URLObject and
+		window.Blob and
+		blobConstructorSupported() and
+		arrayBufferResponseSupported()
+	)
 
 loadImage = ->
 	spinner = new Spinner(
