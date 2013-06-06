@@ -9,6 +9,8 @@ $window = $(window)
 $imageContainer = null
 $image = null
 fullScreen = false
+URLObject = window.URL or window.webkitURL
+
 setSize = () ->
 	width = $(window).outerWidth()
 	height = Math.min($(window).outerHeight(), ($image.outerHeight() + 65))
@@ -32,15 +34,19 @@ getShortURL = () ->
 				.addClass("appear")
 				.find("input").val(data.url)
 
-pasteboard = {}
-window.moduleLoader.load("analytics", pasteboard)
-window.moduleLoader.load("template", pasteboard)
-window.moduleLoader.load("modalWindow", pasteboard)
+progressBarSupported = ->
+	!!(("FormData" of window) and # XHR 2
+	window.ArrayBuffer and
+	window.Blob and
+	URLObject and
+	(try
+		(new XMLHttpRequest()).responseType = "arraybuffer"
+		true
+	catch e
+		false
+	))
 
-$ () ->
-	$imageContainer = $(".image-container")
-	$image = $imageContainer.find(".image")
-
+loadImage = ->
 	spinner = new Spinner(
 		color: "#eee"
 		lines: 12
@@ -53,15 +59,58 @@ $ () ->
 
 	$image.on "load", (e) ->
 		spinner.stop()
-		setPosition()
-		$image.addClass("appear")
-		getShortURL()
-		window.drawBackgroundOverlay()
-
-	$image.on "error", (e) ->
-		$("body").addClass "broken"
 
 	$image.attr "src", $image.data("src")
+
+loadImageWithProgress = ->
+	$progress = $ ".progress"
+	$progressBar = $progress.find ".bar"
+	$progress.addClass "appear"
+
+	xhr = new XMLHttpRequest()
+	xhr.responseType = "arraybuffer"
+	imageSource = $image.data("src")
+
+	xhr.addEventListener "progress", (e) ->
+		$progressBar.css("width", (e.loaded / e.total) * 100 + "%")
+
+	xhr.addEventListener "load", ->
+		opts = {}
+		type = imageSource.match(/.*\.(.*)$/)[1]
+		opts["type"] = "image/#{type}" if type
+
+		$image.attr "src", URLObject.createObjectURL(new Blob([this.response], opts))
+		$progressBar.addClass "done"
+
+	# Add query parameter to make sure the new CORS headers are included
+	xhr.open "GET", imageSource + "?1"
+	xhr.send()
+
+	$image.on "load", ->
+		$progress.hide()
+
+imageLoaded = ->
+	setPosition()
+	$image.addClass("appear")
+	getShortURL()
+	window.drawBackgroundOverlay()
+
+pasteboard = {}
+window.moduleLoader.load("analytics", pasteboard)
+window.moduleLoader.load("template", pasteboard)
+window.moduleLoader.load("modalWindow", pasteboard)
+
+$ () ->
+	$imageContainer = $(".image-container")
+	$image = $imageContainer.find(".image")
+
+	if progressBarSupported()
+		loadImageWithProgress()
+	else
+		loadImage()
+
+	$image.on "load", imageLoaded
+	$image.on "error", (e) -> $("body").addClass "broken"
 
 	pasteboard.analytics.init()
 	pasteboard.modalWindow.init()
@@ -104,6 +153,4 @@ $ () ->
 		$modalWindow.on "cancel", ->
 			$modalWindow.off "confirm cancel"
 			pasteboard.modalWindow.hide()
-
-
 

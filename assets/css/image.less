@@ -100,6 +100,31 @@ input {
 	}
 }
 
+.progress {
+	display: none;
+	position: absolute;
+	width: 200px;
+	height: 14px;
+	left: 50%;
+	top: 50%;
+	margin-left: -195px;
+
+	opacity: 0;
+
+	.track {
+		width: 200px;
+	}
+
+	&.appear {
+		display: block;
+		animation: fadeIn 0.5s both;
+	}
+
+	.broken & {
+		display: none !important;
+	}
+}
+
 aside {
 	position: absolute;
 	width: 190px;

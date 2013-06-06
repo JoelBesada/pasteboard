@@ -301,38 +301,6 @@ footer {
 			.upload-bar {
 				margin: auto;
 				height: 14px;
-
-				.track {
-					position: relative;
-					width: 300px;
-					margin: auto;
-					background-color: darken(@background-color, 30%);
-					border-radius: 12px;
-					overflow: hidden;
-					border: 1px solid black;
-					padding: 2px;
-					height: 100%;
-					box-shadow: 1px 1px 1px rgba(255,255,255,0.10),
-								0 0 5px rgba(255,255,255, 0.05),
-								inset 0 0 5px rgba(0,0,0,0.5),
-								inset 5px 5px 10px rgba(0,0,0,0.3);
-
-					.progress-bar {
-						width: 0%;
-						height: 100%;
-						background-color: #166F16;
-						border-radius: 4px;
-						overflow: hidden;
-						background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(255,255,255,0.3) 5px, rgba(255,255,255,0.3) 10px),
-							linear-gradient(0deg, #E2A63C, #8BB324, #166F16);
-						background-size: 300px;
-						box-shadow: inset 1px 1px 0 rgba(255,255,255,0.15),
-									inset 0 0 5px rgba(255,255,255, 0.05),
-									0 0 5px rgba(0,0,0,0.5),
-									3px 3px 3px rgba(0,0,0,0.5);
-						transition: width 0.15s;
-					}
-				}
 			}
 			.image-link {
 				display: none;
@@ -406,6 +374,44 @@ footer {
 	}
 }
 
+.progress {
+	.track {
+		position: relative;
+		width: 300px;
+		margin: auto;
+		background-color: darken(@background-color, 30%);
+		border-radius: 12px;
+		overflow: hidden;
+		border: 1px solid black;
+		padding: 2px;
+		height: 100%;
+		box-shadow: 1px 1px 1px rgba(255,255,255,0.10),
+					0 0 5px rgba(255,255,255, 0.05),
+					inset 0 0 5px rgba(0,0,0,0.5),
+					inset 5px 5px 10px rgba(0,0,0,0.3);
+
+		.bar {
+			width: 0%;
+			height: 100%;
+			background-color: #166F16;
+			border-radius: 4px;
+			overflow: hidden;
+			background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(255,255,255,0.3) 5px, rgba(255,255,255,0.3) 10px),
+				linear-gradient(90deg, #E2A63C, #8BB324, #166F16);
+			background-size: 300px;
+			box-shadow: inset 1px 1px 0 rgba(255,255,255,0.15),
+						inset 0 0 5px rgba(255,255,255, 0.05),
+						0 0 5px rgba(0,0,0,0.5),
+						3px 3px 3px rgba(0,0,0,0.5);
+			transition: width 0.15s;
+
+			.done & {
+				animation: pulse 2.5s infinite;
+			}
+		}
+	}
+}
+
 @keyframes fadeIn {
 	100% {
 		opacity: 1;
@@ -444,3 +450,9 @@ footer {
 	}
 }
 
+@keyframes pulse {
+	33% {
+		opacity: 0.5;
+	}
+	66% {}
+}
