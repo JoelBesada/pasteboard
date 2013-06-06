@@ -45,12 +45,9 @@ webcam = (pasteboard) ->
 	    else
 	    	video.src = stream
 
-	    video.play()
-
-	    $(video).on "canplay", (e) ->
+	    $(video).one "canplay", (e) ->
 	    	displayWindow()
-	    	video.play() # Firefox stupidness, play the video again
-	    	$(video).off "canplay"
+	    	video.play()
 
 	# Display the webcam window
 	displayWindow = ->
