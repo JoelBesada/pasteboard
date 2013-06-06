@@ -92,7 +92,6 @@ loadImageWithProgress = ->
 imageLoaded = ->
 	setPosition()
 	$image.addClass("appear")
-	getShortURL()
 	window.drawBackgroundOverlay()
 
 pasteboard = {}
@@ -109,6 +108,7 @@ $ () ->
 	else
 		loadImage()
 
+	getShortURL()
 	$image.on "load", imageLoaded
 	$image.on "error", (e) -> $("body").addClass "broken"
 
