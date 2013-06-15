@@ -141,7 +141,7 @@ aside {
 
 	.short-url {
 		opacity: 0;
-		margin: 20px auto 20px auto;
+		margin: 20px auto;
 
 		span {
 			display: block;
@@ -155,6 +155,30 @@ aside {
 			transition: opacity 1s;
 		}
 	}
+
+	.views {
+		opacity: 0;
+		margin: 20px auto 0 auto;
+
+		.text {
+			display: block;
+			text-align: center;
+			font-weight: bold;
+			font-size: 1.05em;
+		}
+
+		.num {
+			text-align: center;
+			font-size: 2.5em;
+			font-weight: bold;
+		}
+
+		&.appear {
+			opacity: 1;
+			transition: opacity 1s;
+		}
+	}
+
 	.button, button {
 		display: block;
 		width: 145px;

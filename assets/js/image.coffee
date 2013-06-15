@@ -121,6 +121,8 @@ $ () ->
 		loadImage()
 
 	getShortURL()
+	getViews()
+
 	$image.on "load", imageLoaded
 	$image.on "error", (e) -> $("body").addClass "broken"
 
