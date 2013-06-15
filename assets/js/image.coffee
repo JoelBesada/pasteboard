@@ -8,6 +8,7 @@
 $window = $(window)
 $imageContainer = null
 $image = null
+$modalWindow = null
 fullScreen = false
 URLObject = window.URL or window.webkitURL
 
@@ -106,6 +107,46 @@ imageLoaded = ->
 	$image.addClass("appear")
 	window.drawBackgroundOverlay()
 
+confirmDelete = (e) ->
+	image =  $(this).data("image")
+	pasteboard.modalWindow.show "confirm",
+		content: "Are you sure you want to delete this image?",
+		showConfirm: true,
+		confirmText: "Yes, delete",
+		showCancel: true
+		cancelText: "No, cancel"
+
+	$modalWindow.on "confirm", ->
+		$modalWindow.off "confirm cancel"
+		$.post "images/#{image}/delete", ->
+			window.location = "/"
+
+	$modalWindow.on "cancel", ->
+		$modalWindow.off "confirm cancel"
+		pasteboard.modalWindow.hide()
+
+toggleFullscreen = ->
+	fullScreen = !fullScreen
+	$("body").toggleClass("full-screen")
+	$(window).scrollTop(0)
+
+	if fullScreen
+		setSize()
+		$window.on "resize", setSize
+	else
+		$window.off "resize", setSize
+		$imageContainer.css
+			width: ""
+			height: ""
+
+	setPosition()
+
+
+getViews = ->
+	return unless window.location.pathname
+	$.getJSON "analytics/views/#{location.pathname.replace "/", ""}", (response) ->
+		$(".views").addClass("appear").find(".num").text(response.views or 1)
+
 pasteboard = {}
 window.moduleLoader.load("analytics", pasteboard)
 window.moduleLoader.load("template", pasteboard)
@@ -131,40 +172,5 @@ $ () ->
 	$modalWindow = $ pasteboard.modalWindow
 
 	$window.on "resize", setPosition
-
-	# Toggle between fullscreen and regular view
-	$image.on "click", () ->
-		fullScreen = !fullScreen
-		$("body").toggleClass("full-screen")
-		$(window).scrollTop(0)
-
-		if fullScreen
-			setSize()
-			$window.on "resize", setSize
-		else
-			$window.off "resize", setSize
-			$imageContainer.css
-				width: ""
-				height: ""
-
-		setPosition()
-
-	# Confirm on image delete
-	$(".delete").click (e) ->
-		image =  $(this).data("image")
-		pasteboard.modalWindow.show "confirm",
-			content: "Are you sure you want to delete this image?",
-			showConfirm: true,
-			confirmText: "Yes, delete",
-			showCancel: true
-			cancelText: "No, cancel"
-
-		$modalWindow.on "confirm", ->
-			$modalWindow.off "confirm cancel"
-			$.post "images/#{image}/delete", ->
-				window.location = "/"
-
-		$modalWindow.on "cancel", ->
-			$modalWindow.off "confirm cancel"
-			pasteboard.modalWindow.hide()
-
+	$image.on "click", toggleFullscreen
+	$(".delete").click confirmDelete
