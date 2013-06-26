@@ -11,7 +11,7 @@ copyAndPaste = (pasteboard) ->
 					.attr("contenteditable", "")
 					.css( "opacity", 0)
 	onPaste = (e) ->
-		if e.originalEvent.clipboardData
+		if e.originalEvent.clipboardData and window.Clipboard
 			items = e.originalEvent.clipboardData.items
 			unless items
 				$("html").addClass("no-copyandpaste")
