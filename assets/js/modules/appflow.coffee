@@ -189,8 +189,6 @@ appFlow = (pasteboard) ->
 								.end().find(".progress-number")
 									.text(if ("" + percent).length < 2 then "0#{percent}" else percent)
 
-								onComplete() if percent is 100
-
 							# This runs when the upload is complete but we're still waiting for
 							# a response from the server
 							onComplete = () ->
@@ -220,6 +218,7 @@ appFlow = (pasteboard) ->
 								onComplete()
 							else
 								stateData.upload.xhr.upload.addEventListener "progress", progressHandler
+								stateData.upload.xhr.upload.addEventListener "load", onComplete
 						)
 
 				# Image is already uploaded, just waiting for
