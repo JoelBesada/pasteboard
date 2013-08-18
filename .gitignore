@@ -6,6 +6,7 @@ auth/*
 !auth/*.example.js
 
 public/storage/*
+!public/storage/.gitinclude
 
 .DS_Store
 
