@@ -1,7 +1,7 @@
 ###
 # Main (Index) Controller
 ###
-fs = require "fs"
+fs = require "fs.extra"
 async = require "async"
 request = require "request"
 formidable = require "formidable"
@@ -137,7 +137,7 @@ post.upload = (req, res) ->
     else
       # Upload to local file storage
       parallels.upload = (callback) ->
-        fs.rename(
+        fs.move(
           sourcePath,
           "#{req.app.get "localStorageFilePath"}#{fileName}",
           callback

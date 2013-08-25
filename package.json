@@ -19,6 +19,7 @@
     "request": "2.10.0",
     "async": "0.1.22",
     "ua-parser": "0.3.2",
-    "underscore": "1.4.4"
+    "underscore": "1.4.4",
+    "fs.extra": "1.2.1"
   }
 }
