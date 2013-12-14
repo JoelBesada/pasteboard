@@ -18,13 +18,14 @@ to drive traffic to your site instead of mine for the exact same functionality. 
 ## Running Locally
 Here are the instructions for running the app for local testing:
 
-__Step 1:__ Install [Node](http://nodejs.org/) and [Node Package Manager](https://npmjs.org/).
-__Step 2:__ Run the following commands in the terminal
+__Step 1:__ Install [Node](http://nodejs.org/) and [Node Package Manager](https://npmjs.org/).  
+__Step 2:__ Run the following commands in the terminal  
 ```
 git clone https://github.com/JoelBesada/pasteboard.git
 cd pasteboard
 git checkout dev
 npm install
+sudo apt-get install imagemagick
 ./run_local
 ```
 __Step 3 (Optional):__ Edit the example files in the _/auth_ folder with your credentials and rename them according to
