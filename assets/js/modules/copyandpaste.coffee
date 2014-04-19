@@ -8,8 +8,8 @@
 
 copyAndPaste = (pasteboard) ->
 	pasteArea = $("<div>")
+					.addClass("pastearea")
 					.attr("contenteditable", "")
-					.css( "opacity", 0)
 
 	usePasteArea = (->
 		$.browser.mozilla
