@@ -1,17 +1,24 @@
-### 
+###
 # Copy and Paste module, handles paste events
 # and sends the pasted image to the editor.
 #
-# This technique is described in a blog post I've written: 
+# This technique is described in a blog post I've written:
 # http://joelb.me/blog/2011/code-snippet-accessing-clipboard-images-with-javascript/
 ###
 
 copyAndPaste = (pasteboard) ->
 	pasteArea = $("<div>")
+					.addClass("pastearea")
 					.attr("contenteditable", "")
-					.css( "opacity", 0)
+
+	usePasteArea = (->
+		$.browser.mozilla
+	)()
+
 	onPaste = (e) ->
-		if e.originalEvent.clipboardData and window.Clipboard
+		if usePasteArea
+			setTimeout parsePaste, 1
+		else
 			items = e.originalEvent.clipboardData.items
 			unless items
 				$("html").addClass("no-copyandpaste")
@@ -23,8 +30,6 @@ copyAndPaste = (pasteboard) ->
 					return
 
 			$(pasteboard).trigger "noimagefound", paste: true
-		else
-			setTimeout parsePaste, 1
 
 	parsePaste = () ->
 		child = pasteArea[0].childNodes[0]
@@ -42,11 +47,11 @@ copyAndPaste = (pasteboard) ->
 
 
 		$(pasteboard).trigger "noimagefound", paste: true
-	
-	focusPasteArea = () ->
-		pasteArea.focus() 
 
-	self = 
+	focusPasteArea = () ->
+		pasteArea.focus()
+
+	self =
 		isSupported: () -> "onpaste" of document
 		# Initializes the module
 		init: () ->
@@ -55,13 +60,13 @@ copyAndPaste = (pasteboard) ->
 				return
 
 			# Clipboard fallback
-			unless window.Clipboard
+			if usePasteArea
 				pasteArea
 					.appendTo("body")
 					.focus()
 
 				$(document).on "click", focusPasteArea
-		
+
 			$(window).on "paste", onPaste
 
 		# Hides the elements related to the module

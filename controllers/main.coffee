@@ -1,7 +1,7 @@
 ###
 # Main (Index) Controller
 ###
-fs = require "fs"
+fs = require "fs.extra"
 async = require "async"
 request = require "request"
 formidable = require "formidable"
@@ -103,8 +103,13 @@ post.upload = (req, res) ->
       file = client.file
       client.uploading[file.path] = true
 
-    return res.send "Missing file", 500 unless file
-    return res.send "File too large", 500 if file.size > FILE_SIZE_LIMIT
+    unless file
+      console.log("Missing file")
+      return res.send "Missing file", 500
+
+    if file.size > FILE_SIZE_LIMIT
+      console.log("File too large")
+      return res.send "File too large", 500
 
     fileName = helpers.generateFileName(file.type.replace "image/", "")
     domain = if req.app.get "localrun" then req.headers.host else req.app.get "domain"
@@ -132,7 +137,7 @@ post.upload = (req, res) ->
     else
       # Upload to local file storage
       parallels.upload = (callback) ->
-        fs.rename(
+        fs.move(
           sourcePath,
           "#{req.app.get "localStorageFilePath"}#{fileName}",
           callback
@@ -158,7 +163,10 @@ post.upload = (req, res) ->
 
     series.push (callback) ->
       async.parallel parallels, (err, results) ->
-        return res.send "Failed to upload file", 500 if err
+        if err
+          console.log err
+          return res.send "Failed to upload file", 500
+
         fs.unlink sourcePath, (-> )
         helpers.setImageOwner res, fileName
         res.json
