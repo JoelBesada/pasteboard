@@ -1,5 +1,5 @@
 /**
- * Google Analytics tracking codes. Rename this to goole_analytics.js
+ * Google Analytics tracking codes. Rename this to google_analytics.js
  */
 
 // Tracking Codes
