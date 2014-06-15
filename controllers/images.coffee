@@ -46,7 +46,7 @@ get.download = (req, res) ->
     headers:
       "Referer": req.headers.referer
 
-  res.set "Content-Disposition", "attachment"
+  res.set "Content-Disposition", "attachment; filename=#{req.params.image}"
   imageRequest.pipe res
 
 # Delete the image
