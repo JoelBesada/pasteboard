@@ -117,12 +117,6 @@ post.upload = (req, res) ->
     sourcePath = file.path
 
     parallels = {}
-    unless req.app.get "localrun"
-      # Request a short URL
-      parallels.shortURL = (callback) ->
-        helpers.requestShortURL longURL, (url) ->
-          callback null, url
-
     if knox
       # Upload to amazon
       parallels.upload = (callback) ->
@@ -170,7 +164,7 @@ post.upload = (req, res) ->
         fs.unlink sourcePath, (-> )
         helpers.setImageOwner res, fileName
         res.json
-          url: results.shortURL or longURL
+          url: longURL
         callback null
 
     async.series series
