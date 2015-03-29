@@ -41,23 +41,6 @@ exports.imageURL = (req, image) ->
   else
     return "http://#{req.headers.host}#{req.app.get "localStorageURL"}#{image}"
 
-# Requests a short URL from Bitly. Bitly doesn't generate
-# new short URLs for the same long URL, so this can be used
-# to fetch an already generated short URL as well.
-exports.requestShortURL = (longURL, callback) ->
-  return false unless auth.bitly
-  apiEndpoint = "http://api.bitly.com/v3/shorten?login=#{auth.bitly.LOGIN}" +
-  "&apiKey=#{auth.bitly.API_KEY}" +
-  "&longURL=#{encodeURIComponent longURL}"
-  return request apiEndpoint, (error, response, body) ->
-    if not error and response.statusCode is 200
-      json = JSON.parse body
-      if json.status_code is 200
-        callback? json.data.url
-        return
-
-    callback? false
-
 # Generate the image owner key
 imageOwnerKey = (image) ->
   return false unless auth.hashing

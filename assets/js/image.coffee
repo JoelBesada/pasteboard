@@ -28,13 +28,6 @@ setPosition = () ->
 		$imageContainer.css
 			top: ""
 
-getShortURL = () ->
-	if window.location.pathname
-		$.get "/images/#{window.location.pathname.replace("/", "")}/shorturl", (data) ->
-			$(".short-url")
-				.addClass("appear")
-				.find("input").val(data.url)
-
 blobConstructorSupported = ->
 	try
 		new window.Blob
@@ -161,7 +154,6 @@ $ () ->
 	else
 		loadImage()
 
-	getShortURL()
 	getViews()
 
 	$image.on "load", imageLoaded

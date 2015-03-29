@@ -13,6 +13,7 @@ exports.index = get.index = (req, res) ->
   viewData =
     imageName: req.params.image
     imageURL: helpers.imageURL req, req.params.image
+    longURL: "#{req.app.get("domain")}/#{req.params.image}"
     useAnalytics: false
     trackingCode: ""
     isImageOwner: helpers.isImageOwner req, req.params.image
@@ -26,18 +27,6 @@ exports.index = get.index = (req, res) ->
       else auth.google_analytics.production
 
   res.render "image", viewData
-
-get.shortURL = (req, res) ->
-  return res.send "Short URLs are disabled locally", 500 if req.app.get "localrun"
-  longURL = "#{req.app.get "domain"}/#{req.params.image}"
-  shortURLRequest = helpers.requestShortURL longURL, (url) ->
-    if url
-      res.json url: url
-    else
-      res.send "Unable to get short URL", 500
-
-  res.send "Unable to send short URL request", 500 unless shortURLRequest
-
 
 # Image download URL
 get.download = (req, res) ->
@@ -67,7 +56,6 @@ post.delete = (req, res) ->
 exports.routes =
   get:
     ":image/download": get.download
-    ":image/shorturl": get.shortURL
   post:
     ":image/delete": post.delete
 
