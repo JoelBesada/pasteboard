@@ -37,9 +37,10 @@ exports.isImageOwner = (req, image) ->
 
 exports.imageURL = (req, image) ->
   if auth.amazon
-    return "#{req.app.get "amazonURL"}#{req.app.get "amazonFilePath"}#{image}"
+    base = auth.amazon.CDN_URL or "http://#{auth.amazon.S3_BUCKET}.s3.amazonaws.com"
+    return "#{base}#{req.app.get "amazonFilePath"}#{image}"
   else
-    return "http://#{req.headers.host}#{req.app.get "localStorageURL"}#{image}"
+    "http://#{req.headers.host}#{req.app.get "localStorageURL"}#{image}"
 
 # Generate the image owner key
 imageOwnerKey = (image) ->

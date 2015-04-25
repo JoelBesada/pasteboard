@@ -27,9 +27,9 @@ exports.init = (app, express) ->
         key: auth.amazon.S3_KEY,
         secret: auth.amazon.S3_SECRET,
         bucket: auth.amazon.S3_BUCKET
+        region: "eu-west-1"
 
       app.set "amazonFilePath", "/#{auth.amazon.S3_IMAGE_FOLDER}"
-      app.set "amazonURL", "http://#{auth.amazon.S3_BUCKET}.s3.amazonaws.com"
 
     # File storage options when not using Amazon S3
     app.set "localStorageFilePath", "#{__dirname}/../public/storage/"

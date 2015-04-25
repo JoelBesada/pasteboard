@@ -5,4 +5,5 @@
 exports.S3_KEY = "YOUR AMAZON S3 KEY";
 exports.S3_SECRET = "YOUR AMAZON S3 SECRET";
 exports.S3_BUCKET = "YOUR AMAZON BUCKET NAME";
+exports.CDN_URL = "YOUR CDN URL";
 exports.S3_IMAGE_FOLDER = "images/";
