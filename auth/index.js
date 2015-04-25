@@ -1,6 +1,5 @@
 var authFiles = [
 	"amazon",
-	"bitly",
 	"google_analytics",
 	"hashing"
 ];
