@@ -88,8 +88,7 @@ loadImageWithProgress = ->
 		$image.attr "src", URLObject.createObjectURL(new Blob([this.response], opts))
 		$progressBar.addClass "done"
 
-	# Add query parameter to make sure the new CORS headers are included
-	xhr.open "GET", imageSource + "?1"
+	xhr.open "GET", imageSource
 	xhr.send()
 
 	$image.on "load", ->

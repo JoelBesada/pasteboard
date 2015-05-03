@@ -48,6 +48,20 @@ post.delete = (req, res) ->
       localPath = "#{req.app.get "localStorageFilePath"}#{req.params.image}"
       require("fs").unlink localPath, (-> )
 
+    if auth.cloudflare
+      params =
+        url: "https://api.cloudflare.com/client/v4/zones/#{auth.cloudflare.ZONE_ID}/purge_cache"
+        json: true
+        headers:
+          "X-Auth-Email": auth.cloudflare.EMAIL
+          "X-Auth-Key": auth.cloudflare.KEY
+        body: {
+          files: [helpers.imageURL req, req.params.image]
+        }
+
+      request.del params, (error) ->
+        console.log("Cloudflare error", error) if error
+
     helpers.removeImageOwner res, req.params.image
     res.send "Success"
 

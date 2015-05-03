@@ -1,7 +1,8 @@
 var authFiles = [
 	"amazon",
 	"google_analytics",
-	"hashing"
+  "hashing",
+	"cloudflare"
 ];
 
 for(var i = 0; i < authFiles.length; i++) {
